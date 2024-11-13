@@ -19,7 +19,7 @@ const LoginForm = ({ type }) => {
     e.preventDefault();
     setMessage({ type: '', content: '' });
     try {
-      const response = await fetch('http://10.18.191.34:8000/student/api/login/', {
+      const response = await fetch('http://3.16.159.54/student/api/login/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
