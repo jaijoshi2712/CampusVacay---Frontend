@@ -36,7 +36,7 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
-      const url = `http://10.18.191.34:8000/student/api/logout/`;
+      const url = `http://3.16.159.54/student/api/logout/`;
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -168,7 +168,7 @@ const SearchBar = () => {
     };
 
     try {
-      const response = await fetch('http://10.18.191.34:8000/hotel/api/search/', {
+      const response = await fetch('http://3.16.159.54/hotel/api/search/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
