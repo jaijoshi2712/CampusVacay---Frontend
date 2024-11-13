@@ -35,7 +35,7 @@ const SearchBar = ({ initialData }) => {
     };
 
     try {
-      const response = await fetch('http://10.18.191.34:8000/hotel/api/search/', {
+      const response = await fetch('http://3.16.159.54/hotel/api/search/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -148,7 +148,7 @@ const HotelCard = ({ hotel }) => {
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
       <div className="relative">
         <img 
-          src={imageError ? "/api/placeholder/400/300" : (hotel.image || "/api/placeholder/400/300")}
+          src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : (hotel.hotel_photos || "/api/placeholder/400/300")}
           alt={hotel.name}
           onError={handleImageError}
           className="w-full h-64 object-cover"
