@@ -20,13 +20,16 @@ const HOTEL_IMAGES = [
   'https://images.pexels.com/photos/2373201/pexels-photo-2373201.jpeg'
 ];
 
+
 const Header = () => {
   const [token, setToken] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [message, setMessage] = useState({ type: '', content: '' });
-
+  
   useEffect(() => {
+    
     const storedToken = localStorage.getItem('authToken');
+    
     if (storedToken) {
       setToken(storedToken);
     }
@@ -41,7 +44,7 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
-      const url = `http://10.18.191.34:8000/student/api/logout/`;
+      const url = `http://3.16.159.54/student/api/logout/`;
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -79,6 +82,10 @@ const Header = () => {
               {item}
             </li>
           ))}
+          <li className="list-none text-gray-600 hover:text-blue-700 cursor-pointer transition duration-300">
+              <a href="/dashboard">Dashboard</a>
+
+          </li>
         </nav>
         {token ? (
           <button onClick={handleLogout} className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
@@ -173,7 +180,7 @@ const SearchBar = () => {
     };
 
     try {
-      const response = await fetch('http://10.18.191.34:8000/hotel/api/search/', {
+      const response = await fetch('http://3.16.159.54/hotel/api/search/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
