@@ -140,7 +140,7 @@ const SearchBar = ({ initialData }) => {
 const HotelCard = ({ hotel }) => {
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
-
+  console.log(hotel);
   const handleImageError = () => {
     setImageError(true);
   };
@@ -247,6 +247,7 @@ const SearchPage = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {searchResults.map((hotel, index) => (
+              
               <HotelCard key={index} hotel={hotel} />
             ))}
           </div>

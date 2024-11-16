@@ -11,12 +11,20 @@ const Rooms = () => {
         {'id':3, 'room_type':'extra', 'number_of_rooms': 3,'price_per_night': 900,'facilities': 'breakfast and lunch',
         'breakfast_included': true,'room_size': '80 sqm','max_occupancy': 8,'smoking_allowed': false},
     ];
-
+    
     const [roomData, setRoomData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     
     useEffect(() => {
+        
+        const getCsrfToken = () => {
+
+            //console.log(document.cookie);
+            const match = document.cookie.match(/csrftoken=([^;]+)/);  // Regex to match CSRF token
+            //console.log('here',match);
+            return match ? match[1] : null;  // Return the token or null if not found
+        };getCsrfToken();
         const fetchData = async () => {
         try {
             /*const response = await fetch("http://3.16.159.54/hotel/api/3/rooms/", {
@@ -38,10 +46,10 @@ const Rooms = () => {
             console.log(roomData);*/
             fetch('http://3.16.159.54/hotel/api/4/rooms/')
             .then((response) => {
-                console.log(response);
+                //console.log(response);
                 response.json()})
             .then((data) => {
-                console.log(data);
+                //console.log(data);
                 //setGreeting(data.message); // Set the greeting message
             })
             .catch((error) => console.error('Error fetching data:', error));
@@ -140,13 +148,15 @@ const Rooms = () => {
 
         if(mode=='create'){
             try {
+                console.log('csrf:',localStorage.getItem('csrftoken'));
                 const response = await fetch('http://3.16.159.54/hotel/api/4/room/add/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json',
+                        'X-CSRFToken': localStorage.getItem('csrftoken'),
                     },
                     body: JSON.stringify(requestBody),
+                    credentials: 'include',
                 });
           
                 const data = await response.json();
@@ -166,13 +176,15 @@ const Rooms = () => {
         }else if(mode=='edit'){
             try {
                 const roomid = '4';
-                const response = await fetch(`http://3.16.159.54/hotel/api/room/${roomid}/edit/`, {
+                const response = await fetch(`http://3.16.159.54/hotel/api/room/7/edit/`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
+                        'X-CSRFToken': 'Thxj5lEcq4v6aFXA4vniFDyBNvL8kZ4r',
                     },
                     body: JSON.stringify(requestBody),
+                    credentials: 'include',
                 });
           
                 const data = await response.json();
@@ -190,11 +202,12 @@ const Rooms = () => {
             }
         }else if(mode=='delete'){
             try {
-                const response = await fetch(`http://3.16.159.54/hotel/api/room/${room_id}/delete/`, {
+                const response = await fetch(`http://3.16.159.54/hotel/api/room/7/delete/`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
+                    'X-CSRFToken': 'Thxj5lEcq4v6aFXA4vniFDyBNvL8kZ4r',
                   },
                   body: JSON.stringify(''),
                 });
@@ -243,17 +256,7 @@ const Rooms = () => {
     };
 
     return (
-        <div className='p-5 min-h-screen'>
-            <div className="flex justify-between items-center py-4 px-5">
-                Hello!<br/>
-                Have a nice day!
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
-                    Hotel
-                </button>
-            </div>
-            {/*<div className="relative p-5">
-                <input type="text" className="border border-gray-300 rounded-lg pl-5 pr-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search..."/>
-            </div>*/}
+        <div className="min-h-screen">
             <div className="flex justify-end px-5">
                 <button onClick={openCreate} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
                     +
@@ -370,17 +373,6 @@ const Rooms = () => {
                     </div>
                     </div>
                 )}
-            </div>
-            <div className="px-8">
-                Sort by:
-                <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="border rounded-md p-1 w-1/4"
-                >
-                <option value="guests">guests</option>
-                <option value="id">ID</option>
-                </select>
             </div>
             <div className='p-3 m-5 min-h-screen bg-white'>
                 <div>
@@ -558,21 +550,46 @@ const Reservations = () => {
     useEffect(() => {
         const fetchData = async () => {
         try {
+            /*console.log('ji');
             const response = await fetch("http://3.16.159.54/hotel/api/hotel/reservations/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({}),
-            credentials: 'same-origin',
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                  'Accept': 'application/json',
+                },
+                body: JSON.stringify(''),
             });
-
+            console.log('hi');
             if (!response.ok) {
             throw new Error("loading error!");
-            }
+            }*/
 
-            const data = await response.json();
-            setReservationData(data);
+            fetch('http://3.16.159.54/hotel/api/hotel/reservations/',{
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                }
+            }) // API URL
+            .then((response) => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data); // Set the data into state
+                setLoading(false); // Set loading to false
+            })
+            .catch((error) => {
+                setError(error.message); // Handle any errors
+                setLoading(false); // Set loading to false
+            });
+
+            //const data = await response.json();
+            //console.log(data, response);
+            //setReservationData(data);
             console.log(reservationData);
         } catch (err) {
             setError(err.message);
@@ -632,21 +649,10 @@ const Reservations = () => {
     };
     
     return (
-        <div className='p-5 min-h-screen'>
-            <div className="flex justify-between items-center py-4 px-5">
-                Hello!<br/>
-                Have a nice day!
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
-                    Hotel
-                </button>
-            </div>
-            {/*<div className="relative p-5">
-                <input type="text" className="border border-gray-300 rounded-lg pl-5 pr-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search..."/>
-                
-            </div>*/}
+        <div className="min-h-screen">
             <div className="p-5 flex items-center">
-                <div htmlFor="start-date" className="px-3 block text-2xl text-gray-700">
-                    Select a Date
+                <div htmlFor="start-date" className="px-3 block text-3xl text-gray-700">
+                    Select a Date: 
                 </div>
                 <div className="w-1/4">
                     <input
@@ -906,22 +912,51 @@ const Reviews = () => {
     });
 
     const [rating, setRating] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    
+    useEffect(() => {
+        const fetchData = async () => {
+        try {
+            /*const response = await fetch("http://3.16.159.54/hotel/api/3/rooms/", {
+            
+            headers: {
+                "Content-Type": "application/json",
+                'Accept': 'application/json',
+                
+            },
+            });
+
+            if (!response.ok) {
+            throw new Error("loading error!");
+            }
+
+            const data = await response.json();
+            console.log(data);
+            setRoomData(data);
+            console.log(roomData);*/
+            fetch('http://3.16.159.54/hotel/api/4/reviews/')
+            .then((response) => {
+                console.log(response);
+                response.json()})
+            .then((data) => {
+                console.log(data);
+                //setGreeting(data.message); // Set the greeting message
+            })
+            .catch((error) => console.error('Error fetching data:', error));
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+        };
+
+        fetchData();
+    }, []);
     
     
     return (
         <div className='p-5 min-h-screen'>
-            <div className="flex justify-between items-center py-4 px-5">
-                Hello!<br/>
-                Have a nice day!
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
-                    Hotel
-                </button>
-            </div>
-            {/*<div className="relative p-5">
-                <input type="text" className="border border-gray-300 rounded-lg pl-5 pr-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search..."/>
-                
-            </div>*/}
-            
             <div className='p-3 m-5 min-h-screen bg-white'>
                 <div>
                     <div className="grid grid-cols-6 p-2 bg-white rounded-md shadow-md hover:bg-gray-200 transition">
@@ -948,7 +983,7 @@ const Reviews = () => {
                                 })}
                             </div>
                             <div className="pt-2">
-                                <input readOnly className="border w-full p-2" value={item.comment} placeholder="Comment..."/>
+                                <input disabled className="bg-white w-full p-2" value={item.comment}/>
                             </div>
                         </div>
                     
@@ -971,13 +1006,88 @@ const Profile = () => {
             facilities: 'brekfast', check_in_time: '15:00', check_out_time: '11:00', cancellation_policy: 'no cancellation', student_discount: 0.9, special_offers: 'none' 
         },
     ];
-    
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [profile, setProfile] = useState(null);
     const [item,setItem] = useState(items[0]);
+    const [isReadOnly, setIsReadOnly] = useState(true);
+
+    useEffect(() => {
+        const fetchData = async () => {
+        try {
+            /*console.log('ji');
+            const response = await fetch("http://3.16.159.54/hotel/api/hotel/reservations/", {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                  'Accept': 'application/json',
+                },
+                body: JSON.stringify(''),
+            });
+            console.log('hi');
+            if (!response.ok) {
+            throw new Error("loading error!");
+            }*/
+            await fetch('http://3.16.159.54/student/student/profile/',{
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                }
+            }) // API URL
+            .then((response) => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                setProfile(data);
+                //setItem(data);
+                setLoading(false); // Set loading to false
+            })
+            .catch((error) => {
+                setError(error.message); // Handle any errors
+                setLoading(false); // Set loading to false
+            });
+
+            //const data = await response.json();
+            //console.log(data, response);
+            //setReservationData(data);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+        };
+
+        fetchData();
+
+    }, []);
     
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
         toggleReadOnly();
+        try {
+            const response = await fetch('localhost', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(''),
+            });
+      
+            const data = await response.json();
+      
+            if (!response.ok) {
+              throw new Error(data.detail || 'edit failed');
+            }
+            console.log('Edit successful:', data);
+            
+        }catch (error) {
+            setError(error.message);
+        }
     };
 
     const handleChange = (e) => {
@@ -992,24 +1102,12 @@ const Profile = () => {
         toggleReadOnly();
     }
 
-    const [isReadOnly, setIsReadOnly] = useState(true);
-
     const toggleReadOnly = () => {
         setIsReadOnly((prev) => !prev);
     };
 
     return (
-        <div className='p-5 min-h-screen'>
-            <div className="flex justify-between items-center py-4 px-5">
-                Hello!<br/>
-                Have a nice day!
-                <div className="relative">
-                    <button className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition duration-300">
-                        Hotel
-                    </button>
-                    
-                </div>
-            </div>
+        <div className="min-h-screen">
             <div className="flex justify-between items-center text-4xl pt-4 px-5">
                 Hotel Profile
             </div>
@@ -1190,7 +1288,22 @@ const DashboardPage = () => {
                 </div>
             </div>
             <div className='w-4/5 min-h-screen'>
-                {page==='profile' && (
+                <div className='p-5 min-h-screen'>
+                    <div className="flex justify-between items-center py-4 px-5">
+                        Hello, manager!<br/>
+                        Have a nice day!
+                        <div className="relative">
+                            <button className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition duration-300">
+                                Hotel
+                            </button>
+                        </div>
+                    </div>
+                    {page==='profile' && (<Profile/>)}
+                    {page==='reservations' && (<Reservations/>)}
+                    {page==='rooms' && (<Rooms/>)}
+                    {page==='reviews' && (<Reviews/>)}
+                </div>
+                {/*{page==='profile' && (
                     <div className='p-5 min-h-screen'>
                         <Profile/>
                     </div>
@@ -1209,7 +1322,7 @@ const DashboardPage = () => {
                     <div className='p-5 min-h-screen'>
                         <Reviews/>
                     </div>
-                )}
+                )}*/}
             </div>
         </div>
     );

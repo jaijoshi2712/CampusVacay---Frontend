@@ -27,7 +27,15 @@ const Header = () => {
   const [message, setMessage] = useState({ type: '', content: '' });
   
   useEffect(() => {
-    
+    function getCSRFToken() {
+      const csrfToken = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        ?.split('=')[1];
+      console.log(csrfToken);
+      localStorage.setItem('csrftoken',csrfToken);
+      //return csrfToken;
+    }getCSRFToken();
     const storedToken = localStorage.getItem('authToken');
     
     if (storedToken) {
