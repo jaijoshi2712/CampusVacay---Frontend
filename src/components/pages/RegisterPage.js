@@ -10,10 +10,10 @@ function RegisterPage() {
       ? {
           username: '',
           password: '',
+          email: '',
           first_name: '',
           last_name: '',
-          email: '',
-          dob: null,
+          dob: '',
           phone_number: '',
           address: '',
           university_name: '',
@@ -24,18 +24,18 @@ function RegisterPage() {
           password: '',
           email: '',
           hotel_name: '',
+          phone_number: '',
           address: '',
           location: '',
           city: '',
           country: '',
           hotel_photos: null,
-          phone_number: '',
           description: '',
           facilities: '',
-          check_in_time: '',
-          check_out_time: '',
+          check_in_time: '15:00',
+          check_out_time: '11:00',
           cancellation_policy: '',
-          student_discount: '',
+          student_discount: '0.00',
           special_offers: ''
         }
   );
@@ -67,7 +67,7 @@ function RegisterPage() {
     });
 
     try {
-      const url = `http://3.16.159.54/${registerType.toLowerCase()}/api/register/`;
+      const url = `https://3.16.159.54/${registerType.toLowerCase()}/api/register/`;
       const response = await fetch(url, {
         method: 'POST',
         body: formDataToSend,
@@ -91,7 +91,7 @@ function RegisterPage() {
     setIsVisible(!isVisible);
   };
 
-  const renderField = (name, label, type = 'text', helpText = '') => (
+  const renderField = (name, label, type = 'text', required = true) => (
     <div className="register-field">
       <input
         type={type}
@@ -100,10 +100,24 @@ function RegisterPage() {
         name={name}
         value={formData[name]}
         onChange={handleChange}
+        required={required}
         autoComplete="off"
-        placeholder={label}
+        placeholder={`${label}${required ? ' *' : ''}`}
       />
-      {helpText && <small className="help-text">{helpText}</small>}
+    </div>
+  );
+
+  const renderTextarea = (name, label, required = true) => (
+    <div className="register-field">
+      <textarea
+        id={name}
+        className="register-input"
+        name={name}
+        value={formData[name]}
+        onChange={handleChange}
+        required={required}
+        placeholder={`${label}${required ? ' *' : ''}`}
+      />
     </div>
   );
 
@@ -135,27 +149,27 @@ function RegisterPage() {
                             password: '',
                             email: '',
                             hotel_name: '',
+                            phone_number: '',
                             address: '',
                             location: '',
                             city: '',
                             country: '',
                             hotel_photos: null,
-                            phone_number: '',
                             description: '',
                             facilities: '',
-                            check_in_time: '',
-                            check_out_time: '',
+                            check_in_time: '15:00',
+                            check_out_time: '11:00',
                             cancellation_policy: '',
-                            student_discount: '',
+                            student_discount: '0.00',
                             special_offers: ''
                           }
                         : {
                             username: '',
                             password: '',
+                            email: '',
                             first_name: '',
                             last_name: '',
-                            email: '',
-                            dob: null,
+                            dob: '',
                             phone_number: '',
                             address: '',
                             university_name: '',
@@ -172,13 +186,6 @@ function RegisterPage() {
 
             {registerType === 'Student' ? (
               <>
-                <div className="register-field-group">
-                  {renderField('first_name', 'Name')}
-                  {renderField('dob', 'Age', 'number')}
-                </div>
-                {renderField('email', 'University Email', 'email')}
-                {renderField('phone_number', 'Phone No')}
-                {renderField('country', 'Country')}
                 {renderField('username', 'Username')}
                 <div className="register-field password-field">
                   <input
@@ -187,53 +194,76 @@ function RegisterPage() {
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    placeholder="Password (6+ characters)"
+                    required
+                    placeholder="Password *"
                     autoComplete="off"
                   />
                   <span className="password-toggle" onClick={toggleVisibility}>
                     {isVisible ? 'Hide' : 'Show'}
                   </span>
                 </div>
+                {renderField('email', 'Email', 'email')}
+                {renderField('first_name', 'First Name')}
+                {renderField('last_name', 'Last Name')}
+                {renderField('dob', 'Date of Birth', 'date')}
+                {renderField('phone_number', 'Phone Number')}
+                {renderTextarea('address', 'Address')}
                 {renderField('university_name', 'University Name')}
-                <div className="register-field file-field">
+                <div className="register-field">
                   <input
                     type="file"
                     id="university_id_proof"
                     className="register-input"
                     name="university_id_proof"
                     onChange={handleChange}
+                    required
                     accept="image/png, image/jpeg, application/pdf"
                   />
-                  <small className="help-text">Upload University ID</small>
                 </div>
               </>
             ) : (
               <>
-                {renderField('hotel_name', 'Hotel Name')}
+                {renderField('username', 'Username')}
+                <div className="register-field password-field">
+                  <input
+                    type={isVisible ? 'text' : 'password'}
+                    className="register-input"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    placeholder="Password *"
+                    autoComplete="off"
+                  />
+                  <span className="password-toggle" onClick={toggleVisibility}>
+                    {isVisible ? 'Hide' : 'Show'}
+                  </span>
+                </div>
                 {renderField('email', 'Email', 'email')}
+                {renderField('hotel_name', 'Hotel Name')}
                 {renderField('phone_number', 'Phone Number')}
-                {renderField('address', 'Address')}
-                {renderField('location', 'Location')}
-                {renderField('city', 'City')}
-                {renderField('country', 'Country')}
-                <div className="register-field file-field">
+                {renderTextarea('address', 'Address')}
+                {renderTextarea('location', 'Location', false)}
+                {renderTextarea('city', 'City')}
+                {renderTextarea('country', 'Country')}
+                <div className="register-field">
                   <input
                     type="file"
                     id="hotel_photos"
                     className="register-input"
                     name="hotel_photos"
                     onChange={handleChange}
+                    required
                     accept="image/*"
                   />
-                  <small className="help-text">Upload Hotel Photos</small>
                 </div>
-                {renderField('description', 'Hotel Description', 'textarea')}
-                {renderField('facilities', 'Facilities', 'text', 'Comma-separated list of facilities')}
+                {renderTextarea('description', 'Description', false)}
+                {renderTextarea('facilities', 'Facilities', false)}
                 {renderField('check_in_time', 'Check-in Time', 'time')}
                 {renderField('check_out_time', 'Check-out Time', 'time')}
-                {renderField('cancellation_policy', 'Cancellation Policy', 'textarea')}
-                {renderField('student_discount', 'Student Discount (%)', 'number')}
-                {renderField('special_offers', 'Special Offers')}
+                {renderTextarea('cancellation_policy', 'Cancellation Policy', false)}
+                {renderField('student_discount', 'Student Discount (%)', 'number', false)}
+                {renderField('special_offers', 'Special Offers', 'text', false)}
               </>
             )}
 
