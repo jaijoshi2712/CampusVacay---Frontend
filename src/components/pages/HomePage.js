@@ -324,12 +324,44 @@ const PropertyGrid = () => {
   );
 };
 
+
+
+const Footer = () => (
+  <footer className="bg-gray-800 text-gray-200 py-6">
+    <div className="max-w-6xl mx-auto px-6 flex flex-wrap justify-between items-start">
+      <div className="w-full md:w-1/3 mb-4 md:mb-0">
+        <a href="#home" className="text-3xl font-bold text-blue-500 flex items-center mb-2 no-underline">
+          <Navigation className="mr-2" />
+          CampusVacay.
+        </a>
+        <p className="text-gray-400 text-sm">We kaboom your beauty holiday instantly and memorable.</p>
+      </div>
+      <div className="w-full md:w-1/3 text-right">
+        <h4 className="text-lg font-semibold mb-2">Contact Us</h4>
+        <ul className="text-gray-400 text-sm space-y-1">
+          <li>Phone: +1-234-567-890</li>
+          <li>Email: support@campusvacay.com</li>
+          <li>Address: 123 Vacation Lane, Dream City, Holiday State</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+);
+
+const CopyrightBar = () => (
+  <div className="bg-[#3252DF] text-white h-11 flex items-center justify-center text-center text-sm">
+    <p>&copy; {new Date().getFullYear()} CampusVacay. All rights reserved.</p>
+  </div>
+);
+
 const HomePage = () => (
-  <div className="bg-gray-50 min-h-screen">
+  <div className="bg-gray-50 min-h-screen flex flex-col" id="home">
     <Header />
     <Hero />
     <SearchBar />
     <PropertyGrid />
+    <Footer />
+    <CopyrightBar />
   </div>
 );
 
