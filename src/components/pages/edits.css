@@ -336,3 +336,254 @@ button.btn-primary:hover {
   color: #9CA3AF;
   font-weight: 300;
 }
+
+
+/* Add these styles to your existing edits.css */
+
+/* Container Layout */
+.container {
+  display: flex;
+  min-height: 100vh;
+  background: #fff;
+}
+
+.left-panel {
+  flex: 1;
+  background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.left-panel h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 2rem;
+}
+
+.right-panel {
+  flex: 1;
+  padding: 2.5rem;
+  background: white;
+  overflow-y: auto;
+  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Form Styling */
+.label-wrapper {
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+}
+
+.label-wrapper label {
+  color: #374151;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.help-text {
+  color: #6B7280;
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #E5E7EB;
+  border-radius: 0.5rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  background: #F9FAFB;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #2563EB;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  background: white;
+}
+
+.input__lg {
+  padding: 0.875rem;
+}
+
+/* Toggle Switch Styling */
+.toggle-checkbox {
+  height: 0;
+  width: 0;
+  visibility: hidden;
+}
+
+.toggle-label {
+  cursor: pointer;
+  width: 48px;
+  height: 24px;
+  background: #E5E7EB;
+  display: block;
+  border-radius: 100px;
+  position: relative;
+}
+
+.toggle-label:after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.toggle-checkbox:checked + .toggle-label {
+  background: #2563EB;
+}
+
+.toggle-checkbox:checked + .toggle-label:after {
+  left: calc(100% - 3px);
+  transform: translateX(-100%);
+}
+
+/* Button Styling */
+.btn {
+  width: 100%;
+  padding: 0.875rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 1rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn__primary {
+  background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
+  color: white;
+  border: none;
+}
+
+.btn__primary:hover {
+  background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%);
+  transform: translateY(-1px);
+}
+
+/* Password Input Styling */
+.inline-block3 {
+  position: relative;
+  width: 100%;
+}
+
+.inline-block4 {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #2563EB;
+  cursor: pointer;
+  font-size: 0.8rem;
+  user-select: none;
+}
+
+/* Message Styling */
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.p-2 {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+}
+
+.bg-green-100 {
+  background-color: #DEF7EC;
+}
+
+.bg-red-100 {
+  background-color: #FEE2E2;
+}
+
+.text-green-700 {
+  color: #046C4E;
+}
+
+.text-red-700 {
+  color: #B91C1C;
+}
+
+/* Text Styling */
+.text-gray-700 {
+  color: #374151;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* Textarea Styling */
+textarea.input {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* File Input Styling */
+input[type="file"].input {
+  padding: 0.5rem;
+  cursor: pointer;
+  background: white;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  
+  .left-panel {
+    padding: 1.5rem;
+    min-height: 200px;
+  }
+  
+  .right-panel {
+    padding: 1.5rem;
+  }
+}
+
+/* Additional Enhancements */
+.right-panel h1 {
+  color: #111827;
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+input::placeholder {
+  color: #9CA3AF;
+}
+
+.inline-block4:hover {
+  color: #1E40AF;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

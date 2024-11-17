@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './Register.css';
+import './edits.css';
+
 
 function RegisterPage() {
   const [registerType, setRegisterType] = useState('Student');
