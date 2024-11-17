@@ -1,587 +1,364 @@
-/* Ensure there is enough space between the fixed header and content */
-/* Ensure space from fixed header */
-
-.hotel-details {
-  padding-top: 100px;
-  margin-top: 20px;
+/* Hotel Details Page Styles */
+.hotel-page {
+  padding-top: 80px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
 }
 
-
-
-/* Breadcrumb Styling */
-.breadcrumb-custom {
-  background-color: transparent;
-  padding: 0;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-  color: #6B7280; /* Light gray for inactive links */
+.hotel-container {
+  padding: 20px;
 }
 
-.breadcrumb-custom .breadcrumb-item.active {
-  color: #111827; /* Dark navy for active breadcrumb */
-  font-weight: 600;
-}
-
-/* Title Styling */
+/* Title Styles */
 .hotel-title {
   font-size: 2.5rem;
-  font-weight: 700; /* Bold title */
-  color: #111827; /* Dark navy */
-  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #2d3436;
+  margin-bottom: 10px;
 }
 
-/* Location Styling */
 .hotel-location {
   font-size: 1.2rem;
-  color: #6B7280; /* Light gray */
-  margin-top: 0.5rem;
+  color: #636e72;
 }
 
-
-.logo-part1 {
-  color: #2563EB;; /* Bright blue */
-  font-weight: 500; /* Bold weight */
-  font-size: 1.5rem; /* Font size */
-  margin-right: 2px; /* Slight spacing between words */
-}
-
-.logo-part2 {
-  color: #111827; /* Dark navy */
-  font-weight: 500; /* Bold weight */
-  font-size: 1.5rem; /* Font size */
-}
-
-.img-fluid {
-  border-radius: 12px;
-}
-
-.card {
-  border-radius: 12px;
-}
-
-.fa {
-  color: #4A5568; /* Gray icon color */
-}
-
-.fa:hover {
-  color: #2563EB;; /* Blue on hover */
-}
-
-.text-success {
-  color: #10B981 !important; /* Green color */
-}
-
-button.btn-primary {
-  background-color: #2563EB;
-  border: none;
-}
-
-button.btn-primary:hover {
-  background-color: #2563EB;
-}
-
-
-
-.logo {
-  font-weight: bold;
-  font-size: 1.8rem;
-}
-
-.highlight {
-  color: #2563EB;; /* Bright blue */
-  font-weight: 500; /* Bold weight */
-  font-size: 1.5rem; /* Font size */
-  margin-right: 2px; /* Slight spacing between words */
-}
-
-.highlight1 {
-  color: #111827; /* Dark navy */
-  font-weight: 500; /* Bold weight */
-  font-size: 1.5rem; /* Font size */
-}
-
-.footer-text {
-  margin-top: 10px;
-  color: #6B7280;  /* Light gray for text */
-  font-size: 1rem;
-  font-weight: 300;
-}
-
-
-.tagline {
-  color: #A1A1AA; /* Light gray for tagline */
-  margin-top: 8px;
-  font-size: 1rem;
-}
-
-.owner-text {
-  color: #111827; /* Dark navy for owner section title */
-}
-
-.register-btn {
-  background-color: #2563EB;; /* Bright blue button */
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px; /* Rounded corners */
-  font-weight: bold;
-  color: white;
-  transition: background-color 0.3s ease;
-}
-
-.register-btn:hover {
-  background-color: #2563EB; /* Slightly darker blue on hover */
-}
-
-.header {
-  background-color: white; /* White background */
-  border-bottom: 1px solid #e5e7eb; /* Thin light gray border at the bottom */
-  z-index: 1000; /* Ensure the header stays on top */
-  padding: 10px 0; /* Add some padding for spacing */
-}
-
-.nav-link {
-  color: #111827; /* Default dark navy */
-  font-weight: 500;
-  font-size: 1rem;
-  margin-right: 1rem; /* Add spacing between links */
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.nav-link:hover {
-  color: #2563EB;; /* Bright blue on hover */
-}
-
-.login-btn {
-  background-color: #2563EB; /* Bright blue background */
-  color: white;
-  font-weight: 600;
-  padding: 8px 16px;
-  border-radius: 8px; /* Rounded corners */
-  border: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.login-btn:hover {
-  background-color: #2563EB; /* Slightly darker blue on hover */
-}
-
-.main-image {
-  height: 100%; /* Full height of the parent container */
-  object-fit: cover; /* Maintain aspect ratio */
-}
-
-/* Smaller images on the right should evenly divide the height */
-.smaller-image {
-  height: calc(50% - 4px); /* Half height minus a small gap for spacing */
-  object-fit: cover; /* Maintain aspect ratio */
-}
-
-
-/* Layout adjustments */
-.align-items-stretch {
-  align-items: stretch; /* Ensure both columns stretch to the same height */
-}
-
-.about-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #111827; /* Dark navy */
-  margin-bottom: 16px;
-}
-
-.about-text {
-  font-size: 1rem;
-  line-height: 1.75;
-  color: #a4a9b2; /* Light gray */
-  font-weight: 300;
-}
-
-/* Booking Card Styling */
-.booking-card {
-  border-radius: 12px;
-  border: 1px solid #E5E7EB;
+/* Image Styles */
+.main-image-container {
   width: 100%;
-  height: 100%; /* Ensure card fills the available height */
+  height: 400px;
+}
+
+.img-main {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.side-images {
+  height: 400px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-/* Price Container Styling */
-.price-container {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 6px;
+.img-side {
+  width: 100%;
+  height: 48%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* Description Styles */
+.hotel-description {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3436;
   margin-bottom: 20px;
 }
 
-.price-amount {
-  font-size: 2.4rem;
-  font-weight: 700;
-  color: #10B981; /* Green */
-}
-
-.price-period {
-  font-size: 1.2rem;
-  font-weight: 400;
-  color: #9CA3AF; /* Light gray */
-  font-weight: 300;
-}
-
-/* Button Styling */
-.booking-button {
-  background-color: #2563EB;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  width: 100%;
-  color: white;
-  transition: background-color 0.3s;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.booking-button:hover {
-  background-color: #2563EB; /* Darker blue on hover */
-}
-
-
-/* Amenities Row Styling */
-.amenities-row {
-  display: flex;
-  justify-content: space-around; /* Distribute amenities evenly */
-  align-items: center;
-  flex-wrap: nowrap; /* Prevent wrapping */
-  gap: 10px; /* Add space between items */
-  overflow-x: auto; /* Ensure it scrolls horizontally if needed */
-  white-space: nowrap; /* Prevent line breaks */
-  padding: 10px 0; /* Add padding for spacing */
-}
-
-/* Amenity Item Styling */
-.amenity {
-  flex: 1;
-  text-align: center;
-  min-width: 100px; /* Prevent items from becoming too small */
-}
-
-/* Icon Styling */
-.amenity-icon {
-  font-size: 2rem;
-  color: #1F2937; /* Navy blue */
-  margin-bottom: 8px;
-}
-
-/* Text Styling */
-.amenity-text {
-  font-size: 1rem;
-  font-weight: 400;
-  color: #9CA3AF; /* Light gray */
-  font-weight: 300;
-}
-
-/* Section Title Styling */
-.section-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #1F2937;
-  margin-bottom: 1rem;
-}
-
-/* Custom Card Styling */
-.custom-card {
+/* Booking Card Styles */
+.booking-card {
+  background: white;
   border: none;
   border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Card Image Wrapper */
-.card-image-wrapper {
-  position: relative;
-}
-
-/* Badge Styling */
-.badge-custom {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background-color: #2563EB;
-  color: white;
-  font-size: 0.75rem;
-  padding: 4px 8px;
-  border-radius: 5px;
-}
-
-/* Card Image Styling */
-.card-img {
-  height: 150px;
-  object-fit: cover;
-}
-
-/* Card Title and Subtitle Styling */
-.card-title {
-  font-size: 1.2rem;
+.booking-title {
+  font-size: 1.3rem;
   font-weight: 600;
-  color: #1F2937;
-  margin-bottom: 0.2rem;
+  color: #2d3436;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
-.card-subtitle {
+.price-info {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.price {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #0984e3;
+}
+
+.per-night {
+  color: #636e72;
+  margin-left: 5px;
+}
+
+.book-now-btn {
+  width: 100%;
+  background-color: #0984e3 !important;
+  border: none !important;
+  padding: 12px !important;
+  font-weight: 600 !important;
+}
+
+.book-now-btn:hover {
+  background-color: #0878d3 !important;
+}
+
+/* Amenities Styles */
+.amenities-section {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  margin-top: 30px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.amenity-item {
+  text-align: center;
+  padding: 15px;
+  transition: transform 0.2s;
+}
+
+.amenity-item:hover {
+  transform: translateY(-5px);
+}
+
+.amenity-icon {
+  font-size: 1.8rem;
+  color: #0984e3;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.amenity-text {
+  color: #636e72;
+  margin: 0;
   font-size: 0.9rem;
-  color: #9CA3AF;
-  font-weight: 300;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .main-image-container {
+    height: 300px;
+    margin-bottom: 20px;
+  }
+
+  .side-images {
+    height: auto;
+  }
+
+  .img-side {
+    height: 200px;
+    margin-bottom: 20px;
+  }
 }
 
 
-/* Add these styles to your existing edits.css */
 
-/* Container Layout */
-.container {
-  display: flex;
+
+/* Register Page Styles */
+.register-page {
   min-height: 100vh;
   background: #fff;
 }
 
-.left-panel {
-  flex: 1;
-  background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
-  padding: 2rem;
+.register-container {
   display: flex;
-  flex-direction: column;
+  min-height: 100vh;
 }
 
-.left-panel h1 {
+.register-left-panel {
+  flex: 1;
+  /* Replace background-image with gradient */
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(147, 197, 253, 0.1) 100%);
+  display: flex;
+  padding: 2rem;
+  position: relative;
+  align-items: flex-start;
+}
+
+/* Add a subtle overlay pattern for depth */
+.register-left-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
+  background-size: 10px 10px;
+  opacity: 0.5;
+}
+
+.register-logo {
+  position: relative;
+  z-index: 1; /* Ensure logo stays above the overlay */
   font-size: 2.5rem;
   font-weight: bold;
-  background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+}
+
+.logo-part-blue {
+  color: #2563EB; /* Adjusted blue color */
+}
+
+.logo-part-dark {
+  color: #1F2937; /* Darker color for better contrast */
+}
+
+.register-logo {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.logo-part-blue {
+  color: #0055FF;
+}
+
+.logo-part-dark {
+  color: #000;
+}
+
+.register-right-panel {
+  flex: 1;
+  padding: 2rem 4rem;
+  overflow-y: auto;
+}
+
+.register-form-container {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.register-header {
   margin-bottom: 2rem;
 }
 
-.right-panel {
-  flex: 1;
-  padding: 2.5rem;
-  background: white;
-  overflow-y: auto;
-  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.05);
+.register-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
 }
 
-/* Form Styling */
-.label-wrapper {
-  margin-bottom: 0.75rem;
+.register-field {
+  margin-bottom: 1rem;
+}
+
+.register-field-group {
   display: flex;
-  align-items: center;
+  gap: 1rem;
 }
 
-.label-wrapper label {
-  color: #374151;
-  font-size: 0.95rem;
-  font-weight: 500;
-}
-
-.help-text {
-  color: #6B7280;
-  font-size: 0.8rem;
-  margin-left: 0.5rem;
-}
-
-.input {
+.register-input {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid #E5E7EB;
-  border-radius: 0.5rem;
-  margin-bottom: 1.25rem;
-  font-size: 0.95rem;
-  transition: all 0.2s;
-  background: #F9FAFB;
+  border-radius: 8px;
+  font-size: 0.9rem;
 }
 
-.input:focus {
-  outline: none;
-  border-color: #2563EB;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
-  background: white;
+.register-input::placeholder {
+  color: #9CA3AF;
 }
 
-.input__lg {
-  padding: 0.875rem;
-}
-
-/* Toggle Switch Styling */
-.toggle-checkbox {
-  height: 0;
-  width: 0;
-  visibility: hidden;
-}
-
-.toggle-label {
-  cursor: pointer;
-  width: 48px;
-  height: 24px;
-  background: #E5E7EB;
-  display: block;
-  border-radius: 100px;
+.password-field {
   position: relative;
 }
 
-.toggle-label:after {
-  content: '';
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 18px;
-  height: 18px;
-  background: white;
-  border-radius: 50%;
-  transition: 0.3s;
-}
-
-.toggle-checkbox:checked + .toggle-label {
-  background: #2563EB;
-}
-
-.toggle-checkbox:checked + .toggle-label:after {
-  left: calc(100% - 3px);
-  transform: translateX(-100%);
-}
-
-/* Button Styling */
-.btn {
-  width: 100%;
-  padding: 0.875rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 1rem;
-  text-align: center;
-  text-decoration: none;
-}
-
-.btn__primary {
-  background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
-  color: white;
-  border: none;
-}
-
-.btn__primary:hover {
-  background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%);
-  transform: translateY(-1px);
-}
-
-/* Password Input Styling */
-.inline-block3 {
-  position: relative;
-  width: 100%;
-}
-
-.inline-block4 {
+.password-toggle {
   position: absolute;
   right: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #2563EB;
   cursor: pointer;
+  color: #6B7280;
   font-size: 0.8rem;
-  user-select: none;
 }
 
-/* Message Styling */
-.mt-4 {
-  margin-top: 1rem;
-}
-
-.p-2 {
+.register-button {
+  width: 100%;
   padding: 0.75rem;
-  border-radius: 0.5rem;
+  background: #0055FF;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  cursor: pointer;
 }
 
-.bg-green-100 {
-  background-color: #DEF7EC;
+.google-button {
+  width: 100%;
+  padding: 0.75rem;
+  background: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
 }
 
-.bg-red-100 {
-  background-color: #FEE2E2;
+.terms-section {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #6B7280;
+  margin: 1rem 0;
 }
 
-.text-green-700 {
+.terms-section a {
+  color: #0055FF;
+  text-decoration: none;
+}
+
+.login-link {
+  text-align: center;
+}
+
+.login-link a {
+  color: #0055FF;
+  text-decoration: none;
+}
+
+.register-message {
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.register-message.success {
+  background: #DEF7EC;
   color: #046C4E;
 }
 
-.text-red-700 {
+.register-message.error {
+  background: #FEE2E2;
   color: #B91C1C;
 }
 
-/* Text Styling */
-.text-gray-700 {
-  color: #374151;
-  font-size: 0.95rem;
-  font-weight: 500;
-}
-
-/* Textarea Styling */
-textarea.input {
-  min-height: 100px;
-  resize: vertical;
-}
-
-/* File Input Styling */
-input[type="file"].input {
-  padding: 0.5rem;
-  cursor: pointer;
-  background: white;
-}
-
-/* Media Queries for Responsiveness */
 @media (max-width: 768px) {
-  .container {
+  .register-container {
     flex-direction: column;
   }
   
-  .left-panel {
-    padding: 1.5rem;
-    min-height: 200px;
+  .register-left-panel {
+    height: 200px;
   }
   
-  .right-panel {
-    padding: 1.5rem;
+  .register-right-panel {
+    padding: 2rem;
+  }
+  
+  .register-field-group {
+    flex-direction: column;
   }
 }
-
-/* Additional Enhancements */
-.right-panel h1 {
-  color: #111827;
-  font-size: 1.8rem;
-  margin-bottom: 2rem;
-  font-weight: 600;
-}
-
-input::placeholder {
-  color: #9CA3AF;
-}
-
-.inline-block4:hover {
-  color: #1E40AF;
-}
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
