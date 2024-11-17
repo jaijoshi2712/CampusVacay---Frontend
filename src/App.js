@@ -7,6 +7,9 @@ import LoginPage from './components/pages/LoginPage';
 import RegisterPage from './components/pages/RegisterPage';
 import HotelRegister from './components/pages/HotelRegister';
 import ReviewBooking from './components/pages/Review_Booking/ReviewBooking';
+import HotelDetails from './components/pages/HotelDetails';
+
+
 
 function App() {
   return (
@@ -18,6 +21,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/register/hotel" element={<HotelRegister />} />
         <Route path="/review-booking" element={<ReviewBooking />} />
+        <Route path="/hotel-details" element={<HotelDetails />} />
       </Routes>
     </Router>
   );

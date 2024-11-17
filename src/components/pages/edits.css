@@ -1,0 +1,338 @@
+/* Ensure there is enough space between the fixed header and content */
+/* Ensure space from fixed header */
+
+.hotel-details {
+  padding-top: 100px;
+  margin-top: 20px;
+}
+
+
+
+/* Breadcrumb Styling */
+.breadcrumb-custom {
+  background-color: transparent;
+  padding: 0;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #6B7280; /* Light gray for inactive links */
+}
+
+.breadcrumb-custom .breadcrumb-item.active {
+  color: #111827; /* Dark navy for active breadcrumb */
+  font-weight: 600;
+}
+
+/* Title Styling */
+.hotel-title {
+  font-size: 2.5rem;
+  font-weight: 700; /* Bold title */
+  color: #111827; /* Dark navy */
+  margin-bottom: 0.5rem;
+}
+
+/* Location Styling */
+.hotel-location {
+  font-size: 1.2rem;
+  color: #6B7280; /* Light gray */
+  margin-top: 0.5rem;
+}
+
+
+.logo-part1 {
+  color: #2563EB;; /* Bright blue */
+  font-weight: 500; /* Bold weight */
+  font-size: 1.5rem; /* Font size */
+  margin-right: 2px; /* Slight spacing between words */
+}
+
+.logo-part2 {
+  color: #111827; /* Dark navy */
+  font-weight: 500; /* Bold weight */
+  font-size: 1.5rem; /* Font size */
+}
+
+.img-fluid {
+  border-radius: 12px;
+}
+
+.card {
+  border-radius: 12px;
+}
+
+.fa {
+  color: #4A5568; /* Gray icon color */
+}
+
+.fa:hover {
+  color: #2563EB;; /* Blue on hover */
+}
+
+.text-success {
+  color: #10B981 !important; /* Green color */
+}
+
+button.btn-primary {
+  background-color: #2563EB;
+  border: none;
+}
+
+button.btn-primary:hover {
+  background-color: #2563EB;
+}
+
+
+
+.logo {
+  font-weight: bold;
+  font-size: 1.8rem;
+}
+
+.highlight {
+  color: #2563EB;; /* Bright blue */
+  font-weight: 500; /* Bold weight */
+  font-size: 1.5rem; /* Font size */
+  margin-right: 2px; /* Slight spacing between words */
+}
+
+.highlight1 {
+  color: #111827; /* Dark navy */
+  font-weight: 500; /* Bold weight */
+  font-size: 1.5rem; /* Font size */
+}
+
+.footer-text {
+  margin-top: 10px;
+  color: #6B7280;  /* Light gray for text */
+  font-size: 1rem;
+  font-weight: 300;
+}
+
+
+.tagline {
+  color: #A1A1AA; /* Light gray for tagline */
+  margin-top: 8px;
+  font-size: 1rem;
+}
+
+.owner-text {
+  color: #111827; /* Dark navy for owner section title */
+}
+
+.register-btn {
+  background-color: #2563EB;; /* Bright blue button */
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px; /* Rounded corners */
+  font-weight: bold;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.register-btn:hover {
+  background-color: #2563EB; /* Slightly darker blue on hover */
+}
+
+.header {
+  background-color: white; /* White background */
+  border-bottom: 1px solid #e5e7eb; /* Thin light gray border at the bottom */
+  z-index: 1000; /* Ensure the header stays on top */
+  padding: 10px 0; /* Add some padding for spacing */
+}
+
+.nav-link {
+  color: #111827; /* Default dark navy */
+  font-weight: 500;
+  font-size: 1rem;
+  margin-right: 1rem; /* Add spacing between links */
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #2563EB;; /* Bright blue on hover */
+}
+
+.login-btn {
+  background-color: #2563EB; /* Bright blue background */
+  color: white;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px; /* Rounded corners */
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.login-btn:hover {
+  background-color: #2563EB; /* Slightly darker blue on hover */
+}
+
+.main-image {
+  height: 100%; /* Full height of the parent container */
+  object-fit: cover; /* Maintain aspect ratio */
+}
+
+/* Smaller images on the right should evenly divide the height */
+.smaller-image {
+  height: calc(50% - 4px); /* Half height minus a small gap for spacing */
+  object-fit: cover; /* Maintain aspect ratio */
+}
+
+
+/* Layout adjustments */
+.align-items-stretch {
+  align-items: stretch; /* Ensure both columns stretch to the same height */
+}
+
+.about-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827; /* Dark navy */
+  margin-bottom: 16px;
+}
+
+.about-text {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #a4a9b2; /* Light gray */
+  font-weight: 300;
+}
+
+/* Booking Card Styling */
+.booking-card {
+  border-radius: 12px;
+  border: 1px solid #E5E7EB;
+  width: 100%;
+  height: 100%; /* Ensure card fills the available height */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Price Container Styling */
+.price-container {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.price-amount {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #10B981; /* Green */
+}
+
+.price-period {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #9CA3AF; /* Light gray */
+  font-weight: 300;
+}
+
+/* Button Styling */
+.booking-button {
+  background-color: #2563EB;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  width: 100%;
+  color: white;
+  transition: background-color 0.3s;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.booking-button:hover {
+  background-color: #2563EB; /* Darker blue on hover */
+}
+
+
+/* Amenities Row Styling */
+.amenities-row {
+  display: flex;
+  justify-content: space-around; /* Distribute amenities evenly */
+  align-items: center;
+  flex-wrap: nowrap; /* Prevent wrapping */
+  gap: 10px; /* Add space between items */
+  overflow-x: auto; /* Ensure it scrolls horizontally if needed */
+  white-space: nowrap; /* Prevent line breaks */
+  padding: 10px 0; /* Add padding for spacing */
+}
+
+/* Amenity Item Styling */
+.amenity {
+  flex: 1;
+  text-align: center;
+  min-width: 100px; /* Prevent items from becoming too small */
+}
+
+/* Icon Styling */
+.amenity-icon {
+  font-size: 2rem;
+  color: #1F2937; /* Navy blue */
+  margin-bottom: 8px;
+}
+
+/* Text Styling */
+.amenity-text {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #9CA3AF; /* Light gray */
+  font-weight: 300;
+}
+
+/* Section Title Styling */
+.section-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1F2937;
+  margin-bottom: 1rem;
+}
+
+/* Custom Card Styling */
+.custom-card {
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Image Wrapper */
+.card-image-wrapper {
+  position: relative;
+}
+
+/* Badge Styling */
+.badge-custom {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #2563EB;
+  color: white;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 5px;
+}
+
+/* Card Image Styling */
+.card-img {
+  height: 150px;
+  object-fit: cover;
+}
+
+/* Card Title and Subtitle Styling */
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 0.2rem;
+}
+
+.card-subtitle {
+  font-size: 0.9rem;
+  color: #9CA3AF;
+  font-weight: 300;
+}
