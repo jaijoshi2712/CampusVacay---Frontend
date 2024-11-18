@@ -188,7 +188,7 @@ const SearchBar = () => {
     };
 
     try {
-      const response = await fetch('http://3.16.159.54/hotel/api/search/', {
+      const response = await fetch('https://3.16.159.54/hotel/api/search/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

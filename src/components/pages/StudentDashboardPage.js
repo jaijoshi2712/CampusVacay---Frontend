@@ -4,9 +4,38 @@ import { MapPin, Navigation } from 'lucide-react';
 const Review = ({ hotel_id}) => {
     //const [review, setReview] = useState({rating: 0, comment: ''});
     const [editOpen, setEditOpen] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
     const handleSubmit = async(e) =>{
         e.preventDefault();
-        console.log(hotel_id, rating, comment);
+        console.log(rating, comment);
+        const hotel_id = 4;
+        try {
+            const response = await fetch(`http://3.16.159.54/hotel/api/reviews/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                    //'X-CSRFToken': localStorage.getItem('csrftoken'),
+                },
+                body: JSON.stringify({rating:rating, review:comment, hotel_id: hotel_id}),
+                //credentials: 'include',
+            });
+      
+            const data = await response.json();
+            console.log(data);
+            if (!response.ok) {
+                throw new Error(data.detail || 'Create failed');
+            }
+      
+            // Update the current page's state instead of navigating
+            window.location.reload();
+        } catch (error) {
+            setError('Failed to create. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     }
     const closeEdit = () => {
         setEditOpen(0);
@@ -235,78 +264,36 @@ const Reservations = () => {
     const [futureData, setFutureData] = useState(items.slice(5,8));
 
     useEffect(() => {
-        //setDate(formattedDate);
-        //console.log(formattedDate);
+        console.log('12');
         const fetchData = async () => {
-        try {
-            /*console.log('ji');
-            const response = await fetch("http://3.16.159.54/hotel/api/hotel/reservations/", {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': 'Token ' + localStorage.getItem('authToken'),
-                  'Accept': 'application/json',
-                },
-                body: JSON.stringify(''),
-            });
-            console.log('hi');
-            if (!response.ok) {
-            throw new Error("loading error!");
-            }*/
-            
-            await fetch('http://3.16.159.54/student/api/student/reservations/',{
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Token ' + localStorage.getItem('authToken'),
-                }
-            }) // API URL
-            .then((response) => {
-                if (!response.ok) {
-                throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
+            try {
+                console.log('1');
+                const response = await fetch('http://3.16.159.54/student/api/student/reservations/', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                        //'X-CSRFToken': localStorage.getItem('csrftoken'),
+                    },
+                    body: JSON.stringify(''),
+                    //credentials: 'include',
+                });
+          
+                const data = await response.json();
                 console.log(data);
-                //setProfile(data);
-                //setItem(data);
-                setLoading(false); // Set loading to false
-            })
-            .catch((error) => {
-                setError(error.message); // Handle any errors
-                setLoading(false); // Set loading to false
-            });
-
-            //const data = await response.json();
-            //console.log(data, response);
-            //setReservationData(data);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-        };
-
-        fetchData();
-
-        //distinguish different reservations
-        /*
-        items.forEach(item=>{
-            const todayDate = new Date();
-            const checkInDate = new Date(item.check_in_date);
-            const checkOutDate = new Date(item.check_out_date);
-
-            if(checkOutDate<todayDate){
-                setPastData((prevItems) => [...prevItems, item]);
-            }else if(checkInDate>todayDate){
-                setFutureData((prevItems) => [...prevItems, item]);
-            }else{
-                setCurrentData((prevItems) => [...prevItems, item]);
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Create failed');
+                }
+          
+                // Update the current page's state instead of navigating
+                window.location.reload();
+            } catch (error) {
+                setError('Failed to create. Please try again.');
+            } finally {
+                setLoading(false);
             }
-        });
-        */
-
+        }
+        fetchData();
     }, []);
 
     
@@ -333,7 +320,7 @@ const Reservations = () => {
     const closeEdit = () => setEditOpen(0);
 
     const handleSubmit = async (e, mode, id) => {
-        
+        //
     };
     const handleChange = (e) => {
         
@@ -658,8 +645,39 @@ const Profile = () => {
     const [profile, setProfile] = useState(null);
     const [item,setItem] = useState(null);
     const [isReadOnly, setIsReadOnly] = useState(true);
-
+    
     useEffect(() => {
+        const fetchReservations = async () => {
+          try {
+            const response = await fetch('http://3.16.159.54/student/student/profile/', {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + localStorage.getItem('authToken'),
+              }
+            });
+    
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+    
+            const data = await response.json();
+            //setReservationData(data); // Set the fetched data to state
+            //setFilteredOrders(data);
+            console.log(data);
+            setProfile(data);
+            setItem(data);
+          } catch (error) {
+            setError(error.message); // Handle errors
+          } finally {
+            setLoading(false); // Always set loading to false when request finishes
+          }
+        };
+    
+        fetchReservations();
+      }, []);
+
+    /*useEffect(() => {
         const fetchData = async () => {
         try {
             /*console.log('ji');
@@ -675,7 +693,7 @@ const Profile = () => {
             console.log('hi');
             if (!response.ok) {
             throw new Error("loading error!");
-            }*/
+            }*//*
             await fetch('http://3.16.159.54/student/student/profile/',{
                 method: 'GET',
                 headers: {
@@ -697,12 +715,12 @@ const Profile = () => {
             .catch((error) => {
                 setError(error.message); // Handle any errors
                 setLoading(false); // Set loading to false
-            });
+            });*/
 
             //const data = await response.json();
             //console.log(data, response);
             //setReservationData(data);
-        } catch (err) {
+        /*} catch (err) {
             setError(err.message);
         } finally {
             setLoading(false);
@@ -711,7 +729,7 @@ const Profile = () => {
 
         fetchData();
 
-    }, []);
+    }, []);*/
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -774,15 +792,7 @@ const Profile = () => {
                     </label>
                     <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                        readOnly={isReadOnly} onChange={handleChange} id="username" name="username" type="text" value='username missing'/>
-                </div>
-                <div className="flex border-b py-5 items-center">
-                    <label className="w-1/3 block text-gray-700 text-3xl font-bold mr-4" htmlFor="password">
-                        Password
-                    </label>
-                    <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                        readOnly={isReadOnly} onChange={handleChange} id="password" name="password" type="text" value='pw missing'/>
+                        readOnly={isReadOnly} onChange={handleChange} id="username" name="username" type="text" value={item.username}/>
                 </div>
                 <div className="flex border-b py-5 items-center">
                     <label className="w-1/3 block text-gray-700 text-3xl font-bold mr-4" htmlFor="email">
@@ -790,7 +800,7 @@ const Profile = () => {
                     </label>
                     <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                        readOnly={isReadOnly} onChange={handleChange} id="email" name="email" type="text" value='email missing'/>
+                        readOnly={isReadOnly} onChange={handleChange} id="email" name="email" type="text" value={item.email}/>
                 </div>
                 <div className="flex border-b py-5 items-center">
                     <label className="w-1/3 block text-gray-700 text-3xl font-bold mr-4" htmlFor="first_name">
@@ -798,7 +808,7 @@ const Profile = () => {
                     </label>
                     <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                        readOnly={isReadOnly} onChange={handleChange} id="first_name" name="first_name" type="text" value='first_name missing'/>
+                        readOnly={isReadOnly} onChange={handleChange} id="first_name" name="first_name" type="text" value={item.first_name}/>
                 </div>
                 <div className="flex border-b py-5 items-center">
                     <label className="w-1/3 block text-gray-700 text-3xl font-bold mr-4" htmlFor="last_name">
@@ -806,7 +816,7 @@ const Profile = () => {
                     </label>
                     <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                        readOnly={isReadOnly} onChange={handleChange} id="last_name" name="last_name" type="text" value='last_name missing'/>
+                        readOnly={isReadOnly} onChange={handleChange} id="last_name" name="last_name" type="text" value={item.last_name}/>
                 </div>
                 <div className="flex border-b py-5 items-center">
                     <label className="w-1/3 block text-gray-700 text-3xl font-bold mr-4" htmlFor="dob">
@@ -857,7 +867,7 @@ const Profile = () => {
 
 
 const StudentDashboardPage = () => {
-    const [page, setPage] = useState('profile');
+    const [page, setPage] = useState('reservations');
     
     return (
         <div className="min-h-screen w-full bg-gray-100 flex">

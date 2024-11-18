@@ -15,8 +15,36 @@ const Rooms = () => {
     const [roomData, setRoomData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
     useEffect(() => {
+        const fetchRooms = async () => {
+          try {
+            const response = await fetch('http://3.16.159.54/hotel/api/rooms/', {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + localStorage.getItem('authToken'),
+              }
+            });
+    
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+    
+            const data = await response.json();
+            console.log(data);
+            setRoomData(data); // Set the fetched data to state
+            //setFilteredOrders(data);
+            console.log(data);
+          } catch (error) {
+            setError(error.message); // Handle errors
+          } finally {
+            setLoading(false); // Always set loading to false when request finishes
+          }
+        };
+    
+        fetchRooms();
+      }, []);
+    /*useEffect(() => {
         
         const getCsrfToken = () => {
 
@@ -44,12 +72,15 @@ const Rooms = () => {
             console.log(data);
             setRoomData(data);
             console.log(roomData);*/
-            fetch('http://3.16.159.54/hotel/api/4/rooms/')
+            /*fetch('http://3.16.159.54/hotel/api/rooms/4')
             .then((response) => {
+                if (!response.ok) {
+                    throw new Error("loading error!");
+                }
                 //console.log(response);
                 response.json()})
             .then((data) => {
-                //console.log(data);
+                console.log(data);
                 //setGreeting(data.message); // Set the greeting message
             })
             .catch((error) => console.error('Error fetching data:', error));
@@ -61,7 +92,7 @@ const Rooms = () => {
         };
 
         fetchData();
-    }, []);
+    }, []);*/
 
     const [sortBy, setSortBy] = useState('guests');
     
@@ -91,7 +122,7 @@ const Rooms = () => {
     const closeCreate = () => setCreateOpen(false);
 
     const openEdit = (id) => {
-        const selectedItem = items.find(item => item.id === id);
+        const selectedItem = roomData.find(item => item.id === id);
         setEditOpen(id);
         setCreateRoom({
             'room_type': selectedItem.room_type,
@@ -133,8 +164,9 @@ const Rooms = () => {
         e.preventDefault();
         console.log(mode, id);
         const room_id = id;
-        console.log(createRoom);
-
+        //console.log(createRoom);
+        //const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        //console.log(csrfToken);
         const requestBody = {
             room_type:createRoom.room_type,
             number_of_rooms:createRoom.number_of_rooms,
@@ -148,15 +180,19 @@ const Rooms = () => {
 
         if(mode=='create'){
             try {
-                console.log('csrf:',localStorage.getItem('csrftoken'));
-                const response = await fetch('http://3.16.159.54/hotel/api/4/room/add/', {
+                
+                
+                //console.log(document.cookie);
+                //console.log('csrf:',localStorage.getItem('csrftoken'));
+                const response = await fetch('http://3.16.159.54/hotel/api/rooms/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': localStorage.getItem('csrftoken'),
+                        'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                        //'X-CSRFToken': localStorage.getItem('csrftoken'),
                     },
                     body: JSON.stringify(requestBody),
-                    credentials: 'include',
+                    //credentials: 'include',
                 });
           
                 const data = await response.json();
@@ -175,16 +211,15 @@ const Rooms = () => {
         
         }else if(mode=='edit'){
             try {
-                const roomid = '4';
-                const response = await fetch(`http://3.16.159.54/hotel/api/room/7/edit/`, {
-                    method: 'POST',
+                //console.log(requestBody);
+                const response = await fetch(`http://3.16.159.54/hotel/api/rooms/${id}/`, {
+                    method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRFToken': 'Thxj5lEcq4v6aFXA4vniFDyBNvL8kZ4r',
+                        'Authorization': 'Token ' + localStorage.getItem('authToken'),
                     },
                     body: JSON.stringify(requestBody),
-                    credentials: 'include',
+                    //credentials: 'include',
                 });
           
                 const data = await response.json();
@@ -202,12 +237,11 @@ const Rooms = () => {
             }
         }else if(mode=='delete'){
             try {
-                const response = await fetch(`http://3.16.159.54/hotel/api/room/7/delete/`, {
-                  method: 'POST',
+                const response = await fetch(`http://3.16.159.54/hotel/api/rooms/${id}/`, {
+                  method: 'DELETE',
                   headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRFToken': 'Thxj5lEcq4v6aFXA4vniFDyBNvL8kZ4r',
+                    'Authorization': 'Token ' + localStorage.getItem('authToken'),
                   },
                   body: JSON.stringify(''),
                 });
@@ -254,6 +288,10 @@ const Rooms = () => {
     const handleImageDelete = (index) => {
         setSelectedImages(prevImages => prevImages.filter((_, i) => i !== index)); // 刪除指定的圖片
     };
+
+    if(loading){
+        return <div>Loading...</div>
+    }
 
     return (
         <div className="min-h-screen">
@@ -380,7 +418,7 @@ const Rooms = () => {
                         <div>#</div>
                         <div>Room Type</div>
                     </div>
-                    {sortedItems.map(item => (
+                    {roomData.map(item => (
                     <div key={item.id} className="grid grid-cols-3 p-2 my-2 bg-gray-100 rounded-md shadow-md hover:bg-gray-200 transition">
                         <div>{item.id}</div>
                         <div>{item.room_type}</div>
@@ -543,63 +581,40 @@ const Reservations = () => {
         {id:7, check_in_date: '2024-11-21', check_out_date: '2024-11-24',guests: 5, 'status': 0},
         {id:8, check_in_date: '2024-12-11', check_out_date: '2024-12-17',guests: 4, 'status': 0},
     ];
-    const [reservationData, setReservationData] = useState(null);
+    const [reservationData, setReservationData] = useState('');
+    const [filteredOrders, setFilteredOrders] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [formData, setFormData] = useState(null);
 
     useEffect(() => {
-        const fetchData = async () => {
-        try {
-            /*console.log('ji');
-            const response = await fetch("http://3.16.159.54/hotel/api/hotel/reservations/", {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': 'Token ' + localStorage.getItem('authToken'),
-                  'Accept': 'application/json',
-                },
-                body: JSON.stringify(''),
+        const fetchReservations = async () => {
+          try {
+            const response = await fetch('http://3.16.159.54/hotel/api/hotel/reservations/', {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + localStorage.getItem('authToken'),
+              }
             });
-            console.log('hi');
+    
             if (!response.ok) {
-            throw new Error("loading error!");
-            }*/
-
-            fetch('http://3.16.159.54/hotel/api/hotel/reservations/',{
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Token ' + localStorage.getItem('authToken'),
-                }
-            }) // API URL
-            .then((response) => {
-                if (!response.ok) {
-                throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log(data); // Set the data into state
-                setLoading(false); // Set loading to false
-            })
-            .catch((error) => {
-                setError(error.message); // Handle any errors
-                setLoading(false); // Set loading to false
-            });
-
-            //const data = await response.json();
-            //console.log(data, response);
-            //setReservationData(data);
-            console.log(reservationData);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
+              throw new Error('Network response was not ok');
+            }
+    
+            const data = await response.json();
+            setReservationData(data); // Set the fetched data to state
+            setFilteredOrders(data);
+            console.log(data);
+          } catch (error) {
+            setError(error.message); // Handle errors
+          } finally {
+            setLoading(false); // Always set loading to false when request finishes
+          }
         };
-
-        fetchData();
-    }, []);
+    
+        fetchReservations();
+      }, []);
 
     const [sortBy, setSortBy] = useState('guests');
     
@@ -631,23 +646,25 @@ const Reservations = () => {
     }
 
     const [startDate, setStartDate] = useState('');
-    const [filteredOrders, setFilteredOrders] = useState(items);
+    
 
     // Handler to filter orders based on the date range
     const filterOrders = () => {
         if (!startDate) {
-        setFilteredOrders(items);
+        setFilteredOrders(reservationData);
         return;
         }
 
-        const filtered = items.filter((item) => {
+        const filtered = reservationData.filter((item) => {
         const orderDate1 = new Date(item.check_in_date);
         const orderDate2 = new Date(item.check_out_date);
         return orderDate1 <= new Date(startDate) && orderDate2 >= new Date(startDate);
         });
         setFilteredOrders(filtered);
     };
-    
+    if (loading) {
+        return <div>Loading...</div>;
+    }
     return (
         <div className="min-h-screen">
             <div className="p-5 flex items-center">
@@ -673,7 +690,7 @@ const Reservations = () => {
                 </div>
                 <div className="mx-2">
                     <button
-                        onClick={()=>setFilteredOrders(items)}
+                        onClick={()=>setFilteredOrders(reservationData)}
                         className="w-full py-2 px-4 mx-2 bg-gray-400 text-white rounded-md hover:bg-gray-500 focus:outline-none focus:ring-2"
                     >
                         Clear
@@ -724,96 +741,96 @@ const Reservations = () => {
                             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-20">
                             <div className="bg-white rounded shadow-lg p-6 w-2/3">
                                 <div className="flex justify-between">
-                                    <h2 className="text-4xl font-bold mb-4">Details for reservation at hotel_name, room_type</h2>
+                                    <h2 className="text-4xl font-bold mb-4">Details for reservation at {item.hotel_name}, {item.room_type}</h2>
                                     <button onClick={closeEdit} className="px-3 bg-red-500 text-white rounded hover:bg-red-600">
                                     X
                                     </button>
                                 </div>
                                 <div className="flex">
-                                    <div className="w-2/5 h-full border rounded m-2">
+                                    <div className="w-1/2 h-full border rounded m-2">
                                         <div className="flex border-b items-center">
-                                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
+                                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-2xl font-bold mr-4" htmlFor="username">
                                                 First Name:
                                             </label>
                                             <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                Kai-Lun
+                                                {item.first_name}
                                             </span>
                                         </div>
                                         <div className="flex border-b items-center">
-                                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
+                                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-2xl font-bold mr-4" htmlFor="username">
                                                 Last Name:
                                             </label>
                                             <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                Yen
+                                                {item.last_name}
                                             </span>
                                         </div>
                                         <div className="flex border-b items-center">
-                                            <label className="w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
+                                            <label className="w-1/3 p-2 block text-gray-700 text-2xl font-bold mr-4" htmlFor="username">
                                                 Guests:
                                             </label>
                                             <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                4
+                                                {item.guests}
                                             </span>
                                         </div>
                                         <div className="flex border-b items-center">
-                                            <label className="w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
+                                            <label className="w-1/3 p-2 block text-gray-700 text-2xl font-bold mr-4" htmlFor="username">
                                                 Email:
                                             </label>
                                             <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                123@mail.com
+                                                {item.email}
                                             </span>
                                         </div>
                                         <div className="flex border-b items-center">
-                                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
+                                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-2xl font-bold mr-4" htmlFor="username">
                                                 Phone No:
                                             </label>
                                             <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                1231237891
+                                                {item.phone_number}
                                             </span>
                                         </div>
                                         <div className="flex items-center">
-                                            <label className="w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
+                                            <label className="w-1/3 p-2 block text-gray-700 text-2xl font-bold mr-4" htmlFor="username">
                                                 Payment:
                                             </label>
                                             <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                Credit Card
+                                                {item.payment_mode}
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="w-3/5 h-full border rounded m-2">
+                                    <div className="w-1/2 h-full border rounded m-2">
                                         <div className="flex border-b items-center">
-                                            <label className="w-1/2 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                                                Check In:
+                                            <label className="w-1/2 p-2 block text-gray-700 text-2xl font-bold mr-4" htmlFor="username">
+                                                Check In Date:
                                             </label>
                                             <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                2024-10-10
+                                                {item.check_in_date}
                                             </span>
                                         </div>
                                         <div className="flex border-b items-center">
-                                            <label className="w-1/2 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                                                Check Out:
+                                            <label className="w-1/2 p-2 block text-gray-700 text-2xl font-bold mr-4" htmlFor="username">
+                                                Check Out Date:
                                             </label>
                                             <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                2024-10-15
+                                                {item.check_out_date}
                                             </span>
                                         </div>
                                         <div className="flex border-b items-center">
-                                            <label className="w-1/2 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
+                                            <label className="w-1/2 p-2 block text-gray-700 text-2xl font-bold mr-4" htmlFor="username">
                                                 Expected Arrival Time:
                                             </label>
                                             <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                11:00
+                                                {item.expected_arrival_time}
                                             </span>
                                         </div>
                                         <div className="flex border-b items-center">
-                                            <label className="w-1/2 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
+                                            <label className="w-1/2 p-2 block text-gray-700 text-2xl font-bold mr-4" htmlFor="username">
                                                 Special Requests:
                                             </label>
                                             <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                None
+                                                {item.special_requests}
                                             </span>
                                         </div>
-                                        <div className="flex border-b items-center">
+                                        {/*<div className="flex border-b items-center">
                                             <label className="w-1/2 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
                                                 Cancelled?
                                             </label>
@@ -836,7 +853,7 @@ const Reservations = () => {
                                             <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
                                                 1
                                             </span>
-                                        </div>
+                                        </div>*/}
                                     </div>
                                 </div>
                                 <form onSubmit={(e) => handleSubmit(e, 'edit', editOpen)}>
@@ -914,7 +931,8 @@ const Reviews = () => {
     const [rating, setRating] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
+    const [noReviews, setNoReviews] = useState(false);
+
     useEffect(() => {
         const fetchData = async () => {
         try {
@@ -935,9 +953,12 @@ const Reviews = () => {
             console.log(data);
             setRoomData(data);
             console.log(roomData);*/
-            fetch('http://3.16.159.54/hotel/api/4/reviews/')
+            fetch('http://3.16.159.54/hotel/api/reviews/4')
             .then((response) => {
                 console.log(response);
+                if (response.statusText=='Not Found'){
+                    setNoReviews(true);
+                }
                 response.json()})
             .then((data) => {
                 console.log(data);
@@ -954,7 +975,9 @@ const Reviews = () => {
         fetchData();
     }, []);
     
-    
+    if (noReviews){
+        return <div>No Reviews Yet!</div>
+    }
     return (
         <div className='p-5 min-h-screen'>
             <div className='p-3 m-5 min-h-screen bg-white'>
