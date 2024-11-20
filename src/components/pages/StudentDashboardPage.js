@@ -6,7 +6,42 @@ const Review = ({ hotel_id}) => {
     const [editOpen, setEditOpen] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [reviewData, setReviewData] = useState([
+        {id:1, rating: 2, comment:'not bad'},
+        {id:2, rating: 4, comment:'very nice'},
+    ]);
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState('');
+    console.log(reviewData, reviewData.length);
+    useEffect(() => {
+        const fetchReviews = async () => {
+          try {
+            const response = await fetch('http://3.16.159.54/hotel/api/reviews/4', {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + localStorage.getItem('authToken'),
+              }
+            });
+    
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            //setReviewData(data);
+            //console.log(data);
+          } catch (error) {
+            setError(error.message); // Handle errors
+          } finally {
+            setLoading(false); // Always set loading to false when request finishes
+          }
+        };
+        fetchReviews();
+    }, []);
 
+    if (loading) {
+        return <div>Loading...</div>;
+    }
     const handleSubmit = async(e) =>{
         e.preventDefault();
         console.log(rating, comment);
@@ -17,18 +52,14 @@ const Review = ({ hotel_id}) => {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Token ' + localStorage.getItem('authToken'),
-                    //'X-CSRFToken': localStorage.getItem('csrftoken'),
                 },
                 body: JSON.stringify({rating:rating, review:comment, hotel_id: hotel_id}),
-                //credentials: 'include',
             });
-      
             const data = await response.json();
-            console.log(data);
+            //console.log(data);
             if (!response.ok) {
                 throw new Error(data.detail || 'Create failed');
             }
-      
             // Update the current page's state instead of navigating
             window.location.reload();
         } catch (error) {
@@ -41,15 +72,11 @@ const Review = ({ hotel_id}) => {
         setEditOpen(0);
         setRating(0);
         setComment('');
-        //document.body.style.overflow = '';
     }
     const openEdit = () => {
         setEditOpen(1);
-        //document.body.style.overflow = 'hidden';
     }
 
-    const [rating, setRating] = useState(0);
-    const [comment, setComment] = useState('');
     const handleClick = (value) => {
         setRating(value);
     };
@@ -97,6 +124,35 @@ const Review = ({ hotel_id}) => {
                             <button onClick={closeEdit} className="p-3 mx-2 bg-gray-300 text-white rounded hover:bg-gray-400">
                                 Cancel
                             </button>
+                        </div>
+                        <div>
+                        { reviewData && reviewData.length > 0 ?(
+                        reviewData.map(item => (
+                        <div key={item.id} className="grid grid-cols-6 p-2 my-2 bg-gray-100 rounded-md shadow-md hover:bg-gray-200 transition">
+                            <div>{item.id}</div>
+                            <div className="col-span-5">
+                                <div className="flex space-x-1">
+                                    {Array.from({ length: 5 }, (_, index) => {
+                                        const starValue = index + 1;
+                                        return (
+                                        <span
+                                            key={starValue}
+                                            className={`text-2xl ${
+                                            starValue <= item.rating ? 'text-yellow-500' : 'text-gray-400'
+                                            }`}
+                                        >
+                                            ★
+                                        </span>
+                                        );
+                                    })}
+                                </div>
+                                <div className="pt-2">
+                                    <input disabled className="bg-white w-full p-2" value={item.comment}/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ))):(<div></div>)}
                         </div>
                     </div>
                     
@@ -208,7 +264,7 @@ const HotelCard = ({ reservation , type }) => {
                         <span className="font-semibold whitespace-nowrap">{reservation.check_in_date} to {reservation.check_out_date}</span>
                     </div>
                 </div>
-                {type!='future' &&
+                {type=='past' &&
                     <Review hotel_id={reservation.hotel_id}/>
                 }
             </div>
@@ -259,52 +315,40 @@ const Reservations = () => {
     const [isReadOnly, setIsReadOnly] = useState(true);
     const [date, setDate] = useState('');
     //temp data
+    const [reservationData, setReservationData] = useState('null');
     const [pastData, setPastData] = useState(items.slice(0,2));
     const [currentData, setCurrentData] = useState(items.slice(2,5));
     const [futureData, setFutureData] = useState(items.slice(5,8));
-
+    
     useEffect(() => {
-        console.log('12');
-        const fetchData = async () => {
-            try {
-                console.log('1');
-                const response = await fetch('http://3.16.159.54/student/api/student/reservations/', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Token ' + localStorage.getItem('authToken'),
-                        //'X-CSRFToken': localStorage.getItem('csrftoken'),
-                    },
-                    body: JSON.stringify(''),
-                    //credentials: 'include',
-                });
-          
-                const data = await response.json();
-                console.log(data);
-                if (!response.ok) {
-                    throw new Error(data.detail || 'Create failed');
-                }
-          
-                // Update the current page's state instead of navigating
-                window.location.reload();
-            } catch (error) {
-                setError('Failed to create. Please try again.');
-            } finally {
-                setLoading(false);
+        const fetchReservations = async () => {
+          try {
+            const response = await fetch('http://3.16.159.54/student/api/student/reservations/', {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + localStorage.getItem('authToken'),
+              }
+            });
+    
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
             }
-        }
-        fetchData();
+            const data = await response.json();
+            setReservationData(data);
+            //console.log(data);
+          } catch (error) {
+            setError(error.message); // Handle errors
+          } finally {
+            setLoading(false); // Always set loading to false when request finishes
+          }
+        };
+        fetchReservations();
     }, []);
 
-    
+
+
     const [sortBy, setSortBy] = useState('all');
-    
-    const sortedItems = [...items].sort((a, b) => {
-        if (sortBy === 'guests') {
-          return a.guests-b.guests;
-        }
-        return a.id - b.id;
-    });
 
     const [editOpen, setEditOpen] = useState(0); 
 
@@ -377,7 +421,7 @@ const Reservations = () => {
                         <div className="my-5 text-4xl font-bold">Past Reservations</div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {pastData.map((reservation,index) => (
-                            <HotelCard key={index} reservation={reservation} />
+                            <HotelCard key={index} reservation={reservation} type="past"/>
                             ))}
                         </div>
                     </div>
@@ -775,7 +819,7 @@ const Profile = () => {
     };
 
     if (loading) {
-        return <div>Loading...</div>;  // 加載中顯示的提示
+        return <div>Loading...</div>;
     }
 
     return (

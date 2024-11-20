@@ -15,6 +15,7 @@ const Rooms = () => {
     const [roomData, setRoomData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    
     useEffect(() => {
         const fetchRooms = async () => {
           try {
@@ -31,10 +32,8 @@ const Rooms = () => {
             }
     
             const data = await response.json();
-            console.log(data);
+            //console.log(data);
             setRoomData(data); // Set the fetched data to state
-            //setFilteredOrders(data);
-            console.log(data);
           } catch (error) {
             setError(error.message); // Handle errors
           } finally {
@@ -44,64 +43,6 @@ const Rooms = () => {
     
         fetchRooms();
       }, []);
-    /*useEffect(() => {
-        
-        const getCsrfToken = () => {
-
-            //console.log(document.cookie);
-            const match = document.cookie.match(/csrftoken=([^;]+)/);  // Regex to match CSRF token
-            //console.log('here',match);
-            return match ? match[1] : null;  // Return the token or null if not found
-        };getCsrfToken();
-        const fetchData = async () => {
-        try {
-            /*const response = await fetch("http://3.16.159.54/hotel/api/3/rooms/", {
-            
-            headers: {
-                "Content-Type": "application/json",
-                'Accept': 'application/json',
-                
-            },
-            });
-
-            if (!response.ok) {
-            throw new Error("loading error!");
-            }
-
-            const data = await response.json();
-            console.log(data);
-            setRoomData(data);
-            console.log(roomData);*/
-            /*fetch('http://3.16.159.54/hotel/api/rooms/4')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("loading error!");
-                }
-                //console.log(response);
-                response.json()})
-            .then((data) => {
-                console.log(data);
-                //setGreeting(data.message); // Set the greeting message
-            })
-            .catch((error) => console.error('Error fetching data:', error));
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-        };
-
-        fetchData();
-    }, []);*/
-
-    const [sortBy, setSortBy] = useState('guests');
-    
-    const sortedItems = [...items].sort((a, b) => {
-        if (sortBy === 'guests') {
-          return a.guests-b.guests;
-        }
-        return a.id - b.id;
-    });
 
     const [createOpen, setCreateOpen] = useState(false); 
     const [editOpen, setEditOpen] = useState(0); 
@@ -113,10 +54,10 @@ const Rooms = () => {
             'number_of_rooms': '',
             'price_per_night': '',
             'facilities': '',
-            'breakfast_included': '',
+            'breakfast_included': false,
             'room_size': '',
             'max_occupancy': '',
-            'smoking_allowed': '',
+            'smoking_allowed': false,
         })
     }
     const closeCreate = () => setCreateOpen(false);
@@ -140,7 +81,6 @@ const Rooms = () => {
         //setSelectedImages(prevImages => [...prevImages, ...imageUrls]);
     }
     const closeEdit = () => setEditOpen(0);
-
     const openDelete = (id) => setDeleteOpen(id);
     const closeDelete = () => setDeleteOpen(0);
   
@@ -149,10 +89,10 @@ const Rooms = () => {
         'number_of_rooms':'',
         'price_per_night':'',
         'facilities':'',
-        'breakfast_included':'',
+        'breakfast_included':false,
         'room_size':'',
         'max_occupancy':'',
-        'smoking_allowed':'',
+        'smoking_allowed':false,
     })
 
     const [selectedImages, setSelectedImages] = useState([]); // 存儲已上傳的圖片
@@ -162,45 +102,35 @@ const Rooms = () => {
         const { name, value, type, files } = e.target;
 
         e.preventDefault();
-        console.log(mode, id);
+        //console.log(mode, id);
         const room_id = id;
-        //console.log(createRoom);
-        //const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        //console.log(csrfToken);
         const requestBody = {
             room_type:createRoom.room_type,
             number_of_rooms:createRoom.number_of_rooms,
             price_per_night:createRoom.price_per_night,
             facilities:createRoom.facilities,
-            breakfast_included:true,
+            breakfast_included:createRoom.breakfast_included,
             room_size:createRoom.room_size,
             max_occupancy:createRoom.max_occupancy,
-            smoking_allowed:false,
+            smoking_allowed:createRoom.smoking_allowed,
         };
-
+        console.log(requestBody);
         if(mode=='create'){
             try {
-                
-                
-                //console.log(document.cookie);
-                //console.log('csrf:',localStorage.getItem('csrftoken'));
                 const response = await fetch('http://3.16.159.54/hotel/api/rooms/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Token ' + localStorage.getItem('authToken'),
-                        //'X-CSRFToken': localStorage.getItem('csrftoken'),
                     },
                     body: JSON.stringify(requestBody),
-                    //credentials: 'include',
                 });
           
                 const data = await response.json();
-                console.log(data);
+                //console.log(data);
                 if (!response.ok) {
                     throw new Error(data.detail || 'Create failed');
                 }
-          
                 // Update the current page's state instead of navigating
                 window.location.reload();
             } catch (error) {
@@ -208,7 +138,6 @@ const Rooms = () => {
             } finally {
                 setLoading(false);
             }
-        
         }else if(mode=='edit'){
             try {
                 //console.log(requestBody);
@@ -219,15 +148,12 @@ const Rooms = () => {
                         'Authorization': 'Token ' + localStorage.getItem('authToken'),
                     },
                     body: JSON.stringify(requestBody),
-                    //credentials: 'include',
                 });
-          
                 const data = await response.json();
-                console.log(data);
+                //console.log(data);
                 if (!response.ok) {
                   throw new Error(data.detail || 'Edit failed');
                 }
-          
                 // Update the current page's state instead of navigating
                 window.location.reload();
             } catch (error) {
@@ -245,13 +171,10 @@ const Rooms = () => {
                   },
                   body: JSON.stringify(''),
                 });
-          
                 const data = await response.json();
-          
                 if (!response.ok) {
                   throw new Error(data.detail || 'Delete failed');
                 }
-          
                 // Update the current page's state instead of navigating
                 window.location.reload();
             } catch (error) {
@@ -270,10 +193,10 @@ const Rooms = () => {
         });
     };
     const handleChange = (e) => {
-        const { name, value, type, files } = e.target;
+        const { name, value, type, files,checked } = e.target;
         setCreateRoom({
         ...createRoom,
-        [name]: type === 'file' ? files : value
+        [name]: type === 'checkbox' ? checked : value
         });
 
     }
@@ -346,8 +269,8 @@ const Rooms = () => {
                                     Breakfast Included
                                 </label>
                                 <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                                    onChange={handleChange} id="breakfast_included" name="breakfast_included" type="text" value={createRoom.breakfast_included}/>
+                                    className="shadow border rounded w-8 h-8 py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    onChange={handleChange} id="breakfast_included" name="breakfast_included" type="checkbox" checked={createRoom.breakfast_included}/>
                             </div>
                             <div>
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="room_size">
@@ -370,10 +293,10 @@ const Rooms = () => {
                                     Smoking Allowed
                                 </label>
                                 <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                                    onChange={handleChange} id="smoking_allowed" name="smoking_allowed" type="text" value={createRoom.smoking_allowed}/>
+                                    className="shadow border rounded w-8 h-8 py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    onChange={handleChange} id="smoking_allowed" name="smoking_allowed" type="checkbox" checked={createRoom.smoking_allowed}/>
                             </div>
-                            <div>
+                            {/*<div>
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="smoking_allowed">
                                     Upload Images
                                 </label>
@@ -399,7 +322,7 @@ const Rooms = () => {
                                     </div>
                                 </div>
                                 ))}
-                            </div>
+                            </div>*/}
 
                             <div className="flex justify-end pt-5">
                                 <button type="submit" className="p-3 bg-blue-500 text-white rounded hover:bg-blue-600">
@@ -407,21 +330,26 @@ const Rooms = () => {
                                 </button>
                             </div>
                         </form>
-                        
                     </div>
                     </div>
                 )}
             </div>
             <div className='p-3 m-5 min-h-screen bg-white'>
                 <div>
-                    <div className="grid grid-cols-3 p-2 bg-white rounded-md shadow-md hover:bg-gray-200 transition">
+                    <div className="grid grid-cols-5 p-2 bg-white rounded-md shadow-md hover:bg-gray-200 transition">
                         <div>#</div>
                         <div>Room Type</div>
+                        <div>Number of Rooms</div>
+                        <div>Price per Night</div>
                     </div>
-                    {roomData.map(item => (
-                    <div key={item.id} className="grid grid-cols-3 p-2 my-2 bg-gray-100 rounded-md shadow-md hover:bg-gray-200 transition">
+                    
+                    {roomData &&roomData.length>0 ?(
+                    roomData.map(item => (
+                    <div key={item.id} className="grid grid-cols-5 p-2 my-2 bg-gray-100 rounded-md shadow-md hover:bg-gray-200 transition">
                         <div>{item.id}</div>
                         <div>{item.room_type}</div>
+                        <div>{item.number_of_rooms}</div>
+                        <div>{item.price_per_night}</div>
                         <div className="flex justify-center">
                             <button onClick={()=>openEdit(item.id)} className="mx-5 p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                                 Edit
@@ -477,8 +405,8 @@ const Rooms = () => {
                                             Breakfast Included
                                         </label>
                                         <input
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                                            onChange={handleChange} id="breakfast_included" name="breakfast_included" type="text" value={createRoom.breakfast_included}/>
+                                            className="shadow border rounded w-8 h-8 py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                            onChange={handleChange} id="breakfast_included" name="breakfast_included" type="checkbox" checked={createRoom.breakfast_included}/>
                                     </div>
                                     <div>
                                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="room_size">
@@ -501,10 +429,10 @@ const Rooms = () => {
                                             Smoking Allowed
                                         </label>
                                         <input
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                                            onChange={handleChange} id="smoking_allowed" name="smoking_allowed" type="text" value={createRoom.smoking_allowed}/>
+                                            className="shadow border rounded w-8 h-8 py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                            onChange={handleChange} id="smoking_allowed" name="smoking_allowed" type="checkbox" checked={createRoom.smoking_allowed}/>
                                     </div>
-                                    <div>
+                                    {/*<div>
                                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="smoking_allowed">
                                             Upload Images
                                         </label>
@@ -529,7 +457,7 @@ const Rooms = () => {
                                             </div>
                                         </div>
                                         ))}
-                                    </div>
+                                    </div>*/}
                                     <div className="flex justify-end pt-5">
                                         <button type="submit" className="p-3 bg-blue-500 text-white rounded hover:bg-blue-600">
                                             Save
@@ -563,7 +491,7 @@ const Rooms = () => {
                         )}
                     </div>
                     
-                    ))}
+                    ))):(<div>No Rooms Yet!</div>)}
                 </div>
             </div>
         </div>
@@ -581,11 +509,15 @@ const Reservations = () => {
         {id:7, check_in_date: '2024-11-21', check_out_date: '2024-11-24',guests: 5, 'status': 0},
         {id:8, check_in_date: '2024-12-11', check_out_date: '2024-12-17',guests: 4, 'status': 0},
     ];
-    const [reservationData, setReservationData] = useState('');
-    const [filteredOrders, setFilteredOrders] = useState('');
+    const [reservationData, setReservationData] = useState(items);
+    const [filteredOrders, setFilteredOrders] = useState(items);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [formData, setFormData] = useState(null);
+    const [formData, setFormData] = useState({
+        room_number:'',
+        checked_in: false,
+        additional_charges: '',
+    });
 
     useEffect(() => {
         const fetchReservations = async () => {
@@ -603,27 +535,17 @@ const Reservations = () => {
             }
     
             const data = await response.json();
-            setReservationData(data); // Set the fetched data to state
-            setFilteredOrders(data);
-            console.log(data);
+            //setReservationData(data);
+            //setFilteredOrders(data);
+            //console.log(data);
           } catch (error) {
             setError(error.message); // Handle errors
           } finally {
             setLoading(false); // Always set loading to false when request finishes
           }
         };
-    
         fetchReservations();
       }, []);
-
-    const [sortBy, setSortBy] = useState('guests');
-    
-    const sortedItems = [...items].sort((a, b) => {
-        if (sortBy === 'guests') {
-          return a.guests-b.guests;
-        }
-        return a.id - b.id;
-    });
 
     const [editOpen, setEditOpen] = useState(0); 
 
@@ -638,15 +560,43 @@ const Reservations = () => {
     }
     const closeEdit = () => setEditOpen(0);
 
-    const handleSubmit = async (e, mode, id) => {
-        
+    const handleSubmit = async (e, id) => {
+        e.preventDefault();
+        console.log(formData);
+        try {
+            const response = await fetch('http://3.16.159.54/hotel/api/hotel/reservations/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                },
+                body: JSON.stringify(formData),
+            });
+      
+            const data = await response.json();
+            //console.log(data);
+            if (!response.ok) {
+                throw new Error(data.detail || 'Create failed');
+            }
+            // Update the current page's state instead of navigating
+            window.location.reload();
+        } catch (error) {
+            setError('Failed to create. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
     const handleChange = (e) => {
         
+        const { name, value, type, files,checked } = e.target;
+        setFormData({
+        ...formData,
+        [name]: type === 'checkbox' ? checked : value
+        });
+
     }
 
     const [startDate, setStartDate] = useState('');
-    
 
     // Handler to filter orders based on the date range
     const filterOrders = () => {
@@ -698,23 +648,6 @@ const Reservations = () => {
                 </div>
             </div>
 
-
-            {/*<div className="flex justify-end px-5">
-                <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
-                    +
-                </button>
-            </div>
-            <div className="px-8">
-                Sort by:
-                <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="border rounded-md p-1 w-1/4"
-                >
-                <option value="guests">guests</option>
-                <option value="id">ID</option>
-                </select>
-            </div>*/}
             <div className='p-3 m-5 min-h-screen bg-white'>
                 <div>
                     <div className="grid grid-cols-6 p-2 bg-white rounded-md shadow-md hover:bg-gray-200 transition">
@@ -725,7 +658,8 @@ const Reservations = () => {
                         <div>status</div>
                         <div>details</div>
                     </div>
-                    {filteredOrders.map(item => (
+                    { filteredOrders && filteredOrders.length>0 ?( 
+                    filteredOrders.map(item => (
                     <div key={item.id} className="grid grid-cols-6 p-2 my-2 bg-gray-100 rounded-md shadow-md hover:bg-gray-200 transition">
                         <div>{item.id}</div>
                         <div>{item.check_in_date}</div>
@@ -856,30 +790,30 @@ const Reservations = () => {
                                         </div>*/}
                                     </div>
                                 </div>
-                                <form onSubmit={(e) => handleSubmit(e, 'edit', editOpen)}>
+                                <form onSubmit={(e) => handleSubmit(e, editOpen)}>
                                     <div>
-                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="room_type">
+                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="additional_charges">
                                             Additional Charges
                                         </label>
                                         <input
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                                            onChange={handleChange} id="additional_charges" name="additional_charges" type="text" value=""/>
+                                            onChange={handleChange} id="additional_charges" name="additional_charges" type="text" value={formData.additional_charges}/>
                                     </div>
-                                    <div>
-                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="number_of_rooms">
+                                    {/*<div>
+                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="damage_report">
                                             Damage Report
                                         </label>
                                         <input
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                                            onChange={handleChange} id="damage_report" name="damage_report" type="text" value=""/>
-                                    </div>
+                                            onChange={handleChange} id="damage_report" name="damage_report" type="text" value={formData.damage_report}/>
+                                    </div>*/}
                                     <div>
-                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price_per_night">
+                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="room_number">
                                             Room Number
                                         </label>
                                         <input
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                                            onChange={handleChange} id="room_number" name="room_number" type="text" value=""/>
+                                            onChange={handleChange} id="room_number" name="room_number" type="text" value={formData.room_number}/>
                                     </div>
                                     <div>
                                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="smoking_allowed">
@@ -887,7 +821,7 @@ const Reservations = () => {
                                         </label>
                                         <input
                                             className="shadow border rounded text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                            onChange={handleChange} id="checked_in" name="checked_in" type="checkbox" value=""/>
+                                            onChange={handleChange} id="checked_in" name="checked_in" type="checkbox" checked={formData.checked_in}/>
                                     </div>
                                     
                                     
@@ -904,7 +838,7 @@ const Reservations = () => {
 
                     
                     
-                    ))}
+                    ))):(<div>No Reservations Yet!</div>)}
                 </div>
                 
             </div>
@@ -928,56 +862,41 @@ const Reviews = () => {
         return a.id - b.id;
     });
 
-    const [rating, setRating] = useState(0);
+    const [reviewData, setReviewData] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [noReviews, setNoReviews] = useState(false);
-
-    useEffect(() => {
-        const fetchData = async () => {
-        try {
-            /*const response = await fetch("http://3.16.159.54/hotel/api/3/rooms/", {
-            
-            headers: {
-                "Content-Type": "application/json",
-                'Accept': 'application/json',
-                
-            },
-            });
-
-            if (!response.ok) {
-            throw new Error("loading error!");
-            }
-
-            const data = await response.json();
-            console.log(data);
-            setRoomData(data);
-            console.log(roomData);*/
-            fetch('http://3.16.159.54/hotel/api/reviews/4')
-            .then((response) => {
-                console.log(response);
-                if (response.statusText=='Not Found'){
-                    setNoReviews(true);
-                }
-                response.json()})
-            .then((data) => {
-                console.log(data);
-                //setGreeting(data.message); // Set the greeting message
-            })
-            .catch((error) => console.error('Error fetching data:', error));
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-        };
-
-        fetchData();
-    }, []);
     
-    if (noReviews){
-        return <div>No Reviews Yet!</div>
+    useEffect(() => {
+        const fetchReviews = async () => {
+          try {
+            const response = await fetch('http://3.16.159.54/hotel/api/reviews/4', {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + localStorage.getItem('authToken'),
+              }
+            });
+    
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            setReviewData(data);
+            //console.log(data);
+          } catch (error) {
+            setError(error.message); // Handle errors
+          } finally {
+            setLoading(false); // Always set loading to false when request finishes
+          }
+        };
+        fetchReviews();
+    }, []);
+
+    if (loading) {
+        return <div>Loading...</div>;
     }
+
     return (
         <div className='p-5 min-h-screen'>
             <div className='p-3 m-5 min-h-screen bg-white'>
@@ -986,7 +905,8 @@ const Reviews = () => {
                         <div>#</div>
                         <div className="col-span-5">Comments</div>
                     </div>
-                    {sortedItems.map(item => (
+                    { reviewData && reviewData.length > 0 ?(
+                    reviewData.map(item => (
                     <div key={item.id} className="grid grid-cols-6 p-2 my-2 bg-gray-100 rounded-md shadow-md hover:bg-gray-200 transition">
                         <div>{item.id}</div>
                         <div className="col-span-5">
@@ -1009,10 +929,9 @@ const Reviews = () => {
                                 <input disabled className="bg-white w-full p-2" value={item.comment}/>
                             </div>
                         </div>
-                    
                     </div>
                     
-                    ))}
+                    ))):(<div>No Reviews Yet!</div>)}
                     
 
                 </div>
