@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, MapPin, Star, Navigation, Calendar, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import './edits.css';
 
 const HOTEL_IMAGES = [
   'https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg',
@@ -64,10 +65,11 @@ const Header = () => {
   return (
     <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'}`}>
       <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
-        <div className="text-3xl font-bold text-blue-700 flex items-center">
+        {/* Updated Logo to remove underline */}
+        <a href="#home" className="text-3xl font-bold text-blue-700 flex items-center no-underline">
           <Navigation className="mr-2" />
           CampusVacay.
-        </div>
+        </a>
         <nav className="hidden md:flex space-x-8 text-lg">
           {['Home', 'Hotels', 'Rooms', 'About', 'Contact'].map((item) => (
             <li key={item} className="list-none text-gray-600 hover:text-blue-700 cursor-pointer transition duration-300">
@@ -93,6 +95,8 @@ const Header = () => {
     </header>
   );
 };
+
+
 
 const Hero = () => (
   <section className="flex justify-between items-center py-32 px-6 bg-gradient-to-br from-white to-blue-50">
@@ -223,17 +227,14 @@ const SearchBar = () => {
         </div>
         <div className="flex-1 min-w-[150px]">
           <label className="block mb-1 text-gray-600">Guests</label>
-          <select
+          <input
+            type="text"
             name="guests"
             value={searchData.guests}
             onChange={handleChange}
+            placeholder="Enter number of guests"
             className="w-full border border-gray-300 rounded-lg p-3"
-          >
-            <option value="">Select Guests</option>
-            {[1, 2, 3, 4, '5+'].map((num) => (
-              <option key={num} value={num}>{num} {num === 1 ? 'Guest' : 'Guests'}</option>
-            ))}
-          </select>
+          />
         </div>
         <div className="flex-1 min-w-[200px]">
           <label className="block mb-1 text-gray-600">Location</label>
@@ -272,6 +273,7 @@ const SearchBar = () => {
     </div>
   );
 };
+
 
 const PropertyCard = ({ imageIndex, price, name, location, popular }) => {
   const imageSrc = HOTEL_IMAGES[imageIndex % HOTEL_IMAGES.length];

@@ -3,8 +3,6 @@ import React from 'react';
 import BookingDetails from './BookingDetails';
 import PriceBreakdown from './PriceBreakdown';
 import GuestDetails from './GuestDetails';
-import ImportantInfo from './ImportantInfo';
-import CouponSection from './CouponSection';
 import './ReviewBooking.css';
 
 function ReviewBooking() {
