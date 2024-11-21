@@ -216,3 +216,191 @@ body {
   background-color: #003DFC;
   transform: translateY(-2px);
 }
+
+
+/* Keep your existing CSS and add these new styles */
+
+/* Booking Details Refinements */
+.booking-info {
+  margin: 15px 0;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.room-info {
+  margin-top: 20px;
+}
+
+.amenities-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.amenities-list li {
+  padding: 5px 0;
+  color: var(--font-color-dark);
+  display: flex;
+  align-items: center;
+}
+
+.amenities-list li:before {
+  content: "✓";
+  color: var(--primary-blue);
+  margin-right: 10px;
+}
+
+/* Price Breakdown Refinements */
+.price-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.price-item.total {
+  border-top: 2px solid var(--border-color);
+  border-bottom: none;
+  margin-top: 10px;
+  padding-top: 15px;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* Coupon Section Refinements */
+.coupon-input {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.coupon-input input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.apply-coupon-btn {
+  background-color: var(--primary-blue);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.apply-coupon-btn:hover {
+  background-color: #003DFC;
+}
+
+.coupon-message {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: var(--primary-blue);
+}
+
+/* Important Info Refinements */
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.info-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--font-color-dark);
+}
+
+.info-list li:last-child {
+  border-bottom: none;
+}
+
+/* Form Group Refinements */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-columns {
+  display: flex;
+  gap: 20px;
+}
+
+.form-columns > div {
+  flex: 1;
+}
+
+/* Responsive Design Improvements */
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+  }
+
+  .left-section, 
+  .right-section {
+    width: 100%;
+  }
+
+  .form-columns {
+    flex-direction: column;
+  }
+
+  .guest-details-form {
+    flex-direction: column;
+  }
+
+  .left-column,
+  .right-column {
+    width: 100%;
+  }
+}
+
+/* Loading States */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Error States */
+.error-message {
+  color: #dc2626;
+  background-color: #fee2e2;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+/* Success States */
+.success-message {
+  color: #059669;
+  background-color: #d1fae5;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+/* Animation for loading states */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.loading-pulse {
+  animation: pulse 1.5s infinite;
+}
+
+/* Button disabled state */
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

@@ -35,7 +35,7 @@ const SearchBar = ({ initialData }) => {
     };
 
     try {
-      const response = await fetch('http://3.16.159.54/hotel/api/search/', {
+      const response = await fetch('https://3.16.159.54/hotel/api/search/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,7 +45,6 @@ const SearchBar = ({ initialData }) => {
       });
 
       const data = await response.json();
-      console.log(data);
 
       if (!response.ok) {
         throw new Error(data.detail || 'Search failed');
@@ -134,20 +133,40 @@ const SearchBar = ({ initialData }) => {
   );
 };
 
-
 const HotelCard = ({ hotel }) => {
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
-  console.log(hotel);
+
   const handleImageError = () => {
     setImageError(true);
+  };
+
+  const handleBooking = () => {
+    navigate('/review-booking', {
+      state: {
+        hotelData: {
+          name: hotel.name,
+          location: hotel.location,
+          check_in_time: hotel.check_in_time,
+          check_out_time: hotel.check_out_time,
+          price: hotel.price,
+          guests: hotel.guests
+        },
+        bookingDetails: {
+          checkIn: hotel.check_in_time,
+          checkOut: hotel.check_out_time,
+          guests: hotel.guests,
+          price: hotel.price
+        }
+      }
+    });
   };
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
       <div className="relative">
         <img 
-          src={imageError ? "https://images.pexels.com/photos/${hotel.name}/pexels-photo-1134176.jpeg" : (hotel.hotel_photos || "/api/placeholder/400/300")}
+          src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : (hotel.hotel_photos || "/api/placeholder/400/300")}
           alt={hotel.name}
           onError={handleImageError}
           className="w-full h-64 object-cover"
@@ -205,7 +224,7 @@ const HotelCard = ({ hotel }) => {
         </div>
         
         <button 
-          onClick={() => navigate(`/hotel/${hotel.id}`)}
+          onClick={handleBooking}
           className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700 transition duration-300"
         >
           Book Now
@@ -245,7 +264,6 @@ const SearchPage = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {searchResults.map((hotel, index) => (
-              
               <HotelCard key={index} hotel={hotel} />
             ))}
           </div>

@@ -1,18 +1,33 @@
-// src/components/ReviewBooking/BookingDetails.js
+// src/components/Review_Booking/BookingDetails.js
 import React from 'react';
 
-function BookingDetails() {
+function BookingDetails({ hotelName, location, checkIn, checkOut, guests }) {
   return (
     <div className="booking-details">
-      <h3>Blue Origin Fams</h3>
-      <p>Galle, Sri Lanka</p>
-      <p><strong>Check-in:</strong> Nov 12, 2024, 2 PM</p>
-      <p><strong>Check-out:</strong> Nov 14, 2024, 12 PM</p>
-      <p><strong>Guests:</strong> 1 Adult | 1 Room</p>
+      <h3>{hotelName}</h3>
+      <p>{location}</p>
+      <div className="booking-info">
+        <div className="info-item">
+          <strong>Check-in:</strong>
+          <p>{checkIn}</p>
+        </div>
+        <div className="info-item">
+          <strong>Check-out:</strong>
+          <p>{checkOut}</p>
+        </div>
+        <div className="info-item">
+          <strong>Guests:</strong>
+          <p>{guests} Guest(s)</p>
+        </div>
+      </div>
       <div className="room-info">
-        <h4>Standard Room with Bathtub</h4>
-        <p>Breakfast, Express check-in</p>
-        <p>Non-Refundable</p>
+        <h4>Room Details</h4>
+        <p>Standard Room with Bathtub</p>
+        <ul className="amenities-list">
+          <li>Breakfast Included</li>
+          <li>Express check-in</li>
+          <li>Non-Refundable</li>
+        </ul>
       </div>
     </div>
   );
