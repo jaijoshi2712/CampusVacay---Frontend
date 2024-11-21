@@ -45,6 +45,7 @@ const SearchBar = ({ initialData }) => {
       });
 
       const data = await response.json();
+      console.log(data);
 
       if (!response.ok) {
         throw new Error(data.detail || 'Search failed');
@@ -137,7 +138,7 @@ const SearchBar = ({ initialData }) => {
 const HotelCard = ({ hotel }) => {
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
-
+  console.log(hotel);
   const handleImageError = () => {
     setImageError(true);
   };
@@ -146,7 +147,7 @@ const HotelCard = ({ hotel }) => {
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
       <div className="relative">
         <img 
-          src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : (hotel.hotel_photos || "/api/placeholder/400/300")}
+          src={imageError ? "https://images.pexels.com/photos/${hotel.name}/pexels-photo-1134176.jpeg" : (hotel.hotel_photos || "/api/placeholder/400/300")}
           alt={hotel.name}
           onError={handleImageError}
           className="w-full h-64 object-cover"
@@ -244,6 +245,7 @@ const SearchPage = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {searchResults.map((hotel, index) => (
+              
               <HotelCard key={index} hotel={hotel} />
             ))}
           </div>

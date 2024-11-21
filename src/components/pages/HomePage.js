@@ -16,13 +16,24 @@ const HOTEL_IMAGES = [
   'https://images.pexels.com/photos/2373201/pexels-photo-2373201.jpeg'
 ];
 
+
 const Header = () => {
   const [token, setToken] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [message, setMessage] = useState({ type: '', content: '' });
-
+  
   useEffect(() => {
+    function getCSRFToken() {
+      const csrfToken = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        ?.split('=')[1];
+      console.log(csrfToken);
+      localStorage.setItem('csrftoken',csrfToken);
+      //return csrfToken;
+    }getCSRFToken();
     const storedToken = localStorage.getItem('authToken');
+    
     if (storedToken) {
       setToken(storedToken);
     }
@@ -76,6 +87,10 @@ const Header = () => {
               {item}
             </li>
           ))}
+          <li className="list-none text-gray-600 hover:text-blue-700 cursor-pointer transition duration-300">
+              <a href="/dashboard">Dashboard</a>
+
+          </li>
         </nav>
         {token ? (
           <button onClick={handleLogout} className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
