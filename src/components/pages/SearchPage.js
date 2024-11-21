@@ -87,17 +87,14 @@ const SearchBar = ({ initialData }) => {
         </div>
         <div className="flex-1 min-w-[150px]">
           <label className="block mb-1 text-gray-600">Guests</label>
-          <select
+          <input
+            type="text"
             name="guests"
             value={searchData.guests}
             onChange={handleChange}
+            placeholder="Enter number of guests"
             className="w-full border border-gray-300 rounded-lg p-3"
-          >
-            <option value="">Select Guests</option>
-            {[1, 2, 3, 4, '5+'].map((num) => (
-              <option key={num} value={num}>{num} {num === 1 ? 'Guest' : 'Guests'}</option>
-            ))}
-          </select>
+          />
         </div>
         <div className="flex-1 min-w-[200px]">
           <label className="block mb-1 text-gray-600">Location</label>
@@ -136,6 +133,7 @@ const SearchBar = ({ initialData }) => {
     </div>
   );
 };
+
 
 const HotelCard = ({ hotel }) => {
   const navigate = useNavigate();

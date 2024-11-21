@@ -1,0 +1,393 @@
+/* Hotel Details Page Styles */
+.hotel-page {
+  padding-top: 80px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.hotel-container {
+  padding: 20px;
+}
+
+/* Title Styles */
+.hotel-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #2d3436;
+  margin-bottom: 10px;
+}
+
+.hotel-location {
+  font-size: 1.2rem;
+  color: #636e72;
+}
+
+/* Image Styles */
+.main-image-container {
+  width: 100%;
+  height: 400px;
+}
+
+.img-main {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.side-images {
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.img-side {
+  width: 100%;
+  height: 48%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* Description Styles */
+.hotel-description {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3436;
+  margin-bottom: 20px;
+}
+
+/* Booking Card Styles */
+.booking-card {
+  background: white;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.booking-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #2d3436;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.price-info {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.price {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #0984e3;
+}
+
+.per-night {
+  color: #636e72;
+  margin-left: 5px;
+}
+
+.book-now-btn {
+  width: 100%;
+  background-color: #0984e3 !important;
+  border: none !important;
+  padding: 12px !important;
+  font-weight: 600 !important;
+}
+
+.book-now-btn:hover {
+  background-color: #0878d3 !important;
+}
+
+/* Amenities Styles */
+.amenities-section {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  margin-top: 30px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.amenity-item {
+  text-align: center;
+  padding: 15px;
+  transition: transform 0.2s;
+}
+
+.amenity-item:hover {
+  transform: translateY(-5px);
+}
+
+.amenity-icon {
+  font-size: 1.8rem;
+  color: #0984e3;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.amenity-text {
+  color: #636e72;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .main-image-container {
+    height: 300px;
+    margin-bottom: 20px;
+  }
+
+  .side-images {
+    height: auto;
+  }
+
+  .img-side {
+    height: 200px;
+    margin-bottom: 20px;
+  }
+}
+
+
+
+
+/* Register Page Styles */
+.register-page {
+  min-height: 100vh;
+  background: #fff;
+}
+
+.register-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.register-left-panel {
+  flex: 1;
+  /* Replace background-image with gradient */
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(147, 197, 253, 0.1) 100%);
+  display: flex;
+  padding: 2rem;
+  position: relative;
+  align-items: flex-start;
+}
+
+/* Add a subtle overlay pattern for depth */
+.register-left-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
+  background-size: 10px 10px;
+  opacity: 0.5;
+}
+
+.register-logo {
+  position: relative;
+  z-index: 1; /* Ensure logo stays above the overlay */
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.logo-part-blue {
+  color: #2563EB; /* Adjusted blue color */
+}
+
+.logo-part-dark {
+  color: #1F2937; /* Darker color for better contrast */
+}
+
+.register-logo {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.logo-part-blue {
+  color: #0055FF;
+}
+
+.logo-part-dark {
+  color: #000;
+}
+
+.register-right-panel {
+  flex: 1;
+  padding: 2rem 4rem;
+  overflow-y: auto;
+}
+
+.register-form-container {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.register-header {
+  margin-bottom: 2rem;
+}
+
+.register-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.register-field {
+  margin-bottom: 1rem;
+}
+
+.register-field-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.register-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.register-input::placeholder {
+  color: #9CA3AF;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #6B7280;
+  font-size: 0.8rem;
+}
+
+.register-button {
+  width: 100%;
+  padding: 0.75rem;
+  background: #0055FF;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+
+.google-button {
+  width: 100%;
+  padding: 0.75rem;
+  background: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.terms-section {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #6B7280;
+  margin: 1rem 0;
+}
+
+.terms-section a {
+  color: #0055FF;
+  text-decoration: none;
+}
+
+.login-link {
+  text-align: center;
+}
+
+.login-link a {
+  color: #0055FF;
+  text-decoration: none;
+}
+
+.register-message {
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.register-message.success {
+  background: #DEF7EC;
+  color: #046C4E;
+}
+
+.register-message.error {
+  background: #FEE2E2;
+  color: #B91C1C;
+}
+
+@media (max-width: 768px) {
+  .register-container {
+    flex-direction: column;
+  }
+  
+  .register-left-panel {
+    height: 200px;
+  }
+  
+  .register-right-panel {
+    padding: 2rem;
+  }
+  
+  .register-field-group {
+    flex-direction: column;
+  }
+}
+
+/* Ensure all cards are the same height */
+.equal-height-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Container for images */
+.image-container {
+  height: 200px; /* Fixed height for all images */
+  overflow: hidden;
+}
+
+/* Make images fit uniformly */
+.room-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures the image scales without distortion */
+}
+
+/* Adjust card body to flex properly */
+.equal-height-card .card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
+
+
