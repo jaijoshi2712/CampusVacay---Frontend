@@ -29,11 +29,10 @@ const Header = () => {
         .find(row => row.startsWith('csrftoken='))
         ?.split('=')[1];
       console.log(csrfToken);
-      localStorage.setItem('csrftoken',csrfToken);
-      //return csrfToken;
-    }getCSRFToken();
+      localStorage.setItem('csrftoken', csrfToken);
+    }
+    getCSRFToken();
     const storedToken = localStorage.getItem('authToken');
-    
     if (storedToken) {
       setToken(storedToken);
     }
@@ -76,31 +75,24 @@ const Header = () => {
   return (
     <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'}`}>
       <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
-        {/* Updated Logo to remove underline */}
         <a href="#home" className="text-3xl font-bold text-blue-700 flex items-center no-underline">
           <Navigation className="mr-2" />
           CampusVacay.
         </a>
-        <nav className="hidden md:flex space-x-8 text-lg">
-          {['Home', 'Hotels', 'Rooms', 'About', 'Contact'].map((item) => (
-            <li key={item} className="list-none text-gray-600 hover:text-blue-700 cursor-pointer transition duration-300">
-              {item}
-            </li>
-          ))}
-          <li className="list-none text-gray-600 hover:text-blue-700 cursor-pointer transition duration-300">
-              <a href="/dashboard">Dashboard</a>
-
-          </li>
-        </nav>
-        {token ? (
-          <button onClick={handleLogout} className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
-            Logout
-          </button>
-        ) : (
-          <a href="/login" className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
-            Login
+        <div className="flex items-center space-x-4">
+          <a href="/dashboard" className="list-none text-gray-600 hover:text-blue-700 cursor-pointer transition duration-300">
+            Dashboard
           </a>
-        )}
+          {token ? (
+            <button onClick={handleLogout} className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
+              Logout
+            </button>
+          ) : (
+            <a href="/login" className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
+              Login
+            </a>
+          )}
+        </div>
       </div>
       {message.content && (
         <div className={`fixed top-16 right-8 p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
@@ -110,6 +102,7 @@ const Header = () => {
     </header>
   );
 };
+
 
 
 
