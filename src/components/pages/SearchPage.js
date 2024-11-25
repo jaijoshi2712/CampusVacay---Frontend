@@ -35,7 +35,7 @@ const SearchBar = ({ initialData }) => {
     };
 
     try {
-      const response = await fetch('https://3.16.159.54/hotel/api/search/', {
+      const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/search/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,8 +50,12 @@ const SearchBar = ({ initialData }) => {
         throw new Error(data.detail || 'Search failed');
       }
 
-      // Update the current page's state instead of navigating
-      window.location.reload();
+      navigate('/search', { 
+        state: { 
+          searchResults: data,
+          searchData: searchData 
+        } 
+      });
     } catch (error) {
       setError('Failed to perform search. Please try again.');
     } finally {
@@ -114,7 +118,7 @@ const SearchBar = ({ initialData }) => {
           {isLoading ? (
             <>
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              <span>Searching...</span>
+              <span className="ml-2">Searching...</span>
             </>
           ) : (
             <>
@@ -136,60 +140,88 @@ const SearchBar = ({ initialData }) => {
 const HotelCard = ({ hotel }) => {
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
+  const location = useLocation();
+  const searchData = location.state?.searchData;
+
+  // Get the lowest price room
+  const lowestPriceRoom = hotel.rooms.reduce((min, room) => 
+    room.price_per_night < (min?.price_per_night || Infinity) ? room : min
+  , null);
+
+  // Calculate maximum occupancy across all room types
+  const maxOccupancy = Math.max(...hotel.rooms.map(room => room.max_occupancy));
 
   const handleImageError = () => {
     setImageError(true);
   };
 
   const handleBooking = () => {
+    // Prepare the data for the booking review page
+    const hotelData = {
+      hotel_id: hotel.hotel_id,
+      name: hotel.hotel_name,
+      location: hotel.address,
+      check_in_time: hotel.check_in_time,
+      check_out_time: hotel.check_out_time,
+      description: hotel.description,
+      facilities: hotel.facilities,
+      rooms: hotel.rooms
+    };
+
+    const bookingDetails = {
+      checkIn: searchData?.check_in || '',
+      checkOut: searchData?.check_out || '',
+      guests: searchData?.guests || '',
+      price: lowestPriceRoom?.price_per_night || 0,
+      room_type: lowestPriceRoom?.room_type || '',
+      room_facilities: lowestPriceRoom?.facilities || '',
+      max_occupancy: lowestPriceRoom?.max_occupancy || 1
+    };
+
     navigate('/review-booking', {
       state: {
-        hotelData: {
-          name: hotel.name,
-          location: hotel.location,
-          check_in_time: hotel.check_in_time,
-          check_out_time: hotel.check_out_time,
-          price: hotel.price,
-          guests: hotel.guests
-        },
-        bookingDetails: {
-          checkIn: hotel.check_in_time,
-          checkOut: hotel.check_out_time,
-          guests: hotel.guests,
-          price: hotel.price
-        }
+        hotelData,
+        bookingDetails
       }
     });
   };
 
+  const formatTime = (timeString) => {
+    try {
+      const [hours, minutes] = timeString.split(':');
+      return new Date(2024, 0, 1, hours, minutes).toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
+      });
+    } catch (e) {
+      return timeString;
+    }
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
       <div className="relative">
         <img 
-          src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : (hotel.hotel_photos || "/api/placeholder/400/300")}
-          alt={hotel.name}
+          src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : "/api/placeholder/400/300"}
+          alt={hotel.hotel_name}
           onError={handleImageError}
           className="w-full h-64 object-cover"
         />
-        <div className="absolute top-4 left-4">
-          <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
-            ${hotel.price}/night
-          </span>
-        </div>
-        {hotel.student_discount && (
-          <div className="absolute top-4 right-4">
-            <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm">
-              {hotel.student_discount}% Student Discount
+        {lowestPriceRoom && (
+          <div className="absolute top-4 left-4">
+            <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+              From ${lowestPriceRoom.price_per_night}/night
             </span>
           </div>
         )}
       </div>
       
       <div className="p-6">
-        <h3 className="text-xl font-bold mb-2">{hotel.name}</h3>
+        <h3 className="text-xl font-bold mb-2">{hotel.hotel_name}</h3>
         <div className="flex items-center text-gray-600 mb-2">
           <MapPin size={16} className="mr-2" />
-          <span>{hotel.location}</span>
+          <span>{hotel.address}</span>
         </div>
         
         <div className="mb-4">
@@ -200,11 +232,11 @@ const HotelCard = ({ hotel }) => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <span className="text-gray-600 block">Check-in</span>
-              <span className="font-semibold">{hotel.check_in_time}</span>
+              <span className="font-semibold">{formatTime(hotel.check_in_time)}</span>
             </div>
             <div>
               <span className="text-gray-600 block">Check-out</span>
-              <span className="font-semibold">{hotel.check_out_time}</span>
+              <span className="font-semibold">{formatTime(hotel.check_out_time)}</span>
             </div>
           </div>
         </div>
@@ -219,6 +251,33 @@ const HotelCard = ({ hotel }) => {
               >
                 {facility.trim()}
               </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-4 border-t pt-4">
+          <h4 className="font-semibold mb-2">Available Rooms</h4>
+          <div className="space-y-2">
+            {hotel.rooms.map((room, index) => (
+              <div key={index} className="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
+                <div>
+                  <span className="text-gray-700 font-medium">{room.room_type}</span>
+                  <div className="text-sm text-gray-500">
+                    Max Occupancy: {room.max_occupancy} guests
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {room.facilities}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-blue-600 font-semibold">
+                    ${room.price_per_night}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    per night
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -263,8 +322,8 @@ const SearchPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {searchResults.map((hotel, index) => (
-              <HotelCard key={index} hotel={hotel} />
+            {searchResults.map((hotel) => (
+              <HotelCard key={hotel.hotel_id} hotel={hotel} />
             ))}
           </div>
         )}
