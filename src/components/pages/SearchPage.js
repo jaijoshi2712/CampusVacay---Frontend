@@ -35,7 +35,7 @@ const SearchBar = ({ initialData }) => {
     };
 
     try {
-      const response = await fetch('http://3.16.159.54/hotel/api/search/', {
+      const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/search/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

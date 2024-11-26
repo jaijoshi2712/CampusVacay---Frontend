@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useNavigate} from 'react';
 import { Form } from 'react-router-dom';
 import { MapPin, Navigation } from 'lucide-react';
+
 const Review = ({ hotel_id}) => {
     //const [review, setReview] = useState({rating: 0, comment: ''});
     const [editOpen, setEditOpen] = useState(0);
@@ -12,11 +13,11 @@ const Review = ({ hotel_id}) => {
     ]);
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
-    console.log(reviewData, reviewData.length);
+    //console.log(reviewData, reviewData.length);
     useEffect(() => {
         const fetchReviews = async () => {
           try {
-            const response = await fetch('http://3.16.159.54/hotel/api/reviews/4', {
+            const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reviews/', {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
@@ -28,8 +29,10 @@ const Review = ({ hotel_id}) => {
               throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            //setReviewData(data);
-            //console.log(data);
+            setReviewData(data[0]);
+            setRating(data[0].rating);
+            setComment(data[0].review);
+            console.log(data);
           } catch (error) {
             setError(error.message); // Handle errors
           } finally {
@@ -42,36 +45,75 @@ const Review = ({ hotel_id}) => {
     if (loading) {
         return <div>Loading...</div>;
     }
-    const handleSubmit = async(e) =>{
+    const handleSubmit = async(e, mode, id) =>{
         e.preventDefault();
-        console.log(rating, comment);
-        const hotel_id = 4;
-        try {
-            const response = await fetch(`http://3.16.159.54/hotel/api/reviews/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Token ' + localStorage.getItem('authToken'),
-                },
-                body: JSON.stringify({rating:rating, review:comment, hotel_id: hotel_id}),
-            });
-            const data = await response.json();
-            //console.log(data);
-            if (!response.ok) {
-                throw new Error(data.detail || 'Create failed');
+        //console.log(mode, rating, comment);
+        if(mode == 'create'){
+            try {
+                const response = await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reviews/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                    },
+                    body: JSON.stringify({rating:rating, review:comment, hotel_id: hotel_id}),
+                });
+                const data = await response.json();
+                //console.log(data);
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Create failed');
+                }
+                // Update the current page's state instead of navigating
+                window.location.reload();
+            } catch (error) {
+                setError('Failed to create. Please try again.');
             }
-            // Update the current page's state instead of navigating
-            window.location.reload();
-        } catch (error) {
-            setError('Failed to create. Please try again.');
-        } finally {
-            setLoading(false);
+        }else if( mode == 'edit'){
+            try {
+                const response = await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reviews/${id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                    },
+                    body: JSON.stringify({rating:rating, review:comment, hotel_id: hotel_id}),
+                });
+                const data = await response.json();
+                //console.log(data);
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Create failed');
+                }
+                // Update the current page's state instead of navigating
+                window.location.reload();
+            } catch (error) {
+                setError('Failed to create. Please try again.');
+            }
+        }else if( mode == 'delete'){
+            try {
+                const response = await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reviews/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                    },
+                    body: JSON.stringify({rating:rating, review:comment, hotel_id: hotel_id}),
+                });
+                const data = await response.json();
+                //console.log(data);
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Create failed');
+                }
+                // Update the current page's state instead of navigating
+                window.location.reload();
+            } catch (error) {
+                setError('Failed to create. Please try again.');
+            }
         }
     }
     const closeEdit = () => {
         setEditOpen(0);
-        setRating(0);
-        setComment('');
+        setRating(reviewData.rating);
+        setComment(reviewData.review);
     }
     const openEdit = () => {
         setEditOpen(1);
@@ -96,36 +138,74 @@ const Review = ({ hotel_id}) => {
                             X
                             </button>
                         </div>
-                        <div className="col-span-5">
-                            <div className="flex space-x-1">
-                                {Array.from({ length: 5 }, (_, index) => {
-                                    const starValue = index + 1;
-                                    return (
-                                    <span
-                                        key={starValue}
-                                        onClick={()=>handleClick(starValue)}
-                                        className={`cursor-pointer text-2xl ${
-                                        starValue <= rating ? 'text-yellow-500' : 'text-gray-400'
-                                        }`}
-                                    >
-                                        ★
-                                    </span>
-                                    );
-                                })}
-                            </div>
-                            <div className="pt-2">
-                                <input className="border w-full p-2" onChange={handleChange} id="comment" name="comment" value={comment} placeholder="Comment..."/>
-                            </div>
-                        </div>
-                        <div className="flex justify-end pt-5">
-                            <button onClick={handleSubmit} className="p-3 mx-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                                Save
-                            </button>
-                            <button onClick={closeEdit} className="p-3 mx-2 bg-gray-300 text-white rounded hover:bg-gray-400">
-                                Cancel
-                            </button>
-                        </div>
+                        {reviewData.length===0 ? (
                         <div>
+                            <div className="col-span-5">
+                                <div className="flex space-x-1">
+                                    {Array.from({ length: 5 }, (_, index) => {
+                                        const starValue = index + 1;
+                                        return (
+                                        <span
+                                            key={starValue}
+                                            onClick={()=>handleClick(starValue)}
+                                            className={`cursor-pointer text-2xl ${
+                                            starValue <= rating ? 'text-yellow-500' : 'text-gray-400'
+                                            }`}
+                                        >
+                                            ★
+                                        </span>
+                                        );
+                                    })}
+                                </div>
+                                <div className="pt-2">
+                                    <input className="border w-full p-2" onChange={handleChange} id="comment" name="comment" value={comment} placeholder="Comment..."/>
+                                </div>
+                            </div>
+                            
+                            <div className="flex justify-end pt-5">
+                                <button onClick={(e)=>handleSubmit(e, 'create', 0)} className="p-3 mx-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                                    Save
+                                </button>
+                                <button onClick={closeEdit} className="p-3 mx-2 bg-gray-300 text-white rounded hover:bg-gray-400">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                        ) : (
+                        <div>
+                            <div className="col-span-5">
+                                <div className="flex space-x-1">
+                                    {Array.from({ length: 5 }, (_, index) => {
+                                        const starValue = index + 1;
+                                        return (
+                                        <span
+                                            key={starValue}
+                                            onClick={()=>handleClick(starValue)}
+                                            className={`cursor-pointer text-2xl ${
+                                            starValue <= rating ? 'text-yellow-500' : 'text-gray-400'
+                                            }`}
+                                        >
+                                            ★
+                                        </span>
+                                        );
+                                    })}
+                                </div>
+                                <div className="pt-2">
+                                    <input className="border w-full p-2" onChange={handleChange} id="comment" name="comment" value={comment} placeholder={comment}/>
+                                </div>
+                            </div>
+                            
+                            <div className="flex justify-end pt-5">
+                                <button onClick={(e)=>handleSubmit(e, 'edit', )} className="p-3 mx-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                                    Edit
+                                </button>
+                                <button onClick={(e)=>handleSubmit(e, 'delete')} className="p-3 mx-2 bg-red-500 text-white rounded hover:bg-red-600">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                        )}
+                        {/*<div>
                         { reviewData && reviewData.length > 0 ?(
                         reviewData.map(item => (
                         <div key={item.id} className="grid grid-cols-6 p-2 my-2 bg-gray-100 rounded-md shadow-md hover:bg-gray-200 transition">
@@ -147,13 +227,13 @@ const Review = ({ hotel_id}) => {
                                     })}
                                 </div>
                                 <div className="pt-2">
-                                    <input disabled className="bg-white w-full p-2" value={item.comment}/>
+                                    <input disabled className="bg-white w-full p-2" value={item.review}/>
                                 </div>
                             </div>
                         </div>
                         
                         ))):(<div></div>)}
-                        </div>
+                        </div>*/}
                     </div>
                     
                 </div>
@@ -176,7 +256,7 @@ const HotelCard = ({ reservation , type }) => {
         
         try {
             /*console.log('ji');
-            const response = await fetch("http://3.16.159.54/hotel/api/hotel/reservations/", {
+            const response = await fetch("http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/hotel/reservations/", {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
@@ -190,7 +270,7 @@ const HotelCard = ({ reservation , type }) => {
             throw new Error("loading error!");
             }*/
             
-            await fetch(`http://3.16.159.54/student/api/reservation/${reservation.id}/cancel/`,{
+            await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/api/reservation/${reservation.id}/cancel/`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -313,17 +393,20 @@ const Reservations = () => {
     const [profile, setProfile] = useState(null);
     const [item,setItem] = useState(null);
     const [isReadOnly, setIsReadOnly] = useState(true);
-    const [date, setDate] = useState('');
+    const [todayDate, setDate] = useState(new Date());
     //temp data
-    const [reservationData, setReservationData] = useState('null');
-    const [pastData, setPastData] = useState(items.slice(0,2));
-    const [currentData, setCurrentData] = useState(items.slice(2,5));
-    const [futureData, setFutureData] = useState(items.slice(5,8));
+    const [reservationData, setReservationData] = useState([]);
+    //const [pastData, setPastData] = useState(items.slice(0,2));
+    //const [currentData, setCurrentData] = useState(items.slice(2,5));
+    //const [futureData, setFutureData] = useState(items.slice(5,8));
+    const [pastData, setPastData] = useState([]);
+    const [currentData, setCurrentData] = useState([]);
+    const [futureData, setFutureData] = useState([]);
     
     useEffect(() => {
         const fetchReservations = async () => {
           try {
-            const response = await fetch('http://3.16.159.54/student/api/student/reservations/', {
+            const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/api/student/reservations/', {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
@@ -335,7 +418,25 @@ const Reservations = () => {
               throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            setReservationData(data);
+    
+            const past = [];
+            const current = [];
+            const future = [];
+            data.forEach((item) => {
+                //const itemDate
+                if (new Date(item.check_out_date) < todayDate) {
+                  past.push(item);
+                } else if (new Date(item.check_in_date) > todayDate) {
+                  future.push(item);
+                } else {
+                  current.push(item);
+                }
+            });
+            setPastData(past);
+            setCurrentData(current);
+            setFutureData(future);
+            //console.log(date);
+            //setReservationData(data);
             //console.log(data);
           } catch (error) {
             setError(error.message); // Handle errors
@@ -344,6 +445,8 @@ const Reservations = () => {
           }
         };
         fetchReservations();
+
+        const today = new Date();
     }, []);
 
 
@@ -369,7 +472,9 @@ const Reservations = () => {
     const handleChange = (e) => {
         
     }
-    
+    if (loading){
+        return <div>Loading...</div>
+    }
     return (
         <div className=''>
             
@@ -400,9 +505,10 @@ const Reservations = () => {
                     <div>
                         <div className="my-5 text-4xl font-bold">Ongoing Reservations</div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {currentData.map((reservation,index) => (
-                            <HotelCard key={index} reservation={reservation} />
-                            ))}
+                            {currentData && currentData.length >0 ? (
+                                currentData.map((reservation,index) => (
+                            <HotelCard key={index} reservation={reservation} type="current"/>
+                            ))):(<div className="min-h-20">No Ongoing Reservations!</div>)}
                         </div>
                     </div>
                     }
@@ -410,9 +516,10 @@ const Reservations = () => {
                     <div>
                         <div className="my-5 text-4xl font-bold">Upcoming Reservations</div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {futureData.map((reservation,index) => (
+                            {futureData && futureData.length >0 ? (
+                                futureData.map((reservation,index) => (
                             <HotelCard key={index} reservation={reservation} type="future"/>
-                            ))}
+                            ))):(<div className="min-h-20">No Future Reservations!</div>)}
                         </div>
                     </div>
                     }
@@ -420,9 +527,10 @@ const Reservations = () => {
                     <div>
                         <div className="my-5 text-4xl font-bold">Past Reservations</div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {pastData.map((reservation,index) => (
+                            {pastData && pastData.length >0 ? (
+                                pastData.map((reservation,index) => (
                             <HotelCard key={index} reservation={reservation} type="past"/>
-                            ))}
+                            ))):(<div className="min-h-20">No Past Reservations!</div>)}
                         </div>
                     </div>
                     }
@@ -693,7 +801,7 @@ const Profile = () => {
     useEffect(() => {
         const fetchReservations = async () => {
           try {
-            const response = await fetch('http://3.16.159.54/student/student/profile/', {
+            const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/student/profile/', {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
@@ -725,7 +833,7 @@ const Profile = () => {
         const fetchData = async () => {
         try {
             /*console.log('ji');
-            const response = await fetch("http://3.16.159.54/hotel/api/hotel/reservations/", {
+            const response = await fetch("http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/hotel/reservations/", {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
@@ -738,7 +846,7 @@ const Profile = () => {
             if (!response.ok) {
             throw new Error("loading error!");
             }*//*
-            await fetch('http://3.16.159.54/student/student/profile/',{
+            await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/student/profile/',{
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -908,6 +1016,50 @@ const Profile = () => {
         </div>
     )
 }
+const CustomToast = () => (
+        <div>
+          <h4>Custom Notification</h4>
+          <p>This is a custom notification with a component inside it!</p>
+        </div>
+      );
+const Wishlist = () => {
+
+    const [notifications, setNotifications] = useState([]);
+
+  const addNotification = (message) => {
+    setNotifications([...notifications, message]);
+    setTimeout(() => {
+      setNotifications(notifications.filter((item) => item !== message));
+    }, 5000); // auto-remove after 5 seconds
+  };
+    
+      return (
+        <div>
+          <h1>Custom Notification System</h1>
+          <button onClick={() => addNotification("New notification!")}>
+            Show Notification
+          </button>
+          {notifications.length > 0 && (
+            <div style={{ position: "fixed", top: "10px", right: "10px" }}>
+              {notifications.map((notif, index) => (
+                <div
+                  key={index}
+                  style={{
+                    backgroundColor: "#444",
+                    color: "#fff",
+                    padding: "10px",
+                    margin: "5px",
+                    borderRadius: "5px",
+                  }}
+                >
+                  {notif}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+}
 
 
 const StudentDashboardPage = () => {
@@ -928,6 +1080,7 @@ const StudentDashboardPage = () => {
                     <ul>
                         <li className='pt-3'><button onClick={()=>setPage('profile')}>Profile</button></li>
                         <li className='pt-3'><button onClick={()=>setPage('reservations')}>Bookings</button></li>
+                        <li className='pt-3'><button onClick={()=>setPage('wishlist')}>Wishlist</button></li>
                         {/*<li className='pt-3'><button onClick={()=>setPage('reviews')}>Reviews</button></li>*/}
                     </ul>
                 </div>
@@ -945,6 +1098,7 @@ const StudentDashboardPage = () => {
                     </div>
                     {page==='profile' && (<Profile/>)}
                     {page==='reservations' && (<Reservations/>)}
+                    {page==='wishlist' && (<Wishlist/>)}
                 </div>
             </div>
         </div>

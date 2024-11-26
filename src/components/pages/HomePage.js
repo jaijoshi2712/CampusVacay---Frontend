@@ -52,7 +52,7 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
-      const url = `http://3.16.159.54/student/api/logout/`;
+      const url = `http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/api/logout/`;
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -188,7 +188,7 @@ const SearchBar = () => {
     };
 
     try {
-      const response = await fetch('https://3.16.159.54/hotel/api/search/', {
+      const response = await fetch('https://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/search/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
