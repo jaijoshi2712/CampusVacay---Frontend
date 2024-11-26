@@ -1,0 +1,218 @@
+/* Import modern fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+:root {
+  --primary-blue: #2563EB;
+  --background-gray: #f7f9fc;
+  --font-color-dark: #333;
+  --border-color: #e0e0e0;
+  --card-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f5f6fa;
+}
+
+/* Header Styling */
+.campusvacay-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background-color: white;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.campusvacay-header .logo-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.campusvacay-header .logo-part1 {
+  color: var(--primary-blue);
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.campusvacay-header .logo-part2 {
+  color: var(--font-color-dark);
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.campusvacay-header h2 {
+  color: var(--font-color-dark);
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+/* Main Container */
+.review-booking {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Content layout */
+.content {
+  display: flex;
+  gap: 20px;
+}
+
+.left-section, .right-section {
+  flex: 1;
+}
+
+/* Card Styling */
+.booking-details, .guest-details, .price-breakdown, .important-info, .coupon-section {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.booking-details h3, .guest-details h3, .price-breakdown h3, .important-info h3, .coupon-section h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--font-color-dark);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+}
+
+/* Form Fields */
+.guest-details label {
+  display: block;
+  font-weight: 500;
+  color: var(--font-color-dark);
+  margin-top: 12px;
+}
+
+.guest-details input, .guest-details select, .guest-details textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+/* Button Styling */
+.pay-now-container {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.pay-now-btn {
+  background-color: var(--primary-blue);
+  color: white;
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.pay-now-btn:hover {
+  background-color: #003DFC;
+  transform: translateY(-2px);
+}
+
+/* Right Section Summary Styling */
+.price-breakdown, .important-info, .coupon-section {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Guest Details Container Styling */
+.guest-details-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Guest Details Styling for Two-Column Layout */
+.guest-details {
+  width: 100%;
+  max-width: 900px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+}
+
+.guest-details h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--font-color-dark);
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+/* Form Layout */
+.guest-details-form {
+  display: flex;
+  gap: 20px;
+}
+
+.left-column, .right-column {
+  flex: 1;
+}
+
+.guest-details label {
+  display: block;
+  font-weight: 500;
+  color: var(--font-color-dark);
+  margin-top: 12px;
+}
+
+.guest-details input, .guest-details select, .guest-details textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--font-color-dark);
+}
+
+.guest-details textarea {
+  resize: vertical;
+}
+
+/* Pay Now Button */
+.pay-now-container {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.pay-now-btn {
+  background-color: var(--primary-blue);
+  color: white;
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.pay-now-btn:hover {
+  background-color: #003DFC;
+  transform: translateY(-2px);
+}
