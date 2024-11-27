@@ -130,11 +130,11 @@ const Review = ({ hotel_id}) => {
         <div>
             <button className="rounded bg-blue-500 p-2 text-white" onClick={openEdit}>Add Reviews</button>
             {editOpen!=0 && (
-                <div className="min-h-screen fixed inset-0 flex items-center justify-center bg-black bg-opacity-20 z-10">
-                    <div className=" bg-white rounded shadow-lg p-6 w-2/3">
-                        <div className="flex justify-between">
-                            <h2 className="text-4xl font-bold mb-4">Writing reviews for hotel {hotel_id}</h2>
-                            <button onClick={closeEdit} className="px-3 bg-red-500 text-white rounded hover:bg-red-600">
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white rounded shadow-lg p-6 max-h-screen w-4/5">
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-2xl font-bold mb-4">Writing reviews for hotel {hotel_id}</h2>
+                            <button onClick={closeEdit} className="p-3 bg-red-500 text-white rounded hover:bg-red-600">
                             X
                             </button>
                         </div>
@@ -162,11 +162,11 @@ const Review = ({ hotel_id}) => {
                                 </div>
                             </div>
                             
-                            <div className="flex justify-end pt-5">
-                                <button onClick={(e)=>handleSubmit(e, 'create', 0)} className="p-3 mx-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                            <div className="flex justify-end pt-2">
+                                <button onClick={(e)=>handleSubmit(e, 'create', 0)} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                                     Save
                                 </button>
-                                <button onClick={closeEdit} className="p-3 mx-2 bg-gray-300 text-white rounded hover:bg-gray-400">
+                                <button onClick={closeEdit} className="p-2 ml-2 bg-gray-300 text-white rounded hover:bg-gray-400">
                                     Cancel
                                 </button>
                             </div>
@@ -195,11 +195,11 @@ const Review = ({ hotel_id}) => {
                                 </div>
                             </div>
                             
-                            <div className="flex justify-end pt-5">
-                                <button onClick={(e)=>handleSubmit(e, 'edit', )} className="p-3 mx-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                            <div className="flex justify-end pt-2">
+                                <button onClick={(e)=>handleSubmit(e, 'edit', )} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                                     Edit
                                 </button>
-                                <button onClick={(e)=>handleSubmit(e, 'delete')} className="p-3 mx-2 bg-red-500 text-white rounded hover:bg-red-600">
+                                <button onClick={(e)=>handleSubmit(e, 'delete')} className="p-2 ml-2 bg-red-500 text-white rounded hover:bg-red-600">
                                     Delete
                                 </button>
                             </div>
@@ -491,7 +491,7 @@ const Reservations = () => {
                 <option value="past">Past</option>
                 </select>
             </div>
-            <div className='p-3 m-5 min-h-screen bg-white'>
+            <div className='p-3 m-3 min-h-screen bg-white'>
                 <div>
                     {/*<div className="grid grid-cols-6 p-2 bg-white rounded-md shadow-md hover:bg-gray-200 transition">
                         <div>#</div>
@@ -503,7 +503,7 @@ const Reservations = () => {
                     </div>*/}
                     {(sortBy=="now" || sortBy=="all") &&
                     <div>
-                        <div className="my-5 text-4xl font-bold">Ongoing Reservations</div>
+                        <div className="text-2xl font-bold">Ongoing Reservations</div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {currentData && currentData.length >0 ? (
                                 currentData.map((reservation,index) => (
@@ -514,7 +514,7 @@ const Reservations = () => {
                     }
                     {(sortBy=="future" || sortBy=="all") &&
                     <div>
-                        <div className="my-5 text-4xl font-bold">Upcoming Reservations</div>
+                        <div className="text-2xl font-bold">Upcoming Reservations</div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {futureData && futureData.length >0 ? (
                                 futureData.map((reservation,index) => (
@@ -525,7 +525,7 @@ const Reservations = () => {
                     }
                     {(sortBy=="past" || sortBy=="all") &&
                     <div>
-                        <div className="my-5 text-4xl font-bold">Past Reservations</div>
+                        <div className="text-2xl font-bold">Past Reservations</div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {pastData && pastData.length >0 ? (
                                 pastData.map((reservation,index) => (
@@ -931,63 +931,63 @@ const Profile = () => {
     }
 
     return (
-        <div className='p-5 min-h-screen'>
+        <div className='min-h-screen'>
             
-            <div className="flex justify-between items-center text-4xl pt-4 px-5">
+            <div className="flex justify-between items-center text-2xl pt-4 px-5">
                 Personal Profile
             </div>
-            <div className="relative p-5">
+            <div className="relative px-5">
             <form onSubmit={(e) => handleSubmit(e)}>
-                <div className="flex border-b py-5 items-center">
-                    <label className="w-1/3 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
+                <div className="flex border-b py-3 items-center">
+                    <label className="w-1/3 block text-gray-700 text-xl font-bold mr-4" htmlFor="username">
                         Username
                     </label>
                     <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
                         readOnly={isReadOnly} onChange={handleChange} id="username" name="username" type="text" value={item.username}/>
                 </div>
-                <div className="flex border-b py-5 items-center">
-                    <label className="w-1/3 block text-gray-700 text-3xl font-bold mr-4" htmlFor="email">
+                <div className="flex border-b py-3 items-center">
+                    <label className="w-1/3 block text-gray-700 text-xl font-bold mr-4" htmlFor="email">
                         E-mail
                     </label>
                     <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
                         readOnly={isReadOnly} onChange={handleChange} id="email" name="email" type="text" value={item.email}/>
                 </div>
-                <div className="flex border-b py-5 items-center">
-                    <label className="w-1/3 block text-gray-700 text-3xl font-bold mr-4" htmlFor="first_name">
+                <div className="flex border-b py-3 items-center">
+                    <label className="w-1/3 block text-gray-700 text-xl font-bold mr-4" htmlFor="first_name">
                         First Name
                     </label>
                     <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
                         readOnly={isReadOnly} onChange={handleChange} id="first_name" name="first_name" type="text" value={item.first_name}/>
                 </div>
-                <div className="flex border-b py-5 items-center">
-                    <label className="w-1/3 block text-gray-700 text-3xl font-bold mr-4" htmlFor="last_name">
+                <div className="flex border-b py-3 items-center">
+                    <label className="w-1/3 block text-gray-700 text-xl font-bold mr-4" htmlFor="last_name">
                         Last Name
                     </label>
                     <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
                         readOnly={isReadOnly} onChange={handleChange} id="last_name" name="last_name" type="text" value={item.last_name}/>
                 </div>
-                <div className="flex border-b py-5 items-center">
-                    <label className="w-1/3 block text-gray-700 text-3xl font-bold mr-4" htmlFor="dob">
+                <div className="flex border-b py-3 items-center">
+                    <label className="w-1/3 block text-gray-700 text-xl font-bold mr-4" htmlFor="dob">
                         Date of Birth
                     </label>
                     <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
                         readOnly={isReadOnly} onChange={handleChange} id="dob" name="dob" type="date" value={item.dob}/>
                 </div>
-                <div className="flex border-b py-5 items-center">
-                    <label className="w-1/3 block text-gray-700 text-3xl font-bold mr-4" htmlFor="phone_number">
+                <div className="flex border-b py-3 items-center">
+                    <label className="w-1/3 block text-gray-700 text-xl font-bold mr-4" htmlFor="phone_number">
                         Phone No.
                     </label>
                     <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
                         readOnly={isReadOnly} onChange={handleChange} id="phone_number" name="phone_number" type="text" value={item.phone_number}/>
                 </div>
-                <div className="flex border-b py-5 items-center">
-                    <label className="w-1/3 block text-gray-700 text-3xl font-bold mr-4" htmlFor="address">
+                <div className="flex border-b py-3 items-center">
+                    <label className="w-1/3 block text-gray-700 text-xl font-bold mr-4" htmlFor="address">
                         Address
                     </label>
                     <input
@@ -995,18 +995,18 @@ const Profile = () => {
                         readOnly={isReadOnly} onChange={handleChange} id="address" name="address" type="text" value={item.address}/>
                 </div>
                 {isReadOnly && (
-                <div className="flex justify-end pt-5">
-                    <button onClick={toggleReadOnly} className="p-3 bg-blue-500 text-white rounded hover:bg-blue-600">
+                <div className="flex justify-end pt-3">
+                    <button onClick={toggleReadOnly} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                         Edit
                     </button>
                 </div>
                 )}
                 {!isReadOnly && (
-                <div className="flex justify-end pt-5">
-                    <button onClick={handleSubmit} className="mx-2 p-3 bg-blue-500 text-white rounded hover:bg-blue-600">
+                <div className="flex justify-end pt-3">
+                    <button onClick={handleSubmit} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                         Save
                     </button>
-                    <button onClick={handleCancel} className="mx-2 p-3 bg-gray-400 text-white rounded hover:bg-gray-500">
+                    <button onClick={handleCancel} className="ml-2 p-2 bg-gray-400 text-white rounded hover:bg-gray-500">
                         Cancel
                     </button>
                 </div>
@@ -1068,7 +1068,7 @@ const StudentDashboardPage = () => {
     return (
         <div className="min-h-screen w-full bg-gray-100 flex">
             <div className="w-1/5 min-h-screen bg-white">
-                <div className='p-5 flex items-center justify-center text-center'>
+                <div className='p-1 text-center'>
                 <a href="/">
                     <div className="text-3xl font-bold text-blue-700 flex items-center">
                         <Navigation className="mr-2" />
@@ -1076,19 +1076,18 @@ const StudentDashboardPage = () => {
                     </div>
                 </a>
                 </div>
-                <div className='p-5'>
-                    <ul>
-                        <li className='pt-3'><button onClick={()=>setPage('profile')}>Profile</button></li>
-                        <li className='pt-3'><button onClick={()=>setPage('reservations')}>Bookings</button></li>
-                        <li className='pt-3'><button onClick={()=>setPage('wishlist')}>Wishlist</button></li>
-                        {/*<li className='pt-3'><button onClick={()=>setPage('reviews')}>Reviews</button></li>*/}
+                <div className='p-1'>
+                    <ul className="list-none p-0 m-0">
+                        <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('profile')}>Profile</li>
+                        <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('reservations')}>Bookings</li>
+                        <li className="p-2 hover:cursor-pointer hover:bg-gray-200">Wishlist</li>
                     </ul>
                 </div>
             </div>
             <div className='w-4/5 min-h-screen'>
-                <div className='p-5 min-h-screen'>
-                    <div className="flex justify-between items-center py-4 px-5">
-                        Hello!<br/>
+                <div className='p-1 min-h-screen'>
+                    <div className="flex justify-between items-center text-xl py-4 px-5">
+                        Hello, student!<br/>
                         Have a nice day!
                         <div className="relative">
                             <button className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition duration-300">
