@@ -377,28 +377,14 @@ const HotelCard = ({ reservation , type }) => {
 };
 
 const Reservations = () => {
-    const items=[
-        {id:1, hotel_id: 4, hotel_name: 'kevinhotel', room_type: 'single', check_in_date: '2024-08-01', check_out_date: '2024-08-10',guests: 4, 'status': 0},
-        {id:2, check_in_date: '2024-08-19', check_out_date: '2024-08-22',guests: 2, 'status': 0},
-        {id:3, check_in_date: '2024-08-20', check_out_date: '2024-09-01',guests: 4, 'status': 0},
-        {id:4, check_in_date: '2024-09-10', check_out_date: '2024-09-11',guests: 2, 'status': 0},
-        {id:5, check_in_date: '2024-09-30', check_out_date: '2024-10-10',guests: 4, 'status': 1},
-        {id:6, check_in_date: '2024-10-01', check_out_date: '2024-10-05',guests: 10, 'status': 0},
-        {id:7, check_in_date: '2024-11-21', check_out_date: '2024-11-24',guests: 5, 'status': 0},
-        {id:8, check_in_date: '2024-12-11', check_out_date: '2024-12-17',guests: 4, 'status': 0},
-    ];
-
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [profile, setProfile] = useState(null);
     const [item,setItem] = useState(null);
     const [isReadOnly, setIsReadOnly] = useState(true);
     const [todayDate, setDate] = useState(new Date());
-    //temp data
+    
     const [reservationData, setReservationData] = useState([]);
-    //const [pastData, setPastData] = useState(items.slice(0,2));
-    //const [currentData, setCurrentData] = useState(items.slice(2,5));
-    //const [futureData, setFutureData] = useState(items.slice(5,8));
     const [pastData, setPastData] = useState([]);
     const [currentData, setCurrentData] = useState([]);
     const [futureData, setFutureData] = useState([]);
