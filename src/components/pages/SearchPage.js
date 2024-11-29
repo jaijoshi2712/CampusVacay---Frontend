@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+
+
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Search, User, MapPin, Calendar } from 'lucide-react';
 
@@ -11,15 +13,93 @@ const SearchBar = ({ initialData }) => {
     guests: ''
   });
 
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  
+  const autocompleteService = useRef(null);
+  const wrapperRef = useRef(null);
+
+  useEffect(() => {
+    const initializeAutocomplete = () => {
+      if (window.google && window.google.maps && window.google.maps.places) {
+        autocompleteService.current = new window.google.maps.places.AutocompleteService();
+      } else {
+        setTimeout(initializeAutocomplete, 500);
+      }
+    };
+
+    initializeAutocomplete();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const fetchPlacePredictions = (input) => {
+    if (!input || !autocompleteService.current) {
+      setSuggestions([]);
+      return;
+    }
+
+    const searchConfig = {
+      input,
+      componentRestrictions: { country: 'us' }
+    };
+
+    autocompleteService.current.getPlacePredictions(
+      searchConfig,
+      (predictions, status) => {
+        if (status === 'OK' && predictions) {
+          const processedSuggestions = predictions.map(prediction => {
+            const mainText = prediction.structured_formatting.main_text;
+            const secondaryText = prediction.structured_formatting.secondary_text;
+            
+            return {
+              id: prediction.place_id,
+              mainText: mainText,
+              secondaryText: secondaryText,
+              description: prediction.description,
+              types: prediction.types
+            };
+          });
+          setSuggestions(processedSuggestions);
+          setShowSuggestions(true);
+        } else {
+          setSuggestions([]);
+        }
+      }
+    );
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSearchData((prev) => ({
+    setSearchData(prev => ({
       ...prev,
       [name]: value
     }));
+
+    if (name === 'location') {
+      fetchPlacePredictions(value);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setSearchData(prev => ({
+      ...prev,
+      location: suggestion.description
+    }));
+    setShowSuggestions(false);
   };
 
   const handleSearch = async (e) => {
@@ -91,24 +171,47 @@ const SearchBar = ({ initialData }) => {
         <div className="flex-1 min-w-[150px]">
           <label className="block mb-1 text-gray-600">Guests</label>
           <input
-            type="text"
+            type="number"
             name="guests"
             value={searchData.guests}
             onChange={handleChange}
-            placeholder="Enter number of guests"
+            placeholder="Number of guests"
+            min="1"
             className="w-full border border-gray-300 rounded-lg p-3"
           />
         </div>
-        <div className="flex-1 min-w-[200px]">
+        <div className="flex-1 min-w-[200px] relative" ref={wrapperRef}>
           <label className="block mb-1 text-gray-600">Location</label>
-          <input
-            type="text"
-            name="location"
-            value={searchData.location}
-            onChange={handleChange}
-            placeholder="Enter a city"
-            className="w-full border border-gray-300 rounded-lg p-3"
-          />
+          <div className="relative">
+            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+            <input
+              type="text"
+              name="location"
+              value={searchData.location}
+              onChange={handleChange}
+              placeholder="Enter location"
+              className="w-full border border-gray-300 rounded-lg p-3 pl-10"
+              autoComplete="off"
+            />
+
+{showSuggestions && suggestions.length > 0 && (
+              <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                {suggestions.map(suggestion => (
+                  <div
+                    key={suggestion.id}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
+                    onClick={() => handleSuggestionClick(suggestion)}
+                  >
+                    <MapPin size={16} className="mr-2 text-gray-400" />
+                    <div>
+                      <div className="text-gray-800">{suggestion.mainText}</div>
+                      <div className="text-sm text-gray-500">{suggestion.secondaryText}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
         <button
           type="submit"
@@ -118,7 +221,7 @@ const SearchBar = ({ initialData }) => {
           {isLoading ? (
             <>
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              <span className="ml-2">Searching...</span>
+              <span>Searching...</span>
             </>
           ) : (
             <>
@@ -156,7 +259,6 @@ const HotelCard = ({ hotel }) => {
   };
 
   const handleBooking = () => {
-    // Prepare the data for the booking review page
     const hotelData = {
       hotel_id: hotel.hotel_id,
       name: hotel.hotel_name,

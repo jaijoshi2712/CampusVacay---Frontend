@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, MapPin, Star, Navigation, Calendar, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './edits.css';
@@ -15,7 +16,6 @@ const HOTEL_IMAGES = [
   'https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg',
   'https://images.pexels.com/photos/2373201/pexels-photo-2373201.jpeg'
 ];
-
 
 const Header = () => {
   const [token, setToken] = useState(null);
@@ -103,9 +103,6 @@ const Header = () => {
   );
 };
 
-
-
-
 const Hero = () => (
   <section className="flex justify-between items-center py-32 px-6 bg-gradient-to-br from-white to-blue-50">
     <div className="max-w-6xl mx-auto flex flex-wrap lg:flex-nowrap items-center w-full">
@@ -156,15 +153,86 @@ const SearchBar = () => {
     guests: ''
   });
 
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  
+  const autocompleteService = useRef(null);
+  const wrapperRef = useRef(null);
+
+  useEffect(() => {
+    const initializeAutocomplete = () => {
+      if (window.google && window.google.maps && window.google.maps.places) {
+        autocompleteService.current = new window.google.maps.places.AutocompleteService();
+      } else {
+        setTimeout(initializeAutocomplete, 500);
+      }
+    };
+
+    initializeAutocomplete();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const fetchPlacePredictions = (input) => {
+    if (!input || !autocompleteService.current) {
+      setSuggestions([]);
+      return;
+    }
+
+    const searchConfig = {
+      input,
+     
+      componentRestrictions: { country: 'us' }
+    };
+
+    autocompleteService.current.getPlacePredictions(
+      searchConfig,
+      (predictions, status) => {
+        if (status === 'OK' && predictions) {
+          const processedSuggestions = predictions.map(prediction => ({
+            id: prediction.place_id,
+            description: prediction.description
+          }));
+          setSuggestions(processedSuggestions);
+          setShowSuggestions(true);
+        } else {
+          setSuggestions([]);
+        }
+      }
+    );
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSearchData((prev) => ({
+    setSearchData(prev => ({
       ...prev,
       [name]: value
     }));
+
+    if (name === 'location') {
+      fetchPlacePredictions(value);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setSearchData(prev => ({
+      ...prev,
+      location: suggestion.description
+    }));
+    setShowSuggestions(false);
   };
 
   const handleSearch = async (e) => {
@@ -236,29 +304,48 @@ const SearchBar = () => {
         <div className="flex-1 min-w-[150px]">
           <label className="block mb-1 text-gray-600">Guests</label>
           <input
-            type="text"
+            type="number"
             name="guests"
             value={searchData.guests}
             onChange={handleChange}
-            placeholder="Enter number of guests"
+            placeholder="Number of guests"
             className="w-full border border-gray-300 rounded-lg p-3"
+            min="1"
           />
         </div>
-        <div className="flex-1 min-w-[200px]">
+        <div className="flex-1 min-w-[200px] relative" ref={wrapperRef}>
           <label className="block mb-1 text-gray-600">Location</label>
-          <input
-            type="text"
-            name="location"
-            value={searchData.location}
-            onChange={handleChange}
-            placeholder="Enter a city"
-            className="w-full border border-gray-300 rounded-lg p-3"
-          />
+          <div className="relative">
+            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+            <input
+              type="text"
+              name="location"
+              value={searchData.location}
+              onChange={handleChange}
+              placeholder="Enter a city"
+              className="w-full border border-gray-300 rounded-lg p-3 pl-10"
+              autoComplete="off"
+            />
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                {suggestions.map(suggestion => (
+                  <div
+                    key={suggestion.id}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
+                    onClick={() => handleSuggestionClick(suggestion)}
+                  >
+                    <MapPin size={16} className="mr-2 text-gray-400" />
+                    <span>{suggestion.description}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
         <button
           type="submit"
           disabled={isLoading}
-          className="bg-blue-700 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition duration-300 flex items-center"
+          className="bg-blue-700 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition duration-300 flex items-center self-end"
         >
           {isLoading ? (
             <>
@@ -281,7 +368,6 @@ const SearchBar = () => {
     </div>
   );
 };
-
 
 const PropertyCard = ({ imageIndex, price, name, location, popular }) => {
   const imageSrc = HOTEL_IMAGES[imageIndex % HOTEL_IMAGES.length];
@@ -334,8 +420,6 @@ const PropertyGrid = () => {
   );
 };
 
-
-
 const Footer = () => (
   <footer className="bg-gray-800 text-gray-200 py-6">
     <div className="max-w-6xl mx-auto px-6 flex flex-wrap justify-between items-start">
@@ -376,3 +460,9 @@ const HomePage = () => (
 );
 
 export default HomePage;
+
+
+
+
+
+
