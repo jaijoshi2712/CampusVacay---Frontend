@@ -528,9 +528,9 @@ const Details = ({item}) => {
     })
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+        console.log(item.id);
         try {
-            const response = await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reservation/${item.id}/update/`, {
+            const response = await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reservations/${item.id}/`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1124,7 +1124,6 @@ const Profile = () => {
                 setError(error.message); // Handle any errors
                 setLoading(false); // Set loading to false
             });
-
             //const data = await response.json();
             //console.log(data, response);
             //setReservationData(data);
@@ -1134,9 +1133,7 @@ const Profile = () => {
             setLoading(false);
         }
         };
-
         fetchData();
-
     }, []);
     
     const handleSubmit = async (e) => {
@@ -1466,20 +1463,13 @@ const NotificationBell = () => {
 
 const DashboardPage = () => {
     const [page, setPage] = useState('profile');
-    
 
     useEffect(() => {
         const savedPage = localStorage.getItem('currentPage');
         if (savedPage) {
           setPage(savedPage);
         }
-
-        
-
-        
     }, []);
-    
-      // Save page state to localStorage whenever it changes
     useEffect(() => {
         localStorage.setItem('currentPage', page);
     }, [page]);

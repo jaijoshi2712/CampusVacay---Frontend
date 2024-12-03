@@ -2,17 +2,16 @@ import React, { useState, useEffect, useNavigate} from 'react';
 import { Form } from 'react-router-dom';
 import { MapPin, Navigation } from 'lucide-react';
 
-const Review = ({ hotel_id}) => {
+const Review = ({ hotel_id }) => {
     //const [review, setReview] = useState({rating: 0, comment: ''});
     const [editOpen, setEditOpen] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [reviewData, setReviewData] = useState([
-        {id:1, rating: 2, comment:'not bad'},
-        {id:2, rating: 4, comment:'very nice'},
-    ]);
+    const [reviewData, setReviewData] = useState([]);
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
+    const [message, setMessage] = useState({ type: '', content: '' });
+    
     //console.log(reviewData, reviewData.length);
     useEffect(() => {
         const fetchReviews = async () => {
@@ -29,10 +28,17 @@ const Review = ({ hotel_id}) => {
               throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            setReviewData(data[0]);
-            setRating(data[0].rating);
-            setComment(data[0].review);
-            console.log(data);
+            //console.log(data, hotel_id);
+            data.forEach(d => {
+                if (d.hotel===hotel_id){
+                    //console.log(d);
+                    setReviewData(d);
+                    setRating(d.rating);
+                    setComment(d.review);
+                }
+            });
+            //setReviewData(data[0]);
+            
           } catch (error) {
             setError(error.message); // Handle errors
           } finally {
@@ -63,14 +69,21 @@ const Review = ({ hotel_id}) => {
                 if (!response.ok) {
                     throw new Error(data.detail || 'Create failed');
                 }
-                // Update the current page's state instead of navigating
-                window.location.reload();
+                setEditOpen(0);
+                setMessage({ type: 'success', content: 'Review Created successfully!' });
+                setTimeout(() => {
+                    window.location.reload();
+                    setMessage({type: '', content: ''});
+                }, 5000);
             } catch (error) {
-                setError('Failed to create. Please try again.');
+                setMessage({ type: 'error', content: error.message });
+                setTimeout(() => {
+                    setMessage({type: '', content: ''});
+                }, 5000);
             }
         }else if( mode == 'edit'){
             try {
-                const response = await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reviews/${id}`, {
+                const response = await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reviews/${id}/`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
@@ -84,29 +97,39 @@ const Review = ({ hotel_id}) => {
                     throw new Error(data.detail || 'Create failed');
                 }
                 // Update the current page's state instead of navigating
-                window.location.reload();
+                setEditOpen(0);
+                setMessage({ type: 'success', content: 'Review Edited successfully!' });
+                setTimeout(() => {
+                    window.location.reload();
+                    setMessage({type: '', content: ''});
+                }, 5000);
             } catch (error) {
-                setError('Failed to create. Please try again.');
+                setMessage({ type: 'error', content: error.message });
+                setTimeout(() => {
+                    setMessage({type: '', content: ''});
+                }, 5000);
             }
         }else if( mode == 'delete'){
             try {
-                const response = await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reviews/`, {
-                    method: 'POST',
+                const response = await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reviews/${id}/`, {
+                    method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Token ' + localStorage.getItem('authToken'),
                     },
-                    body: JSON.stringify({rating:rating, review:comment, hotel_id: hotel_id}),
+                    //body: JSON.stringify({rating:rating, review:comment, hotel_id: hotel_id}),
                 });
-                const data = await response.json();
-                //console.log(data);
-                if (!response.ok) {
-                    throw new Error(data.detail || 'Create failed');
-                }
-                // Update the current page's state instead of navigating
-                window.location.reload();
+                setEditOpen(0);
+                setMessage({ type: 'success', content: 'Review Deleted successfully!' });
+                setTimeout(() => {
+                    window.location.reload();
+                    setMessage({type: '', content: ''});
+                }, 5000);
             } catch (error) {
-                setError('Failed to create. Please try again.');
+                setMessage({ type: 'error', content: error.message });
+                setTimeout(() => {
+                    setMessage({type: '', content: ''});
+                }, 5000);
             }
         }
     }
@@ -128,6 +151,11 @@ const Review = ({ hotel_id}) => {
     
     return (
         <div>
+            {message.content && (
+                <div className={`fixed top-16 right-8 p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                {message.content}
+                </div>
+            )}
             <button className="rounded bg-blue-500 p-2 text-white" onClick={openEdit}>Add Reviews</button>
             {editOpen!=0 && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -196,10 +224,10 @@ const Review = ({ hotel_id}) => {
                             </div>
                             
                             <div className="flex justify-end pt-2">
-                                <button onClick={(e)=>handleSubmit(e, 'edit', )} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                                <button onClick={(e)=>handleSubmit(e, 'edit', reviewData.id)} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                                     Edit
                                 </button>
-                                <button onClick={(e)=>handleSubmit(e, 'delete')} className="p-2 ml-2 bg-red-500 text-white rounded hover:bg-red-600">
+                                <button onClick={(e)=>handleSubmit(e, 'delete', reviewData.id)} className="p-2 ml-2 bg-red-500 text-white rounded hover:bg-red-600">
                                     Delete
                                 </button>
                             </div>
@@ -345,7 +373,7 @@ const HotelCard = ({ reservation , type }) => {
                     </div>
                 </div>
                 {type=='past' &&
-                    <Review hotel_id={reservation.hotel_id}/>
+                    <Review hotel_id={reservation.hotel}/>
                 }
             </div>
             
@@ -418,12 +446,10 @@ const Reservations = () => {
                   current.push(item);
                 }
             });
+            console.log('1', data);
             setPastData(past);
             setCurrentData(current);
             setFutureData(future);
-            //console.log(date);
-            //setReservationData(data);
-            //console.log(data);
           } catch (error) {
             setError(error.message); // Handle errors
           } finally {
@@ -431,33 +457,10 @@ const Reservations = () => {
           }
         };
         fetchReservations();
-
-        const today = new Date();
     }, []);
-
-
 
     const [sortBy, setSortBy] = useState('all');
 
-    const [editOpen, setEditOpen] = useState(0); 
-
-    const openEdit = (id) => {
-        //const selectedItem = items.find(item => item.id === id);
-        setEditOpen(id);
-        
-
-        //const files = Array.from(createRoom.images); // 獲取選擇的文件
-        //const imageUrls = files.map(file => URL.createObjectURL(file)); // 生成圖片的 URL
-        //setSelectedImages(prevImages => [...prevImages, ...imageUrls]);
-    }
-    const closeEdit = () => setEditOpen(0);
-
-    const handleSubmit = async (e, mode, id) => {
-        //
-    };
-    const handleChange = (e) => {
-        
-    }
     if (loading){
         return <div>Loading...</div>
     }
@@ -520,173 +523,6 @@ const Reservations = () => {
                         </div>
                     </div>
                     }
-                    {/*{pastData.map(item => (
-                    <div key={item.id} className="grid grid-cols-6 p-2 my-2 bg-gray-100 rounded-md shadow-md hover:bg-gray-200 transition">
-                        <div>{item.id}</div>
-                        <div>{item.check_in_date}</div>
-                        <div>{item.check_out_date}</div>
-                        <div>{item.guests}</div>
-                        <div>{item.status}</div>
-                        <div>
-                            <button onClick={()=>openEdit(item.id)} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                                Details
-                            </button>
-                        </div>
-                        {editOpen!=0 && (
-                            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-20">
-                            <div className="bg-white rounded shadow-lg p-6 w-2/3">
-                                <div className="flex justify-between">
-                                    <h2 className="text-4xl font-bold mb-4">Details for reservation at hotel_name, room_type</h2>
-                                    <button onClick={closeEdit} className="px-3 bg-red-500 text-white rounded hover:bg-red-600">
-                                    X
-                                    </button>
-                                </div>
-                                <div>
-                                <div className="w-full h-full border rounded m-2">
-                                        <div className="flex border-b items-center">
-                                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                                                First Name:
-                                            </label>
-                                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                Kai-Lun
-                                            </span>
-                                        </div>
-                                        <div className="flex border-b items-center">
-                                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                                                Last Name:
-                                            </label>
-                                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                Yen
-                                            </span>
-                                        </div>
-                                        <div className="flex border-b items-center">
-                                            <label className="w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                                                Guests:
-                                            </label>
-                                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                4
-                                            </span>
-                                        </div>
-                                        <div className="flex border-b items-center">
-                                            <label className="w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                                                Email:
-                                            </label>
-                                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                123@mail.com
-                                            </span>
-                                        </div>
-                                        <div className="flex border-b items-center">
-                                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                                                Phone No:
-                                            </label>
-                                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                1231237891
-                                            </span>
-                                        </div>
-                                        <div className="flex border-b items-center">
-                                            <label className="w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                                                Payment:
-                                            </label>
-                                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                Credit Card
-                                            </span>
-                                        </div>
-                                        <div className="flex border-b items-center">
-                                            <label className="w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                                                Check In:
-                                            </label>
-                                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                2024-10-10
-                                            </span>
-                                        </div>
-                                        <div className="flex border-b items-center">
-                                            <label className="w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                                                Check Out:
-                                            </label>
-                                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                2024-10-15
-                                            </span>
-                                        </div>
-                                        <div className="flex border-b items-center">
-                                            <label className="w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                                                Expected Arrival Time:
-                                            </label>
-                                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                11:00
-                                            </span>
-                                        </div>
-                                        <div className="flex border-b items-center">
-                                            <label className="w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                                                Special Requests
-                                            </label>
-                                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                None
-                                            </span>
-                                        </div>
-                                        <div className="flex border-b items-center">
-                                            <label className="w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                                                Cancelled?
-                                            </label>
-                                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                1
-                                            </span>
-                                        </div>
-                                        <div className="flex border-b items-center">
-                                            <label className="w-1/3 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                                                Cancellation Date:
-                                            </label>
-                                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                1
-                                            </span>
-                                        </div>
-                                        <div className="flex border-b items-center">
-                                            <label className="w-1/3 whitespace-nowrap p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                                                Cancellation Reason:
-                                            </label>
-                                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                                1
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            </div>
-                        )}
-                    </div>
-
-                    
-                    
-                    ))}*/}
-                    
-                    {/*{futureData.map(item => (
-                    <div key={item.id} className="grid grid-cols-6 p-2 my-2 bg-gray-100 rounded-md shadow-md hover:bg-gray-200 transition">
-                        <div>{item.id}</div>
-                        <div>{item.check_in_date}</div>
-                        <div>{item.check_out_date}</div>
-                        <div>{item.guests}</div>
-                        <div>{item.status}</div>
-                        <div>
-                            <button onClick={()=>openEdit(item.id)} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                                Details
-                            </button>
-                        </div>
-                    </div>
-                    ))}*/}
-                    {/*{currentData.map(item => (
-                    <div key={item.id} className="grid grid-cols-6 p-2 my-2 bg-gray-100 rounded-md shadow-md hover:bg-gray-200 transition">
-                        <div>{item.id}</div>
-                        <div>{item.check_in_date}</div>
-                        <div>{item.check_out_date}</div>
-                        <div>{item.guests}</div>
-                        <div>{item.status}</div>
-                        <div>
-                            <button onClick={()=>openEdit(item.id)} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                                Details
-                            </button>
-                        </div>
-                    </div>
-                    ))}*/}
-                    
                 </div>
                 
             </div>
@@ -694,90 +530,7 @@ const Reservations = () => {
     )
 };
 
-
-{/*const Reviews = () => {
-    const items=[
-        {id:1, rating: 2, comment:'not bad'},
-        {id:2, rating: 4, comment:'nice'}
-    ];
-
-    const [sortBy, setSortBy] = useState('guests');
-    
-    const sortedItems = [...items].sort((a, b) => {
-        if (sortBy === 'guests') {
-          return a.guests-b.guests;
-        }
-        return a.id - b.id;
-    });
-
-    const [rating, setRating] = useState(0);
-    
-    const handleClick = (value) => {
-        setRating(value);
-    };
-    
-    return (
-        <div className='p-5 min-h-screen'>
-            <div className="flex justify-between items-center py-4 px-5">
-                Hello!<br/>
-                Have a nice day!
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
-                    Hotel
-                </button>
-            </div>
-            <div className="relative p-5">
-                <input type="text" className="border border-gray-300 rounded-lg pl-5 pr-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search..."/>
-                
-            </div>
-            
-            <div className='p-3 m-5 min-h-screen bg-white'>
-                <div>
-                    <div className="grid grid-cols-6 p-2 bg-white rounded-md shadow-md hover:bg-gray-200 transition">
-                        <div>#</div>
-                        <div className="col-span-5">Comments</div>
-                    </div>
-                    {sortedItems.map(item => (
-                    <div key={item.id} className="grid grid-cols-6 p-2 my-2 bg-gray-100 rounded-md shadow-md hover:bg-gray-200 transition">
-                        <div>{item.id}</div>
-                        <div className="col-span-5">
-                            <div className="flex space-x-1">
-                                {Array.from({ length: 5 }, (_, index) => {
-                                    const starValue = index + 1;
-                                    return (
-                                    <span
-                                        key={starValue}
-                                        onClick={() => handleClick(starValue)}
-                                        className={`cursor-pointer text-2xl ${
-                                        starValue <= item.rating ? 'text-yellow-500' : 'text-gray-400'
-                                        }`}
-                                    >
-                                        ★
-                                    </span>
-                                    );
-                                })}
-                            </div>
-                            <div className="pt-2">
-                                <input className="border w-full p-2" value={item.comment} placeholder="Comment..."/>
-                            </div>
-                        </div>
-                    
-                    </div>
-                    
-                    ))}
-                    
-
-                </div>
-            </div>
-        </div>
-    )
-};*/}
-
-
 const Profile = () => {
-    const items=[
-        {id:1, dob: '1999-06-16', check_in_date: '2024-08-01', check_out_date: '2024-08-10',guests: 4, 'status': 0},
-    ];
-
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [profile, setProfile] = useState(null);
@@ -785,7 +538,7 @@ const Profile = () => {
     const [isReadOnly, setIsReadOnly] = useState(true);
     
     useEffect(() => {
-        const fetchReservations = async () => {
+        const fetchProfile = async () => {
           try {
             const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/student/profile/', {
               method: 'GET',
@@ -794,15 +547,11 @@ const Profile = () => {
                 'Authorization': 'Token ' + localStorage.getItem('authToken'),
               }
             });
-    
             if (!response.ok) {
               throw new Error('Network response was not ok');
             }
-    
             const data = await response.json();
-            //setReservationData(data); // Set the fetched data to state
-            //setFilteredOrders(data);
-            console.log(data);
+            //console.log(data);
             setProfile(data);
             setItem(data);
           } catch (error) {
@@ -812,62 +561,8 @@ const Profile = () => {
           }
         };
     
-        fetchReservations();
+        fetchProfile();
       }, []);
-
-    /*useEffect(() => {
-        const fetchData = async () => {
-        try {
-            /*console.log('ji');
-            const response = await fetch("http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/hotel/reservations/", {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': 'Token ' + localStorage.getItem('authToken'),
-                  'Accept': 'application/json',
-                },
-                body: JSON.stringify(''),
-            });
-            console.log('hi');
-            if (!response.ok) {
-            throw new Error("loading error!");
-            }*//*
-            await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/student/profile/',{
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Token ' + localStorage.getItem('authToken'),
-                }
-            }) // API URL
-            .then((response) => {
-                if (!response.ok) {
-                throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                setProfile(data);
-                setItem(data);
-                setLoading(false); // Set loading to false
-            })
-            .catch((error) => {
-                setError(error.message); // Handle any errors
-                setLoading(false); // Set loading to false
-            });*/
-
-            //const data = await response.json();
-            //console.log(data, response);
-            //setReservationData(data);
-        /*} catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-        };
-
-        fetchData();
-
-    }, []);*/
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -882,14 +577,11 @@ const Profile = () => {
               },
               body: JSON.stringify(''),
             });
-      
             const data = await response.json();
-      
             if (!response.ok) {
               throw new Error(data.detail || 'edit failed');
             }
             console.log('Edit successful:', data);
-            
         }catch (error) {
             setError(error.message);
         }
@@ -905,9 +597,6 @@ const Profile = () => {
         setItem(profile);
         toggleReadOnly();
     }
-
-    
-
     const toggleReadOnly = () => {
         setIsReadOnly((prev) => !prev);
     };
@@ -1049,8 +738,18 @@ const Wishlist = () => {
 
 
 const StudentDashboardPage = () => {
-    const [page, setPage] = useState('reservations');
-    
+    const [page, setPage] = useState('profile');
+
+    useEffect(() => {
+        const savedPage = localStorage.getItem('currentPage');
+        if (savedPage) {
+          setPage(savedPage);
+        }
+    }, []);
+    useEffect(() => {
+        localStorage.setItem('currentPage', page);
+    }, [page]);
+
     return (
         <div className="min-h-screen w-full bg-gray-100 flex">
             <div className="w-1/5 min-h-screen bg-white">
