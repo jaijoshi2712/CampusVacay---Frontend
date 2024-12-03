@@ -1,15 +1,32 @@
-// src/components/ReviewBooking/PriceBreakdown.js
+// src/components/Review_Booking/PriceBreakdown.js
 import React from 'react';
 
-function PriceBreakdown() {
+function PriceBreakdown({ price }) {
+  // Calculate additional fees
+  const taxRate = 0.1; // 10% tax
+  const tax = price * taxRate;
+  const serviceFee = 20; // Fixed service fee
+  const total = price + tax + serviceFee;
+
   return (
     <div className="price-breakdown">
       <h3>Price Breakdown</h3>
-      <p>1 Room x 2 Nights: $400</p>
-      <p>Total Discount: -$50</p>
-      <p>Price After Discount: $350</p>
-      <p>Taxes & Service Fees: $30</p>
-      <p><strong>Total Amount: $380</strong></p>
+      <div className="price-item">
+        <span>Room Rate</span>
+        <span>${price}</span>
+      </div>
+      <div className="price-item">
+        <span>Taxes ({taxRate * 100}%)</span>
+        <span>${tax.toFixed(2)}</span>
+      </div>
+      <div className="price-item">
+        <span>Service Fee</span>
+        <span>${serviceFee}</span>
+      </div>
+      <div className="price-item total">
+        <span>Total Amount</span>
+        <span>${total.toFixed(2)}</span>
+      </div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, MapPin, Star, Navigation, Calendar, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './edits.css';
@@ -16,7 +17,6 @@ const HOTEL_IMAGES = [
   'https://images.pexels.com/photos/2373201/pexels-photo-2373201.jpeg'
 ];
 
-
 const Header = () => {
   const [token, setToken] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -29,11 +29,10 @@ const Header = () => {
         .find(row => row.startsWith('csrftoken='))
         ?.split('=')[1];
       console.log(csrfToken);
-      localStorage.setItem('csrftoken',csrfToken);
-      //return csrfToken;
-    }getCSRFToken();
+      localStorage.setItem('csrftoken', csrfToken);
+    }
+    getCSRFToken();
     const storedToken = localStorage.getItem('authToken');
-    
     if (storedToken) {
       setToken(storedToken);
     }
@@ -76,31 +75,24 @@ const Header = () => {
   return (
     <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'}`}>
       <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
-        {/* Updated Logo to remove underline */}
         <a href="#home" className="text-3xl font-bold text-blue-700 flex items-center no-underline">
           <Navigation className="mr-2" />
           CampusVacay.
         </a>
-        <nav className="hidden md:flex space-x-8 text-lg">
-          {['Home', 'Hotels', 'Rooms', 'About', 'Contact'].map((item) => (
-            <li key={item} className="list-none text-gray-600 hover:text-blue-700 cursor-pointer transition duration-300">
-              {item}
-            </li>
-          ))}
-          <li className="list-none text-gray-600 hover:text-blue-700 cursor-pointer transition duration-300">
-              <a href="/dashboard">Dashboard</a>
-
-          </li>
-        </nav>
-        {token ? (
-          <button onClick={handleLogout} className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
-            Logout
-          </button>
-        ) : (
-          <a href="/login" className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
-            Login
+        <div className="flex items-center space-x-4">
+          <a href="/dashboard" className="list-none text-gray-600 hover:text-blue-700 cursor-pointer transition duration-300">
+            Dashboard
           </a>
-        )}
+          {token ? (
+            <button onClick={handleLogout} className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
+              Logout
+            </button>
+          ) : (
+            <a href="/login" className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
+              Login
+            </a>
+          )}
+        </div>
       </div>
       {message.content && (
         <div className={`fixed top-16 right-8 p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
@@ -110,8 +102,6 @@ const Header = () => {
     </header>
   );
 };
-
-
 
 const Hero = () => (
   <section className="flex justify-between items-center py-32 px-6 bg-gradient-to-br from-white to-blue-50">
@@ -163,15 +153,86 @@ const SearchBar = () => {
     guests: ''
   });
 
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  
+  const autocompleteService = useRef(null);
+  const wrapperRef = useRef(null);
+
+  useEffect(() => {
+    const initializeAutocomplete = () => {
+      if (window.google && window.google.maps && window.google.maps.places) {
+        autocompleteService.current = new window.google.maps.places.AutocompleteService();
+      } else {
+        setTimeout(initializeAutocomplete, 500);
+      }
+    };
+
+    initializeAutocomplete();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const fetchPlacePredictions = (input) => {
+    if (!input || !autocompleteService.current) {
+      setSuggestions([]);
+      return;
+    }
+
+    const searchConfig = {
+      input,
+     
+      componentRestrictions: { country: 'us' }
+    };
+
+    autocompleteService.current.getPlacePredictions(
+      searchConfig,
+      (predictions, status) => {
+        if (status === 'OK' && predictions) {
+          const processedSuggestions = predictions.map(prediction => ({
+            id: prediction.place_id,
+            description: prediction.description
+          }));
+          setSuggestions(processedSuggestions);
+          setShowSuggestions(true);
+        } else {
+          setSuggestions([]);
+        }
+      }
+    );
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSearchData((prev) => ({
+    setSearchData(prev => ({
       ...prev,
       [name]: value
     }));
+
+    if (name === 'location') {
+      fetchPlacePredictions(value);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setSearchData(prev => ({
+      ...prev,
+      location: suggestion.description
+    }));
+    setShowSuggestions(false);
   };
 
   const handleSearch = async (e) => {
@@ -187,7 +248,7 @@ const SearchBar = () => {
     };
 
     try {
-      const response = await fetch('https://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/search/', {
+      const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/search/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -243,29 +304,48 @@ const SearchBar = () => {
         <div className="flex-1 min-w-[150px]">
           <label className="block mb-1 text-gray-600">Guests</label>
           <input
-            type="text"
+            type="number"
             name="guests"
             value={searchData.guests}
             onChange={handleChange}
-            placeholder="Enter number of guests"
+            placeholder="Number of guests"
             className="w-full border border-gray-300 rounded-lg p-3"
+            min="1"
           />
         </div>
-        <div className="flex-1 min-w-[200px]">
+        <div className="flex-1 min-w-[200px] relative" ref={wrapperRef}>
           <label className="block mb-1 text-gray-600">Location</label>
-          <input
-            type="text"
-            name="location"
-            value={searchData.location}
-            onChange={handleChange}
-            placeholder="Enter a city"
-            className="w-full border border-gray-300 rounded-lg p-3"
-          />
+          <div className="relative">
+            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+            <input
+              type="text"
+              name="location"
+              value={searchData.location}
+              onChange={handleChange}
+              placeholder="Enter a city"
+              className="w-full border border-gray-300 rounded-lg p-3 pl-10"
+              autoComplete="off"
+            />
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                {suggestions.map(suggestion => (
+                  <div
+                    key={suggestion.id}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
+                    onClick={() => handleSuggestionClick(suggestion)}
+                  >
+                    <MapPin size={16} className="mr-2 text-gray-400" />
+                    <span>{suggestion.description}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
         <button
           type="submit"
           disabled={isLoading}
-          className="bg-blue-700 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition duration-300 flex items-center"
+          className="bg-blue-700 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition duration-300 flex items-center self-end"
         >
           {isLoading ? (
             <>
@@ -288,7 +368,6 @@ const SearchBar = () => {
     </div>
   );
 };
-
 
 const PropertyCard = ({ imageIndex, price, name, location, popular }) => {
   const imageSrc = HOTEL_IMAGES[imageIndex % HOTEL_IMAGES.length];
@@ -341,8 +420,6 @@ const PropertyGrid = () => {
   );
 };
 
-
-
 const Footer = () => (
   <footer className="bg-gray-800 text-gray-200 py-6">
     <div className="max-w-6xl mx-auto px-6 flex flex-wrap justify-between items-start">
@@ -383,3 +460,9 @@ const HomePage = () => (
 );
 
 export default HomePage;
+
+
+
+
+
+

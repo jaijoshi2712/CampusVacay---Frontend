@@ -8,8 +8,17 @@ const Header = () => {
   const [token, setToken] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [message, setMessage] = useState({ type: '', content: '' });
-
+  
   useEffect(() => {
+    function getCSRFToken() {
+      const csrfToken = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        ?.split('=')[1];
+      console.log(csrfToken);
+      localStorage.setItem('csrftoken', csrfToken);
+    }
+    getCSRFToken();
     const storedToken = localStorage.getItem('authToken');
     if (storedToken) {
       setToken(storedToken);
@@ -30,7 +39,7 @@ const Header = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Token ' + localStorage.getItem('authToken'),
+          'Authorization': 'Token ' + localStorage.getItem('authToken'),
         },
         body: JSON.stringify(''),
       });
@@ -57,22 +66,20 @@ const Header = () => {
           <Navigation className="mr-2" />
           CampusVacay.
         </a>
-        <nav className="hidden md:flex space-x-8 text-lg">
-          {['Home', 'Hotels', 'Rooms', 'About', 'Contact'].map((item) => (
-            <li key={item} className="list-none text-gray-600 hover:text-blue-700 cursor-pointer transition duration-300">
-              {item}
-            </li>
-          ))}
-        </nav>
-        {token ? (
-          <button onClick={handleLogout} className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
-            Logout
-          </button>
-        ) : (
-          <a href="/login" className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
-            Login
+        <div className="flex items-center space-x-4">
+          <a href="/dashboard" className="list-none text-gray-600 hover:text-blue-700 cursor-pointer transition duration-300">
+            Dashboard
           </a>
-        )}
+          {token ? (
+            <button onClick={handleLogout} className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
+              Logout
+            </button>
+          ) : (
+            <a href="/login" className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
+              Login
+            </a>
+          )}
+        </div>
       </div>
       {message.content && (
         <div className={`fixed top-16 right-8 p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
@@ -82,6 +89,7 @@ const Header = () => {
     </header>
   );
 };
+
 
 const HotelDetailsContent = ({ roomSectionRef }) => {
   return (
