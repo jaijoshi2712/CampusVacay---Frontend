@@ -258,35 +258,15 @@ const HotelCard = ({ hotel }) => {
     setImageError(true);
   };
 
-  const handleBooking = () => {
-    const hotelData = {
-      hotel_id: hotel.hotel_id,
-      name: hotel.hotel_name,
-      location: hotel.address,
-      check_in_time: hotel.check_in_time,
-      check_out_time: hotel.check_out_time,
-      description: hotel.description,
-      facilities: hotel.facilities,
-      rooms: hotel.rooms
-    };
-
-    const bookingDetails = {
-      checkIn: searchData?.check_in || '',
-      checkOut: searchData?.check_out || '',
-      guests: searchData?.guests || '',
-      price: lowestPriceRoom?.price_per_night || 0,
-      room_type: lowestPriceRoom?.room_type || '',
-      room_facilities: lowestPriceRoom?.facilities || '',
-      max_occupancy: lowestPriceRoom?.max_occupancy || 1
-    };
-
-    navigate('/review-booking', {
-      state: {
-        hotelData,
-        bookingDetails
-      }
-    });
-  };
+// In HotelCard component (SearchPage.js)
+const handleBooking = () => {
+  navigate('/hotel-details', {
+    state: {
+      hotelData: hotel, // Pass the entire hotel object from API
+      searchData
+    }
+  });
+};
 
   const formatTime = (timeString) => {
     try {
@@ -424,9 +404,12 @@ const SearchPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {searchResults.map((hotel) => (
-              <HotelCard key={hotel.hotel_id} hotel={hotel} />
-            ))}
+          {searchResults.map((hotel) => (
+  <HotelCard 
+    key={hotel.hotel_id} 
+    hotel={hotel}  // Pass the complete hotel object
+  />
+))}
           </div>
         )}
       </div>
