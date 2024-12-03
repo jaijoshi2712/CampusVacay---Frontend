@@ -68,7 +68,7 @@ function RegisterPage() {
     });
 
     try {
-      const url = `http://3.16.159.54/${registerType.toLowerCase()}/api/register/`;
+      const url = `http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/${registerType.toLowerCase()}/api/register/`;
       const response = await fetch(url, {
         method: 'POST',
         body: formDataToSend,

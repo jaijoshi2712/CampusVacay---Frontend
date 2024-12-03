@@ -47,7 +47,7 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
-      const url = `http://3.16.159.54/student/api/logout/`;
+      const url = `http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/api/logout/`;
       const response = await fetch(url, {
         method: 'POST',
         headers: {
