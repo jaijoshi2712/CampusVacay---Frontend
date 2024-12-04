@@ -1087,76 +1087,116 @@ const Reviews = () => {
 
 
 const Profile = () => {
-    const items=[
-        {username:'kevinhotel', password: 'kevin123', email: '123@mail.com',guests: 4, hotel_name: 'Hotel Name', address: 'address', 
-            location: 'Brooklyn', city: 'Brooklyn', country: 'New York', phone_number: '1231236767', description: 'amazing hotel', 
-            facilities: 'brekfast', check_in_time: '15:00', check_out_time: '11:00', cancellation_policy: 'no cancellation', student_discount: 0.9, special_offers: 'none' 
-        },
-    ];
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [profile, setProfile] = useState(null);
-    const [item,setItem] = useState(items[0]);
+    const [profile, setProfile] = useState([]);
+    const [item,setItem] = useState([]);
     const [isReadOnly, setIsReadOnly] = useState(true);
+    const [message, setMessage] = useState({ type: '', content: '' });
 
     useEffect(() => {
-        const fetchData = async () => {
-        try {
-            await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/student/profile/',{
+        const fetchProfile = async () => {
+            try {
+              const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/hotel/hotel-profile/', {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Token ' + localStorage.getItem('authToken'),
                 }
-            }) // API URL
-            .then((response) => {
-                if (!response.ok) {
+              });
+              if (!response.ok) {
                 throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                setProfile(data);
-                //setItem(data);
-                setLoading(false); // Set loading to false
-            })
-            .catch((error) => {
-                setError(error.message); // Handle any errors
-                setLoading(false); // Set loading to false
+              }
+              const data = await response.json();
+              console.log(data);
+              setProfile({
+                username: data.user.username,
+                email: data.user.email,
+                hotel_name: data.hotel_name,
+                address: data.address,
+                location: data.location,
+                city: data.city,
+                country: data.country,
+                phone_number: data.phone_number,
+                description: data.description,
+                facilities: data.facilities,
+                check_in_time: data.check_in_time,
+                check_out_time: data.check_out_time,
+                cancellation_policy: data.cancellation_policy,
+                student_discount: data.student_discount,
+                special_offers: data.special_offers,
             });
-            //const data = await response.json();
-            //console.log(data, response);
-            //setReservationData(data);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-        };
-        fetchData();
+              setItem({
+                username: data.user.username,
+                email: data.user.email,
+                hotel_name: data.hotel_name,
+                address: data.address,
+                location: data.location,
+                city: data.city,
+                country: data.country,
+                phone_number: data.phone_number,
+                description: data.description,
+                facilities: data.facilities,
+                check_in_time: data.check_in_time,
+                check_out_time: data.check_out_time,
+                cancellation_policy: data.cancellation_policy,
+                student_discount: data.student_discount,
+                special_offers: data.special_offers,
+            });
+            } catch (error) {
+              setError(error.message); // Handle errors
+            } finally {
+              setLoading(false); // Always set loading to false when request finishes
+            }
+          };
+      
+          fetchProfile();
     }, []);
     
     const handleSubmit = async (e) => {
         e.preventDefault();
         toggleReadOnly();
+        const formData = {
+            username: item.username,
+            email: item.email,
+            hotel_name: item.hotel_name,
+            address: item.address,
+            location: item.location,
+            city: item.city,
+            country: item.country,
+            phone_number: item.phone_number,
+            description: item.description,
+            facilities: item.facilities,
+            check_in_time: item.check_in_time,
+            check_out_time: item.check_out_time,
+            cancellation_policy: item.cancellation_policy,
+            student_discount: item.student_discount,
+            special_offers: item.special_offers,
+        };
+
         try {
-            const response = await fetch('localhost', {
-              method: 'POST',
+            const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/hotel/hotel-profile/', {
+              method: 'PATCH',
               headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Token ' + localStorage.getItem('authToken'),
               },
-              body: JSON.stringify(''),
+              body: JSON.stringify(formData),
             });
       
             const data = await response.json();
-      
             if (!response.ok) {
               throw new Error(data.detail || 'edit failed');
             }
-            console.log('Edit successful:', data);
-            
+            setMessage({ type: 'success', content: 'Profile Edited successfully!' });
+            setTimeout(() => {
+                setMessage({type: '', content: ''});
+            }, 5000);
         }catch (error) {
-            setError(error.message);
+            setMessage({ type: 'error', content: error.message });
+            setTimeout(() => {
+                setMessage({type: '', content: ''});
+            }, 5000);
         }
     };
 
@@ -1168,7 +1208,7 @@ const Profile = () => {
     }
 
     const handleCancel = () => {
-        setItem(items[0]);
+        setItem(profile);
         toggleReadOnly();
     }
 
@@ -1177,7 +1217,13 @@ const Profile = () => {
     };
 
     return (
+        
         <div className="min-h-screen">
+            {message.content && (
+                <div className={`z-10 fixed top-16 right-8 p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                {message.content}
+                </div>
+            )}
             <div className="flex justify-between items-center text-2xl pt-4 px-5">
                 Hotel Profile
             </div>
@@ -1191,14 +1237,14 @@ const Profile = () => {
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
                         readOnly={isReadOnly} onChange={handleChange} id="username" name="username" type="text" value={item.username}/>
                 </div>
-                <div className="flex border-b py-3 items-center">
+                {/*<div className="flex border-b py-3 items-center">
                     <label className="w-1/3 block text-gray-700 text-xl font-bold mr-4" htmlFor="password">
                         Password
                     </label>
                     <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
                         readOnly={isReadOnly} onChange={handleChange} id="password" name="password" type="text" value={item.password}/>
-                </div>
+                </div>*/}
                 <div className="flex border-b py-3 items-center">
                     <label className="w-1/3 block text-gray-700 text-xl font-bold mr-4" htmlFor="email">
                         E-mail
@@ -1312,18 +1358,18 @@ const Profile = () => {
                         readOnly={isReadOnly} onChange={handleChange} id="special_offers" name="special_offers" type="text" value={item.special_offers}/>
                 </div>
                 {isReadOnly && (
-                <div className="flex justify-end pt-3">
+                <div className="flex justify-end p-3">
                     <button onClick={toggleReadOnly} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                         Edit
                     </button>
                 </div>
                 )}
                 {!isReadOnly && (
-                <div className="flex justify-end pt-5">
-                    <button onClick={handleSubmit} className="mx-2 p-3 bg-blue-500 text-white rounded hover:bg-blue-600">
+                <div className="flex justify-end p-3">
+                    <button onClick={handleSubmit} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                         Save
                     </button>
-                    <button onClick={handleCancel} className="mx-2 p-3 bg-gray-400 text-white rounded hover:bg-gray-500">
+                    <button onClick={handleCancel} className="mx-2 p-2 bg-gray-400 text-white rounded hover:bg-gray-500">
                         Cancel
                     </button>
                 </div>
@@ -1502,9 +1548,9 @@ const DashboardPage = () => {
                         <div className="flex">
                             <NotificationBell/>
                             <div className="relative">
-                                <button className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition duration-300">
+                                <div className="bg-blue-600 text-white px-6 py-2 rounded-full transition duration-300">
                                     Hotel
-                                </button>
+                                </div>
                             </div>
                         </div>
                     </div>
