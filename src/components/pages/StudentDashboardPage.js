@@ -133,6 +133,36 @@ const Review = ({ hotel_id }) => {
             }
         }
     }
+    const handleFavSubmit = async(e) =>{
+        e.preventDefault();
+        //console.log(mode, rating, comment);
+        try {
+            const response = await fetch(`http://10.18.245.80:8000/student/api/favourite/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                },
+                body: JSON.stringify({hotel_id: hotel_id}),
+            });
+            const data = await response.json();
+            console.log(data);
+            if (!response.ok) {
+                throw new Error(data.detail || 'Create failed');
+            }
+            setEditOpen(0);
+            setMessage({ type: 'success', content: 'Review Created successfully!' });
+            setTimeout(() => {
+                window.location.reload();
+                setMessage({type: '', content: ''});
+            }, 5000);
+        } catch (error) {
+            setMessage({ type: 'error', content: error.message });
+            setTimeout(() => {
+                setMessage({type: '', content: ''});
+            }, 5000);
+        }
+    }
     const closeEdit = () => {
         setEditOpen(0);
         setRating(reviewData.rating);
@@ -157,6 +187,8 @@ const Review = ({ hotel_id }) => {
                 </div>
             )}
             <button className="rounded bg-blue-500 p-2 text-white" onClick={openEdit}>Add Reviews</button>
+            <button className="rounded bg-red-400 p-2 ml-2 text-white" onClick={handleFavSubmit}>Add to Favorite</button>
+
             {editOpen!=0 && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white rounded shadow-lg p-6 max-h-screen w-4/5">
@@ -540,7 +572,7 @@ const Profile = () => {
     useEffect(() => {
         const fetchProfile = async () => {
           try {
-            const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/student/profile/', {
+            const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/api/student/profile/', {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
@@ -551,9 +583,27 @@ const Profile = () => {
               throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            //console.log(data);
-            setProfile(data);
-            setItem(data);
+            console.log(data);
+            setProfile({
+                username: data.user.username,
+                email: data.user.email,
+                first_name: data.user.first_name,
+                last_name: data.user.last_name,
+                address: data.address,
+                dob: data.dob,
+                city: data.city,
+                phone_number: data.phone_number,
+            });
+            setItem({
+                username: data.user.username,
+                email: data.user.email,
+                first_name: data.user.first_name,
+                last_name: data.user.last_name,
+                address: data.address,
+                dob: data.dob,
+                city: data.city,
+                phone_number: data.phone_number,
+            });
           } catch (error) {
             setError(error.message); // Handle errors
           } finally {
@@ -567,15 +617,25 @@ const Profile = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         toggleReadOnly();
-
+        const formData = {
+            username: item.username,
+            email: item.email,
+            first_name: item.first_name,
+            last_name: item.last_name,
+            dob: item.dob,
+            phone_number: item.phone_number,
+            address: item.address,
+        };
+        console.log(formData);
         //submit profile edit here
         try {
-            const response = await fetch('localhost', {
-              method: 'POST',
+            const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/api/student/profile/', {
+              method: 'PATCH',
               headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Token ' + localStorage.getItem('authToken'),
               },
-              body: JSON.stringify(''),
+              body: JSON.stringify(formData),
             });
             const data = await response.json();
             if (!response.ok) {
@@ -670,14 +730,14 @@ const Profile = () => {
                         readOnly={isReadOnly} onChange={handleChange} id="address" name="address" type="text" value={item.address}/>
                 </div>
                 {isReadOnly && (
-                <div className="flex justify-end pt-3">
+                <div className="flex justify-end p-3">
                     <button onClick={toggleReadOnly} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                         Edit
                     </button>
                 </div>
                 )}
                 {!isReadOnly && (
-                <div className="flex justify-end pt-3">
+                <div className="flex justify-end p-3">
                     <button onClick={handleSubmit} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                         Save
                     </button>
@@ -691,22 +751,45 @@ const Profile = () => {
         </div>
     )
 }
-const CustomToast = () => (
-        <div>
-          <h4>Custom Notification</h4>
-          <p>This is a custom notification with a component inside it!</p>
-        </div>
-      );
+
 const Wishlist = () => {
+    const [wishData, setWishData] = useState([]);
+    
+    useEffect(() => {
+        const fetchWishes = async () => {
+          try {
+            const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/api/favourite/', {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + localStorage.getItem('authToken'),
+              }
+            });
+    
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            //setWishData(data);
+            console.log(data);
+
+          } catch (error) {
+            //setError(error.message); // Handle errors
+          } finally {
+            //setLoading(false); // Always set loading to false when request finishes
+          }
+        };
+        fetchWishes();
+    }, []);
 
     const [notifications, setNotifications] = useState([]);
 
-  const addNotification = (message) => {
-    setNotifications([...notifications, message]);
-    setTimeout(() => {
-      setNotifications(notifications.filter((item) => item !== message));
-    }, 5000); // auto-remove after 5 seconds
-  };
+    const addNotification = (message) => {
+        setNotifications([...notifications, message]);
+        setTimeout(() => {
+            setNotifications(notifications.filter((item) => item !== message));
+        }, 5000); // auto-remove after 5 seconds
+    };
     
       return (
         <div>
@@ -765,7 +848,7 @@ const StudentDashboardPage = () => {
                     <ul className="list-none p-0 m-0">
                         <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('profile')}>Profile</li>
                         <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('reservations')}>Bookings</li>
-                        <li className="p-2 hover:cursor-pointer hover:bg-gray-200">Wishlist</li>
+                        <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('wishlist')}>Wishlist</li>
                     </ul>
                 </div>
             </div>
