@@ -1,47 +1,97 @@
-// src/components/pages/GuestDetails.js
-import React from 'react';
+// src/components/Review_Booking/GuestDetails.js
+import React, { useState } from 'react';
 
 function GuestDetails() {
+  const [guestData, setGuestData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    specialRequests: '',
+    arrivalTime: '',
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setGuestData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   return (
     <div className="guest-details">
       <h3>Guest Details</h3>
       <form className="guest-details-form">
-        <div className="left-column">
-          <label>First Name</label>
-          <input type="text" placeholder="Enter First Name" />
-
-          <label>Last Name</label>
-          <input type="text" placeholder="Enter Last Name" />
-
-          <label>Email</label>
-          <input type="email" placeholder="Enter Email" />
-
-          <label>Country</label>
-          <input type="text" placeholder="Enter Country" />
-
-          <label>Expected Arrival Time</label>
-          <input type="time" />
-        </div>
-
-        <div className="right-column">
-          <label>Phone Number</label>
-          <input type="tel" placeholder="Enter Phone Number" />
-
-          <label>Special Requests</label>
-          <textarea placeholder="Any special requests..." rows="2.7"></textarea>
-
-          <label>Damage Insurance</label>
-          <select>
-            <option value="">Select</option>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select>
-
-          <label>Amount</label>
-          <input type="number" placeholder="Amount" step="0.01" />
-
-          <label>Check-out Date</label>
-          <input type="date" />
+        <div className="form-columns">
+          <div className="left-column">
+            <div className="form-group">
+              <label>First Name</label>
+              <input
+                type="text"
+                name="firstName"
+                value={guestData.firstName}
+                onChange={handleChange}
+                placeholder="Enter First Name"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                name="email"
+                value={guestData.email}
+                onChange={handleChange}
+                placeholder="Enter Email"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Expected Arrival Time</label>
+              <input
+                type="time"
+                name="arrivalTime"
+                value={guestData.arrivalTime}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+          <div className="right-column">
+            <div className="form-group">
+              <label>Last Name</label>
+              <input
+                type="text"
+                name="lastName"
+                value={guestData.lastName}
+                onChange={handleChange}
+                placeholder="Enter Last Name"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Phone Number</label>
+              <input
+                type="tel"
+                name="phone"
+                value={guestData.phone}
+                onChange={handleChange}
+                placeholder="Enter Phone Number"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Special Requests</label>
+              <textarea
+                name="specialRequests"
+                value={guestData.specialRequests}
+                onChange={handleChange}
+                placeholder="Any special requests..."
+                rows="3"
+              ></textarea>
+            </div>
+          </div>
         </div>
       </form>
     </div>

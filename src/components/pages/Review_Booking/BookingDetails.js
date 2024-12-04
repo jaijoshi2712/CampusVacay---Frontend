@@ -1,18 +1,48 @@
-// src/components/ReviewBooking/BookingDetails.js
 import React from 'react';
 
-function BookingDetails() {
+function BookingDetails({ 
+  hotelName, 
+  location, 
+  checkIn, 
+  checkOut, 
+  guests,
+  roomType,
+  roomFacilities
+}) {
   return (
     <div className="booking-details">
-      <h3>Blue Origin Fams</h3>
-      <p>Galle, Sri Lanka</p>
-      <p><strong>Check-in:</strong> Nov 12, 2024, 2 PM</p>
-      <p><strong>Check-out:</strong> Nov 14, 2024, 12 PM</p>
-      <p><strong>Guests:</strong> 1 Adult | 1 Room</p>
+      <h3>{hotelName || 'Hotel Name'}</h3>
+      <p>{location || 'Location'}</p>
+      
+      <div className="booking-info">
+        <div className="info-item">
+          <strong>Check-in Date:</strong>
+          <p>{checkIn || 'Not specified'}</p>
+        </div>
+        <div className="info-item">
+          <strong>Check-out Date:</strong>
+          <p>{checkOut || 'Not specified'}</p>
+        </div>
+        <div className="info-item">
+          <strong>Guests:</strong>
+          <p>{guests || 0} Guest(s)</p>
+        </div>
+      </div>
+
       <div className="room-info">
-        <h4>Standard Room with Bathtub</h4>
-        <p>Breakfast, Express check-in</p>
-        <p>Non-Refundable</p>
+        <h4>Room Details</h4>
+        <p>{roomType || 'Standard Room'}</p>
+        <ul className="amenities-list">
+          {roomFacilities ? (
+            roomFacilities.split(',').map((facility, index) => (
+              <li key={index}>{facility.trim()}</li>
+            ))
+          ) : (
+            <>
+              <li>No specific facilities listed</li>
+            </>
+          )}
+        </ul>
       </div>
     </div>
   );
