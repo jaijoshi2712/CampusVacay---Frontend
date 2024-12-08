@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, MapPin, Star, Navigation, Calendar, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './edits.css';
+import LoginPage from './LoginPage';
 
 const HOTEL_IMAGES = [
   'https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg',
@@ -19,24 +20,16 @@ const HOTEL_IMAGES = [
 
 const Header = () => {
   const [token, setToken] = useState(null);
+  const [loginType, setLoginType] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [message, setMessage] = useState({ type: '', content: '' });
   
   useEffect(() => {
-    function getCSRFToken() {
-      const csrfToken = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('csrftoken='))
-        ?.split('=')[1];
-      console.log(csrfToken);
-      localStorage.setItem('csrftoken', csrfToken);
-    }
-    getCSRFToken();
+    setLoginType(localStorage.getItem('type'));
     const storedToken = localStorage.getItem('authToken');
     if (storedToken) {
       setToken(storedToken);
     }
-
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
@@ -80,9 +73,16 @@ const Header = () => {
           CampusVacay.
         </a>
         <div className="flex items-center space-x-4">
-          <a href="/dashboard" className="list-none text-gray-600 hover:text-blue-700 cursor-pointer transition duration-300">
-            Dashboard
-          </a>
+          {token && loginType == 'Student' ? (
+            <a href="/student/dashboard" className="list-none text-gray-600 hover:text-blue-700 cursor-pointer transition duration-300">
+              Dashboard
+            </a>
+          ) : token && loginType === 'Hotel' ? (
+            <a href="/dashboard" className="list-none text-gray-600 hover:text-blue-700 cursor-pointer transition duration-300">
+              Dashboard
+            </a>
+          ) : (<div></div>)
+          }
           {token ? (
             <button onClick={handleLogout} className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
               Logout

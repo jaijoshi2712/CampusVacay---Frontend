@@ -362,41 +362,24 @@ const HotelCard = ({ reservation , type }) => {
         } finally {
             setLoading(false);
         }
-    } 
-  
+    }
+    
+    const [popOpen, setPopOpen] = useState(false); 
+    const openPop = () => setPopOpen(true);
+    const closePop = () => setPopOpen(false);
     return (
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="relative">
+        <div className="relative hover:cursor-pointer" onClick={openPop}>
           <img 
-            src={imageError ? "https://images.pexels.com/photos/${hotel.name}/pexels-photo-1134176.jpeg" : (reservation.hotel_photos || "/api/placeholder/400/300")}
-            alt={reservation.hotel_name}
+          src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : "/api/placeholder/400/300"}
+          alt={reservation.hotel_name}
             onError={handleImageError}
             className="w-full h-64 object-cover"
           />
-          {/*<div className="absolute top-4 left-4">
-            <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
-              ${hotel.price}/night
-            </span>
-          </div>
-          {hotel.student_discount && (
-            <div className="absolute top-4 right-4">
-              <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm">
-                {hotel.student_discount}% Student Discount
-              </span>
-            </div>
-          )}*/}
         </div>
         
         <div className="p-6">
             <h3 className="text-xl font-bold mb-2">{reservation.hotel_name}</h3>
-            {/*<div className="flex items-center text-gray-600 mb-2">
-                <MapPin size={16} className="mr-2" />
-                <span>{hotel.location}</span>
-            </div>
-            
-            <div className="mb-4">
-                <p className="text-gray-600">{hotel.description}</p>
-            </div>*/}
             
             <div className="border-t pt-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -416,21 +399,107 @@ const HotelCard = ({ reservation , type }) => {
                 </button>
             </div>
             }
-  
-            {/*<div className="mt-4 border-t pt-4">
-                <h4 className="font-semibold mb-2">Facilities</h4>
-                <div className="flex flex-wrap gap-2">
-                {hotel.facilities?.split(',').map((facility, index) => (
-                    <span 
-                    key={index}
-                    className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm"
-                    >
-                    {facility.trim()}
-                    </span>
-                ))}
+
+            { popOpen && (
+            <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white rounded shadow-lg p-6 max-h-screen w-4/5">
+                <div className="flex items-center justify-between">
+                    <h2 className="text-2xl font-bold mb-4">Details for reservation at {reservation.hotel_name}, {reservation.room_type}</h2>
+                    <button onClick={closePop} className="p-2 bg-red-500 text-white rounded hover:bg-red-600">
+                    X
+                    </button>
                 </div>
-            </div>*/}
-          
+                
+                <div className="flex">
+                    <div className="w-1/2 h-full border rounded m-2">
+                        <div className="flex border-b items-center">
+                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                First Name:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.first_name}
+                            </span>
+                        </div>
+                        <div className="flex border-b items-center">
+                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Last Name:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.last_name}
+                            </span>
+                        </div>
+                        <div className="flex border-b items-center">
+                            <label className="w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Guests:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.guests}
+                            </span>
+                        </div>
+                        <div className="flex border-b items-center">
+                            <label className="w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Email:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.email}
+                            </span>
+                        </div>
+                        <div className="flex border-b items-center">
+                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Phone No:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.phone_number}
+                            </span>
+                        </div>
+                        <div className="flex items-center">
+                            <label className="w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Payment:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.payment_mode}
+                            </span>
+                        </div>
+                    </div>
+                    <div className="w-1/2 h-full border rounded m-2">
+                        <div className="flex border-b items-center">
+                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Check In Date:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.check_in_date}
+                            </span>
+                        </div>
+                        <div className="flex border-b items-center">
+                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Check Out Date:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.check_out_date}
+                            </span>
+                        </div>
+                        <div className="flex border-b items-center">
+                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Expected Arrival Time:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.expected_arrival_time}
+                            </span>
+                        </div>
+                        <div className="flex border-b items-center">
+                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Special Requests:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.special_requests}
+                            </span>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            </div>
+            )}
         </div>
       </div>
     );

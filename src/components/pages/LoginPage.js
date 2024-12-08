@@ -34,6 +34,8 @@ const LoginForm = ({ type }) => {
       }
 
       setMessage({ type: 'success', content: 'Login successful!' });
+      localStorage.setItem('type', type);
+      console.log(localStorage.getItem('type'));
       // Here you can handle the successful login data if needed
 
 
