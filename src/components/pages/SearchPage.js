@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Search, User, MapPin, Calendar } from 'lucide-react';
 
+
+
 const SearchBar = ({ initialData }) => {
   const navigate = useNavigate();
   const [searchData, setSearchData] = useState(initialData || {
