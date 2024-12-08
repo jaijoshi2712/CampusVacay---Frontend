@@ -721,6 +721,13 @@ const Reservations = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [allRoomTypes, setAllRoomTypes] = useState([]);
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    
+    const formattedDate = `${year}-${month}-${day}`;
+    const [startDate, setStartDate] = useState(formattedDate);
 
     useEffect(() => {
         const fetchReservations = async () => {
@@ -740,11 +747,14 @@ const Reservations = () => {
             const data = await response.json();
             //console.log(data);
             setReservationData(data);
+            console.log(data);
             data.forEach(d => {
                 const orderDate1 = new Date(d.check_in_date);
                 const orderDate2 = new Date(d.check_out_date);
-                const today = new Date();
+                const today = new Date(startDate);
+                //console.log(orderDate1,orderDate2,today);
                 if(orderDate1<=today && orderDate2>=today){
+                    console.log(d);
                     setFilteredOrders(prev=>[...prev, d]);
                     setInitialOrders(prev=>[...prev, d]);
                 }
@@ -799,8 +809,9 @@ const Reservations = () => {
         //setSelectedImages(prevImages => [...prevImages, ...imageUrls]);
     }
     const closeEdit = () => setEditOpen(0);
+    
 
-    const [startDate, setStartDate] = useState('');
+    
 
     // Handler to filter orders based on the date range
     const filterOrders = () => {
@@ -1113,8 +1124,8 @@ const Profile = () => {
                 username: data.user.username,
                 email: data.user.email,
                 hotel_name: data.hotel_name,
-                address: data.address,
-                location: data.location,
+                address: data.address1,
+                location: data.address2,
                 city: data.city,
                 country: data.country,
                 phone_number: data.phone_number,
@@ -1130,8 +1141,8 @@ const Profile = () => {
                 username: data.user.username,
                 email: data.user.email,
                 hotel_name: data.hotel_name,
-                address: data.address,
-                location: data.location,
+                address: data.address1,
+                location: data.address2,
                 city: data.city,
                 country: data.country,
                 phone_number: data.phone_number,
@@ -1160,8 +1171,8 @@ const Profile = () => {
             username: item.username,
             email: item.email,
             hotel_name: item.hotel_name,
-            address: item.address,
-            location: item.location,
+            address: item.address1,
+            location: item.address2,
             city: item.city,
             country: item.country,
             phone_number: item.phone_number,
@@ -1425,7 +1436,7 @@ const NotificationBell = ({init}) => {
               } 
             };
           //fetchUpdates();
-          const intervalId = setInterval(fetchUpdates, 5000);
+          const intervalId = setInterval(fetchUpdates, 10000);
       //return () => clearTimeout(timer);
     }, []);
   
