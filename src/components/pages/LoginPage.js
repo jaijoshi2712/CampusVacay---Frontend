@@ -37,6 +37,7 @@ const LoginForm = ({ type }) => {
       console.log('Login response data:', data); // Debugging output
   
       setMessage({ type: 'success', content: 'Login successful!' });
+
       localStorage.setItem('authToken', data.token);
       console.log(loginType);
   

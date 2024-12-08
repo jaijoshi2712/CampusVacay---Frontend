@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useNavigate} from 'react';
+import React, { useState, useEffect} from 'react';
 import { Form } from 'react-router-dom';
 import { MapPin, Navigation } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
 
 const Review = ({ hotel_id }) => {
     //const [review, setReview] = useState({rating: 0, comment: ''});
@@ -137,7 +139,7 @@ const Review = ({ hotel_id }) => {
         e.preventDefault();
         //console.log(mode, rating, comment);
         try {
-            const response = await fetch(`http://10.18.245.80:8000/student/api/favourite/`, {
+            const response = await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/api/favourite/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -151,9 +153,8 @@ const Review = ({ hotel_id }) => {
                 throw new Error(data.detail || 'Create failed');
             }
             setEditOpen(0);
-            setMessage({ type: 'success', content: 'Review Created successfully!' });
+            setMessage({ type: 'success', content: data.message });
             setTimeout(() => {
-                window.location.reload();
                 setMessage({type: '', content: ''});
             }, 5000);
         } catch (error) {
@@ -163,6 +164,7 @@ const Review = ({ hotel_id }) => {
             }, 5000);
         }
     }
+
     const closeEdit = () => {
         setEditOpen(0);
         setRating(reviewData.rating);
@@ -330,8 +332,8 @@ const HotelCard = ({ reservation , type }) => {
             throw new Error("loading error!");
             }*/
             
-            await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/api/reservation/${reservation.id}/cancel/`,{
-                method: 'POST',
+            await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/hotel/reservations/${reservation.id}`,{
+                method: 'delete',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Token ' + localStorage.getItem('authToken'),
@@ -362,41 +364,24 @@ const HotelCard = ({ reservation , type }) => {
         } finally {
             setLoading(false);
         }
-    } 
-  
+    }
+    
+    const [popOpen, setPopOpen] = useState(false); 
+    const openPop = () => setPopOpen(true);
+    const closePop = () => setPopOpen(false);
     return (
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="relative">
+        <div className="relative hover:cursor-pointer" onClick={openPop}>
           <img 
-            src={imageError ? "https://images.pexels.com/photos/${hotel.name}/pexels-photo-1134176.jpeg" : (reservation.hotel_photos || "/api/placeholder/400/300")}
-            alt={reservation.hotel_name}
+          src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : reservation.hotel_photos}
+          alt={reservation.hotel_name}
             onError={handleImageError}
             className="w-full h-64 object-cover"
           />
-          {/*<div className="absolute top-4 left-4">
-            <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
-              ${hotel.price}/night
-            </span>
-          </div>
-          {hotel.student_discount && (
-            <div className="absolute top-4 right-4">
-              <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm">
-                {hotel.student_discount}% Student Discount
-              </span>
-            </div>
-          )}*/}
         </div>
         
         <div className="p-6">
             <h3 className="text-xl font-bold mb-2">{reservation.hotel_name}</h3>
-            {/*<div className="flex items-center text-gray-600 mb-2">
-                <MapPin size={16} className="mr-2" />
-                <span>{hotel.location}</span>
-            </div>
-            
-            <div className="mb-4">
-                <p className="text-gray-600">{hotel.description}</p>
-            </div>*/}
             
             <div className="border-t pt-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -416,21 +401,135 @@ const HotelCard = ({ reservation , type }) => {
                 </button>
             </div>
             }
-  
-            {/*<div className="mt-4 border-t pt-4">
-                <h4 className="font-semibold mb-2">Facilities</h4>
-                <div className="flex flex-wrap gap-2">
-                {hotel.facilities?.split(',').map((facility, index) => (
-                    <span 
-                    key={index}
-                    className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm"
-                    >
-                    {facility.trim()}
-                    </span>
-                ))}
+
+            { popOpen && (
+            <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white rounded shadow-lg p-6 max-h-screen w-4/5">
+                <div className="flex items-start justify-between">
+                    <h2 className="text-2xl font-bold mb-4">Details for reservation at {reservation.hotel_name}, {reservation.room_type}</h2>
+                    <button onClick={closePop} className="align-top px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+                    X
+                    </button>
                 </div>
-            </div>*/}
-          
+                <img 
+                src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : reservation.hotel_photos}
+                alt={reservation.hotel_name}
+                    onError={handleImageError}
+                    className="w-full h-64 object-cover"
+                />
+                <div className="flex">
+                    <div className="w-1/2 h-full border rounded m-2">
+                        <div className="flex border-b items-center">
+                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                First Name:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.first_name}
+                            </span>
+                        </div>
+                        <div className="flex border-b items-center">
+                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Last Name:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.last_name}
+                            </span>
+                        </div>
+                        <div className="flex border-b items-center">
+                            <label className="w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Guests:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.guests}
+                            </span>
+                        </div>
+                        <div className="flex border-b items-center">
+                            <label className="w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Email:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.email}
+                            </span>
+                        </div>
+                        <div className="flex border-b items-center">
+                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Phone No:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.phone_number}
+                            </span>
+                        </div>
+                        <div className="flex items-center">
+                            <label className="w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Payment:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.payment_status}
+                            </span>
+                        </div>
+                    </div>
+                    <div className="w-1/2 h-full border rounded m-2">
+                        <div className="flex border-b items-center">
+                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Check In Date:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.check_in_date}
+                            </span>
+                        </div>
+                        <div className="flex border-b items-center">
+                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Check Out Date:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.check_out_date}
+                            </span>
+                        </div>
+                        <div className="flex border-b items-center">
+                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Expected Arrival Time:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.expected_arrival_time}
+                            </span>
+                        </div>
+                        <div className="flex border-b items-center">
+                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
+                                Special Requests:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.special_requests}
+                            </span>
+                        </div>
+                        <div className="flex border-b items-center">
+                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="damage_insurance">
+                                Damage Insurance:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.damage_insurance ? 'Insured' : 'No'}
+                            </span>
+                        </div>
+                        <div className="flex border-b items-center">
+                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="damage_report">
+                                Damage Report:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.damage_report}
+                            </span>
+                        </div>
+                        <div className="flex border-b items-center">
+                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="additional_charges">
+                                Additional Charge:
+                            </label>
+                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
+                                {reservation.additional_charges}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            )}
         </div>
       </div>
     );
@@ -593,6 +692,7 @@ const Profile = () => {
                 dob: data.dob,
                 city: data.city,
                 phone_number: data.phone_number,
+                university_name: data.university_name,
             });
             setItem({
                 username: data.user.username,
@@ -603,6 +703,7 @@ const Profile = () => {
                 dob: data.dob,
                 city: data.city,
                 phone_number: data.phone_number,
+                university_name: data.university_name,
             });
           } catch (error) {
             setError(error.message); // Handle errors
@@ -625,6 +726,7 @@ const Profile = () => {
             dob: item.dob,
             phone_number: item.phone_number,
             address: item.address,
+            university_name: item.university_name,
         };
         console.log(formData);
         //submit profile edit here
@@ -648,9 +750,10 @@ const Profile = () => {
     };
 
     const handleChange = (e) => {
+        const { name, value, type, files } = e.target;
         setItem({
         ...item,
-        [e.target.name]: e.target.value
+        [name]: type==='file' ? files[0] : value
         });
     }
     const handleCancel = () => {
@@ -729,6 +832,29 @@ const Profile = () => {
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
                         readOnly={isReadOnly} onChange={handleChange} id="address" name="address" type="text" value={item.address}/>
                 </div>
+                <div className="flex border-b py-3 items-center">
+                    <label className="w-1/3 block text-gray-700 text-xl font-bold mr-4" htmlFor="university_name">
+                        University
+                    </label>
+                    <input
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                        readOnly={isReadOnly} onChange={handleChange} id="university_name" name="university_name" type="text" value={item.university_name}/>
+                </div>
+                <div className="flex border-b py-3 items-center">
+                    <label className="w-1/3 block text-gray-700 text-xl font-bold mr-4" htmlFor="university_id_proof">
+                        University Proof
+                    </label>
+                    <input
+                        type="file"
+                        id="university_id_proof"
+                        className="register-input"
+                        name="university_id_proof"
+                        readOnly={isReadOnly}
+                        onChange={handleChange}
+                        required
+                        accept="image/png, image/jpeg, application/pdf"
+                    />
+                </div>
                 {isReadOnly && (
                 <div className="flex justify-end p-3">
                     <button onClick={toggleReadOnly} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
@@ -753,8 +879,14 @@ const Profile = () => {
 }
 
 const Wishlist = () => {
+    const navigate = useNavigate();
     const [wishData, setWishData] = useState([]);
-    
+    const [imageError, setImageError] = useState(false);
+    const [message, setMessage] = useState({ type: '', content: '' });
+
+    const handleImageError = () => {
+      setImageError(true);
+    };
     useEffect(() => {
         const fetchWishes = async () => {
           try {
@@ -770,7 +902,7 @@ const Wishlist = () => {
               throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            //setWishData(data);
+            setWishData(data);
             console.log(data);
 
           } catch (error) {
@@ -790,31 +922,113 @@ const Wishlist = () => {
             setNotifications(notifications.filter((item) => item !== message));
         }, 5000); // auto-remove after 5 seconds
     };
+    const removeFav = async(hotel_id) => {
+        //e.preventDefault();
+        console.log(hotel_id);
+        try {
+            const response = await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/api/favourite/${hotel_id}/`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                },
+                //body: JSON.stringify({hotel_id: hotel_id}),
+            });
+            const data = await response.json();
+            console.log(data);
+            if (!response.ok) {
+                throw new Error(data.detail || 'Remove failed');
+            }
+            //setEditOpen(0);
+            setMessage({ type: 'error', content: data.message });
+            setTimeout(() => {
+                window.location.reload();
+                setMessage({type: '', content: ''});
+            }, 5000);
+        } catch (error) {
+            setMessage({ type: 'error', content: error.message });
+            setTimeout(() => {
+                setMessage({type: '', content: ''});
+            }, 5000);
+        }
+    }
+
+    const goHotel = (reservation) => {
+        console.log(reservation);
     
-      return (
-        <div>
-          <h1>Custom Notification System</h1>
-          <button onClick={() => addNotification("New notification!")}>
-            Show Notification
-          </button>
-          {notifications.length > 0 && (
-            <div style={{ position: "fixed", top: "10px", right: "10px" }}>
-              {notifications.map((notif, index) => (
-                <div
-                  key={index}
-                  style={{
-                    backgroundColor: "#444",
-                    color: "#fff",
-                    padding: "10px",
-                    margin: "5px",
-                    borderRadius: "5px",
-                  }}
-                >
-                  {notif}
+        navigate('/hotel-details', {
+            state: {
+                hotelData: {
+                    address: reservation.address1,
+                    average_rating: reservation.average_rating,
+                    cancellation_policy: reservation.cancellation_policy,
+                    check_in_time: reservation.check_in_time,
+                    check_out_time: reservation.check_out_time,
+                    description: reservation.description,
+                    facilities: reservation.facilities,
+                    hotel_id: reservation.hotel_id,
+                    hotel_name: reservation.hotel_name,
+                    hotel_photos: reservation.hotel_photos,
+                    hotel_reviews: reservation.hotel_reviews,
+                    phone_number: reservation.phone_number,
+                    rooms: reservation.rooms,
+                    student_discount: reservation.student_discount,
+                    tourist_spots: reservation.tourist_spots,
+                },
+                searchData: {
+                    check_in: reservation.check_in_date,
+                    check_out: reservation.check_out_date,
+                    guests: reservation.guests,
+                    location: reservation.location,
+                }
+            }
+        });  
+    };
+    
+    return (
+        <div className=''>
+            {message.content && (
+                <div className={`fixed top-16 right-8 p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                {message.content}
                 </div>
-              ))}
+            )}
+            <div className='p-3 m-3 min-h-screen bg-white'>
+                <div>
+                    <div>
+                        <div className="text-2xl font-bold">Wishlist</div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {wishData && wishData.length >0 ? (
+                                wishData.map((reservation,index) => (
+                                    <div className="w-full border">
+                                        <div className="relative" onClick={() => goHotel(reservation)}>
+                                        <img 
+                                        src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : `http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com${reservation.hotel_photos}`}
+                                        alt={reservation.hotel_name}
+                                            onError={handleImageError}
+                                            className="w-full h-64 object-cover"
+                                        />
+                                        </div>
+                                        
+                                        <div className="p-6">
+                                            <h3 className="text-xl font-bold mb-2">{reservation.hotel_name}</h3>
+                                            <span className="font-semibold whitespace-nowrap">{reservation.address1}, {reservation.city}, {reservation.country}</span>
+
+                                            <div className="border-t pt-4">
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div onClick={()=>removeFav(reservation.id)}>
+                                                        remove {reservation.id}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            ))):(<div className="min-h-20">Wishlist Empty!</div>)}
+                        </div>
+                    </div>
+                    
+                </div>
+                
             </div>
-          )}
         </div>
       );
 }

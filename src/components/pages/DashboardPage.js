@@ -721,6 +721,13 @@ const Reservations = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [allRoomTypes, setAllRoomTypes] = useState([]);
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    
+    const formattedDate = `${year}-${month}-${day}`;
+    const [startDate, setStartDate] = useState(formattedDate);
 
     useEffect(() => {
         const fetchReservations = async () => {
@@ -740,11 +747,14 @@ const Reservations = () => {
             const data = await response.json();
             //console.log(data);
             setReservationData(data);
+            console.log(data);
             data.forEach(d => {
                 const orderDate1 = new Date(d.check_in_date);
                 const orderDate2 = new Date(d.check_out_date);
-                const today = new Date();
+                const today = new Date(startDate);
+                //console.log(orderDate1,orderDate2,today);
                 if(orderDate1<=today && orderDate2>=today){
+                    console.log(d);
                     setFilteredOrders(prev=>[...prev, d]);
                     setInitialOrders(prev=>[...prev, d]);
                 }
@@ -799,8 +809,9 @@ const Reservations = () => {
         //setSelectedImages(prevImages => [...prevImages, ...imageUrls]);
     }
     const closeEdit = () => setEditOpen(0);
+    
 
-    const [startDate, setStartDate] = useState('');
+    
 
     // Handler to filter orders based on the date range
     const filterOrders = () => {
@@ -1113,8 +1124,8 @@ const Profile = () => {
                 username: data.user.username,
                 email: data.user.email,
                 hotel_name: data.hotel_name,
-                address: data.address,
-                location: data.location,
+                address: data.address1,
+                location: data.address2,
                 city: data.city,
                 country: data.country,
                 phone_number: data.phone_number,
@@ -1130,8 +1141,8 @@ const Profile = () => {
                 username: data.user.username,
                 email: data.user.email,
                 hotel_name: data.hotel_name,
-                address: data.address,
-                location: data.location,
+                address: data.address1,
+                location: data.address2,
                 city: data.city,
                 country: data.country,
                 phone_number: data.phone_number,
@@ -1160,8 +1171,8 @@ const Profile = () => {
             username: item.username,
             email: item.email,
             hotel_name: item.hotel_name,
-            address: item.address,
-            location: item.location,
+            address: item.address1,
+            location: item.address2,
             city: item.city,
             country: item.country,
             phone_number: item.phone_number,
@@ -1380,54 +1391,17 @@ const Profile = () => {
     )
 }
 
-const NotificationBell = () => {
+const NotificationBell = ({init}) => {
     const [hasNotification, setHasNotification] = useState(false);
     const [reservationData, setReservationData] = useState([]);
-    const [updateData, setUpdateData] = useState([]);
+    const [newData, setNewData] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
-
     // Example: Simulating new notifications after a delay (replace with your actual logic)
-    useEffect(() => {
-        const fetchReservations = async () => {
-            try {
-              const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/hotel/reservations/', {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': 'Token ' + localStorage.getItem('authToken'),
-                }
-              });
-      
-              if (!response.ok) {
-                throw new Error('Network response was not ok');
-              }
-      
-              const data = await response.json();
-              console.log(data);
-              setReservationData(data);
-              //setUpdateData(data);
-              /*data.forEach(d => {
-                  const orderDate1 = new Date(d.check_in_date);
-                  const orderDate2 = new Date(d.check_out_date);
-                  const today = new Date();
-                  if(orderDate1<=today && orderDate2>=today){
-                      setFilteredOrders(prev=>[...prev, d]);
-                      setInitialOrders(prev=>[...prev, d]);
-                  }
-              });*/
-            } catch (error) {
-              setError(error.message); // Handle errors
-            } finally {
-              setLoading(false); // Always set loading to false when request finishes
-            }
-          };
-          //fetchReservations();
-    },[]);
+
     useEffect(() => {
         const fetchUpdates = async () => {
-            console.log(reservationData, updateData);
             try {
                 const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/hotel/reservations/', {
                     method: 'GET',
@@ -1441,10 +1415,14 @@ const NotificationBell = () => {
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
+                console.log('fetching', data);
+                if (data.length > init.length) {
+                    setNewData(true);
+                }
                 //setUpdateData(data);
                 //console.log(data);
                 //console.log(updateData);
-                data.forEach(d => {
+                /*data.forEach(d => {
                     console.log(d,reservationData);
                     console.log(reservationData.includes(d));
                     if (!reservationData.includes(d)) {
@@ -1452,13 +1430,13 @@ const NotificationBell = () => {
                         setReservationData(prev=>[...prev, d]);
                         setHasNotification(true);
                     }
-                });
+                });*/
               } catch (error) {
-                setError(error.message); // Handle errors
+                //setError(error.message); // Handle errors
               } 
             };
           //fetchUpdates();
-          //const intervalId = setInterval(fetchUpdates, 10000000);
+          const intervalId = setInterval(fetchUpdates, 10000);
       //return () => clearTimeout(timer);
     }, []);
   
@@ -1496,8 +1474,8 @@ const NotificationBell = () => {
                 {hasNotification && <span style={notificationDotStyle}></span>}
                 {isOpen && (
                 <div className="w-40 absolute bg-white border rounded right-0 text-sm">
-                    {updateData && updateData.length > 0 ?
-                        <span onClick={toReservations}>You have {updateData.length} new reservations!</span>:
+                    {newData ?
+                        <span onClick={toReservations}>You have new reservation!</span>:
                         <span>No new reservation!</span>
                     }
                 </div>
@@ -1509,7 +1487,44 @@ const NotificationBell = () => {
 
 const DashboardPage = () => {
     const [page, setPage] = useState('profile');
+    const [reservationData, setReservationData] = useState([]);
 
+    useEffect(() => {
+        const fetchReservations = async () => {
+            try {
+              const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/hotel/reservations/', {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                }
+              });
+      
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+      
+              const data = await response.json();
+              //console.log('hi',data);
+              setReservationData(data);
+              //setUpdateData(data);
+              /*data.forEach(d => {
+                  const orderDate1 = new Date(d.check_in_date);
+                  const orderDate2 = new Date(d.check_out_date);
+                  const today = new Date();
+                  if(orderDate1<=today && orderDate2>=today){
+                      setFilteredOrders(prev=>[...prev, d]);
+                      setInitialOrders(prev=>[...prev, d]);
+                  }
+              });*/
+            } catch (error) {
+              //setError(error.message); // Handle errors
+            } finally {
+              //setLoading(false); // Always set loading to false when request finishes
+            }
+          };
+          fetchReservations();
+    },[]);
     useEffect(() => {
         const savedPage = localStorage.getItem('currentPage');
         if (savedPage) {
@@ -1546,7 +1561,7 @@ const DashboardPage = () => {
                         Hello, manager!<br/>
                         Have a nice day!
                         <div className="flex">
-                            <NotificationBell/>
+                            <NotificationBell init={reservationData}/>
                             <div className="relative">
                                 <div className="bg-blue-600 text-white px-6 py-2 rounded-full transition duration-300">
                                     Hotel
