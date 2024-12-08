@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
 
 import './edits.css';
 import { FaGoogle } from 'react-icons/fa';
@@ -27,22 +28,20 @@ function RegisterPage() {
           hotel_name: '',
           phone_number: '',
           address: '',
-          location: '',
+          address1: '',
+          address2: '',
           city: '',
           country: '',
-          hotel_photos: null,
-          description: '',
-          facilities: '',
-          check_in_time: '15:00',
-          check_out_time: '11:00',
-          cancellation_policy: '',
-          student_discount: '0.00',
-          special_offers: ''
+          zip: ''
+          
         }
   );
 
   const [message, setMessage] = useState({ type: '', content: '' });
   const [isVisible, setIsVisible] = useState(false);
+
+  const navigate = useNavigate();
+
 
   function handleChange(event) {
     const { name, value, type, files } = event.target;
@@ -68,7 +67,7 @@ function RegisterPage() {
     });
 
     try {
-      const url = `http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/${registerType.toLowerCase()}/api/register/`;
+      const url = `http://10.18.190.118:8000/${registerType.toLowerCase()}/api/register/`;
       const response = await fetch(url, {
         method: 'POST',
         body: formDataToSend,
@@ -76,15 +75,18 @@ function RegisterPage() {
 
       const responseData = await response.json();
 
-      if (!response.ok) {
-        throw new Error(responseData.detail || JSON.stringify(responseData));
+      if (response.ok) {
+        if (registerType === 'Hotel') {
+          navigate('/login'); // Redirect to the Login page upon success
+        } else {
+          setMessage({ type: 'success', content: 'Student registered successfully!' });
+        }
+      } else {
+        const errorData = await response.json();
+        setMessage({ type: 'error', content: errorData.message || 'Registration failed. Please try again.' });
       }
-
-      console.log('Registration successful:', responseData);
-      setMessage({ type: 'success', content: 'Registration successful!' });
     } catch (error) {
-      console.error('Registration error:', error);
-      setMessage({ type: 'error', content: error.message });
+      setMessage({ type: 'error', content: 'An error occurred. Please try again.' });
     }
   }
 
@@ -151,18 +153,11 @@ function RegisterPage() {
                             email: '',
                             hotel_name: '',
                             phone_number: '',
-                            address: '',
-                            location: '',
+                            address1: '',
+                            address2: '',
                             city: '',
                             country: '',
-                            hotel_photos: null,
-                            description: '',
-                            facilities: '',
-                            check_in_time: '15:00',
-                            check_out_time: '11:00',
-                            cancellation_policy: '',
-                            student_discount: '0.00',
-                            special_offers: ''
+                            zip: ''
                           }
                         : {
                             username: '',
@@ -243,28 +238,13 @@ function RegisterPage() {
                 {renderField('email', 'Email', 'email')}
                 {renderField('hotel_name', 'Hotel Name')}
                 {renderField('phone_number', 'Phone Number')}
-                {renderTextarea('address', 'Address')}
-                {renderTextarea('location', 'Location', false)}
+                {renderTextarea('address1', 'Address 1')}
+                {renderTextarea('address2', 'Address 2 (Optional)', false)}
                 {renderTextarea('city', 'City')}
                 {renderTextarea('country', 'Country')}
-                <div className="register-field">
-                  <input
-                    type="file"
-                    id="hotel_photos"
-                    className="register-input"
-                    name="hotel_photos"
-                    onChange={handleChange}
-                    required
-                    accept="image/*"
-                  />
-                </div>
-                {renderTextarea('description', 'Description', false)}
-                {renderTextarea('facilities', 'Facilities', false)}
-                {renderField('check_in_time', 'Check-in Time', 'time')}
-                {renderField('check_out_time', 'Check-out Time', 'time')}
-                {renderTextarea('cancellation_policy', 'Cancellation Policy', false)}
-                {renderField('student_discount', 'Student Discount (%)', 'number', false)}
-                {renderField('special_offers', 'Special Offers', 'text', false)}
+                {renderField('zip', 'Zip')}
+    
+
               </>
             )}
 

@@ -9,6 +9,7 @@ import HotelRegister from './components/pages/HotelRegister';
 import DashboardPage from './components/pages/DashboardPage';
 import StudentDashboardPage from './components/pages/StudentDashboardPage';
 import ReviewBooking from './components/pages/Review_Booking/ReviewBooking';
+import BookingSuccess from './components/pages/Review_Booking/BookingSuccess';
 import HotelDetails from './components/pages/HotelDetails';
 
 
@@ -25,6 +26,7 @@ function App() {
         <Route path="/dashboard" element={<DashboardPage /> } />
         <Route path="/student/dashboard" element={<StudentDashboardPage /> } />
         <Route path="/review-booking" element={<ReviewBooking />} />
+        <Route path="/booking-success" element={<BookingSuccess />} />
         <Route path="/hotel-details" element={<HotelDetails />} />
       </Routes>
     </Router>
