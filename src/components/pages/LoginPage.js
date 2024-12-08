@@ -10,6 +10,7 @@ const LoginForm = ({ type }) => {
     password: ''
   });
   const [message, setMessage] = useState({ type: '', content: '' });
+  const [loginType, setLoginType] = useState('Student');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,25 +27,30 @@ const LoginForm = ({ type }) => {
         },
         body: JSON.stringify(formData),
       });
-
+  
       const data = await response.json();
-
+  
       if (!response.ok) {
         throw new Error(data.detail || 'Login failed');
       }
-
+  
+      console.log('Login response data:', data); // Debugging output
+  
       setMessage({ type: 'success', content: 'Login successful!' });
-      // Here you can handle the successful login data if needed
-
-
-      console.log('Login successful:', data);
-      localStorage.setItem('authToken',data.token);
-      navigate('/');
-
+      localStorage.setItem('authToken', data.token);
+      console.log(loginType);
+  
+      // Check userType and navigate accordingly
+      if (loginType === 'hotel') {
+        navigate('/dashboard');
+      } else {
+        navigate('/'); // Default navigation for non-hotel users
+      }
     } catch (error) {
       setMessage({ type: 'error', content: error.message });
     }
   };
+  
 
   return (
     <div className="w-full max-w-md">
