@@ -1,159 +1,69 @@
-// import React, { useEffect, useState } from 'react';
-// import { useLocation, useNavigate } from 'react-router-dom';
-// import BookingDetails from './BookingDetails';
-// import PriceBreakdown from './PriceBreakdown';
-// import GuestDetails from './GuestDetails';
-// import CouponSection from './CouponSection';
-// import ImportantInfo from './ImportantInfo';
-// import './ReviewBooking.css';
-
-// function ReviewBooking() {
-//   const location = useLocation();
-//   const navigate = useNavigate();
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState(null);
-  
-//   const { hotelData, bookingDetails } = location.state || {};
-
-//   // Redirect if no booking data is present
-//   useEffect(() => {
-//     if (!hotelData || !bookingDetails) {
-//       navigate('/');
-//     }
-//   }, [hotelData, bookingDetails, navigate]);
-
-//   const handlePayment = async () => {
-//     setLoading(true);
-//     setError(null);
-
-//     try {
-//       // Add your payment processing logic here
-//       console.log('Processing payment...', {
-//         hotelData,
-//         bookingDetails
-//       });
-
-//       // Mock API call
-//       await new Promise(resolve => setTimeout(resolve, 2000));
-
-//       // Navigate to success page or show success message
-//       alert('Payment successful!');
-//     } catch (err) {
-//       setError('Payment failed. Please try again.');
-//       console.error('Payment error:', err);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   if (!hotelData || !bookingDetails) {
-//     return null;
-//   }
-
-//   return (
-//     <div className="min-h-screen bg-gray-50">
-//       <div className="max-w-7xl mx-auto px-4 py-8">
-//         <div className="mb-6">
-//           <h1 className="text-3xl font-bold text-gray-900">Review Your Booking</h1>
-//         </div>
-
-//         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-//           <div className="lg:col-span-2 space-y-6">
-//             {/* Hotel Info */}
-//             <div className="bg-white rounded-lg shadow p-6">
-//               <h2 className="text-xl font-semibold mb-4 text-gray-900">Hotel Details</h2>
-//               <div className="space-y-4">
-//                 <div>
-//                   <h3 className="font-medium text-gray-900">{hotelData.name}</h3>
-//                   <p className="text-gray-600">{hotelData.location}</p>
-//                 </div>
-//                 <div className="grid grid-cols-2 gap-4">
-//                   <div>
-//                     <p className="text-sm text-gray-600">Check-in</p>
-//                     <p className="font-medium text-gray-900">{bookingDetails.checkIn}</p>
-//                   </div>
-//                   <div>
-//                     <p className="text-sm text-gray-600">Check-out</p>
-//                     <p className="font-medium text-gray-900">{bookingDetails.checkOut}</p>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-
-//             {/* Selected Rooms */}
-//             <div className="bg-white rounded-lg shadow p-6">
-//               <h2 className="text-xl font-semibold mb-4 text-gray-900">Selected Rooms</h2>
-//               <div className="space-y-4">
-//                 {hotelData.selectedRooms.map((room, index) => (
-//                   <div key={index} className="flex justify-between items-start border-b pb-4 last:border-0">
-//                     <div>
-//                       <h3 className="font-medium text-gray-900">{room.room_type}</h3>
-//                       <p className="text-sm text-gray-600">Quantity: {room.quantity}</p>
-//                       <p className="text-sm text-gray-600">Max occupancy: {room.max_occupancy} guests per room</p>
-//                       <p className="text-sm text-gray-600">{room.facilities}</p>
-//                     </div>
-//                     <div className="text-right">
-//                       <p className="font-semibold text-gray-900">${room.price_per_night}</p>
-//                       <p className="text-sm text-gray-600">per night</p>
-//                     </div>
-//                   </div>
-//                 ))}
-//               </div>
-//             </div>
-
-//             {/* Guest Details */}
-//             <div className="bg-white rounded-lg shadow p-6">
-//               <h2 className="text-xl font-semibold mb-4 text-gray-900">Guest Details</h2>
-//               <GuestDetails />
-//             </div>
-//           </div>
-
-//           <div className="lg:col-span-1">
-//             {/* Price Breakdown */}
-//             <div className="bg-white rounded-lg shadow p-6 sticky top-6">
-//               <h2 className="text-xl font-semibold mb-4 text-gray-900">Price Summary</h2>
-//               <PriceBreakdown price={bookingDetails.totalPrice} />
-              
-//               {/* Coupon Section */}
-//               <div className="mt-6">
-//                 <CouponSection />
-//               </div>
-
-//               {error && (
-//                 <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600">
-//                   {error}
-//                 </div>
-//               )}
-
-//               <button
-//                 onClick={handlePayment}
-//                 disabled={loading}
-//                 className="mt-6 w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-//               >
-//                 {loading ? (
-//                   <span className="flex items-center justify-center">
-//                     <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
-//                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-//                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-//                     </svg>
-//                     Processing...
-//                   </span>
-//                 ) : (
-//                   `Pay $${bookingDetails.totalPrice}`
-//                 )}
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default ReviewBooking;
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
+import { loadStripe } from '@stripe/stripe-js';
+import {
+  Elements,
+  PaymentElement,
+  useStripe,
+  useElements,
+} from '@stripe/react-stripe-js';
+
+// Initialize Stripe with your publishable key
+const stripePromise = loadStripe('pk_test_51QTTD8ER4O8rsbmLHpV5QJT6foTDYrS8TMYl157Ev3hBJmWK2yKrFq3oBvyOxgMiUs8jbghkPMcB4CZl4mF2DoHC00CdOwtBcF');
+
+// Payment Form Component
+const PaymentForm = ({ clientSecret, onSuccess, onError, amount }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
+
+    setLoading(true);
+    try {
+      const { error, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/booking-success`,
+        },
+        redirect: 'if_required'
+      });
+
+      if (error) {
+        onError(error.message);
+      } else if (paymentIntent.status === 'succeeded') {
+        onSuccess(paymentIntent);
+      }
+    } catch (err) {
+      onError('Payment failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <PaymentElement className="mb-4" />
+      <button
+        type="submit"
+        disabled={loading || !stripe}
+        className="w-full bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+      >
+        {loading ? (
+          <span className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+            Processing...
+          </span>
+        ) : (
+          `Pay $${amount}`
+        )}
+      </button>
+    </form>
+  );
+};
 
 const ReviewBooking = () => {
   const location = useLocation();
@@ -161,7 +71,7 @@ const ReviewBooking = () => {
   const { hotelData, bookingDetails } = location.state || {};
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [clientSecret, setClientSecret] = useState('');
   const [guestDetails, setGuestDetails] = useState({
     first_name: '',
     last_name: '',
@@ -181,18 +91,23 @@ const ReviewBooking = () => {
     }));
   };
 
-  const makeReservation = async () => {
-    setLoading(true);
-    setError(null);
-    
+  const handleInitiatePayment = async () => {
+    // Validate required fields
+    const requiredFields = ['first_name', 'last_name', 'email', 'country', 'phone_number', 'expected_arrival_time'];
+    const missingFields = requiredFields.filter(field => !guestDetails[field]);
+
+    if (missingFields.length > 0) {
+      setError('Please fill in all required fields');
+      return;
+    }
+
     try {
-      // Mock successful payment
-      console.log('Payment successful, creating reservation...');
-      
-      // Create reservation request body
+      setLoading(true);
+
+      // Store reservation data
       const reservationData = {
         hotel: hotelData.hotel_id,
-        room: bookingDetails.rooms[0].room_id,  // Using first room's ID
+        room: 17,
         first_name: guestDetails.first_name,
         last_name: guestDetails.last_name,
         email: guestDetails.email,
@@ -204,77 +119,72 @@ const ReviewBooking = () => {
         check_out_date: bookingDetails.checkOut,
         guests: bookingDetails.guests,
         damage_insurance: includeInsurance,
-        stripe_payment_id: 'mock_payment_' + Date.now(),
-        amount: bookingDetails.totalPrice,
-        payment_status: 'completed'
+        amount: bookingDetails.totalPrice
       };
 
-      console.log('Making API call with data:', reservationData);
+      localStorage.setItem('pendingReservation', JSON.stringify(reservationData));
 
-      const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reservations/', {
+      // Create payment intent
+      const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/payment/create-payment-intent/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(reservationData)
+        body: JSON.stringify({
+          amount: Math.round((bookingDetails.discountedTotal || bookingDetails.totalPrice) * 100), // Convert to cents
+          currency: 'usd',
+        }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create reservation');
+        throw new Error(errorData.error || 'Failed to initialize payment');
       }
 
-      const result = await response.json();
-      console.log('Reservation created successfully:', result);
-      setShowConfirmation(true);
+      const { client_secret } = await response.json();
+      setClientSecret(client_secret);
 
     } catch (error) {
-      console.error('Error creating reservation:', error);
-      setError(error.message || 'Failed to create reservation');
+      setError(error.message || 'Failed to initialize payment');
+      console.error('Payment initialization error:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handlePaymentClick = async () => {
-    // Validate required fields
-    const requiredFields = ['first_name', 'last_name', 'email', 'country', 'phone_number', 'expected_arrival_time'];
-    const missingFields = requiredFields.filter(field => !guestDetails[field]);
+  const handlePaymentSuccess = async (paymentIntent) => {
+    try {
+      const pendingReservation = JSON.parse(localStorage.getItem('pendingReservation'));
 
-    if (missingFields.length > 0) {
-      setError('Please fill in all required fields');
-      return;
+      // Create reservation with payment details
+      const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reservations/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${localStorage.getItem('authToken')}`,
+        },
+        body: JSON.stringify({
+          ...pendingReservation,
+          payment_status: paymentIntent.status,
+          stripe_payment_id: paymentIntent.id,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create reservation');
+      }
+
+      // Clear pending reservation
+      localStorage.removeItem('pendingReservation');
+      
+      // Navigate to success page
+      navigate('/booking-success');
+
+    } catch (error) {
+      setError('Failed to complete reservation. Please contact support.');
+      console.error('Reservation error:', error);
     }
-
-    // Proceed with reservation
-    await makeReservation();
   };
-
-  if (showConfirmation) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
-        <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
-          <div className="text-center">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
-              <svg className="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-            </div>
-            <h2 className="mt-4 text-2xl font-bold text-gray-900">Booking Confirmed!</h2>
-            <p className="mt-2 text-gray-600">
-              A confirmation email has been sent to {guestDetails.email}
-            </p>
-            <button
-              onClick={() => navigate('/')}
-              className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-            >
-              Return to Home
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   if (!hotelData || !bookingDetails) {
     return null;
@@ -286,7 +196,6 @@ const ReviewBooking = () => {
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Review Your Booking</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Hotel Info */}
             <div className="bg-white rounded-lg shadow p-6">
@@ -445,20 +354,31 @@ const ReviewBooking = () => {
                   </div>
                 )}
 
-                <button
-                  onClick={handlePaymentClick}
-                  disabled={loading}
-                  className="w-full bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-                >
-                  {loading ? (
-                    <span className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                      Processing...
-                    </span>
-                  ) : (
-                    `Pay $${bookingDetails.discountedTotal?.toFixed(2) || bookingDetails.totalPrice?.toFixed(2)}`
-                  )}
-                </button>
+{clientSecret ? (
+                  <Elements stripe={stripePromise} options={{ clientSecret }}>
+                    <PaymentForm
+                      clientSecret={clientSecret}
+                      onSuccess={handlePaymentSuccess}
+                      onError={setError}
+                      amount={bookingDetails.discountedTotal?.toFixed(2) || bookingDetails.totalPrice?.toFixed(2)}
+                    />
+                  </Elements>
+                ) : (
+                  <button
+                    onClick={handleInitiatePayment}
+                    disabled={loading}
+                    className="w-full bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {loading ? (
+                      <span className="flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                        Processing...
+                      </span>
+                    ) : (
+                      `Pay $${bookingDetails.discountedTotal?.toFixed(2) || bookingDetails.totalPrice?.toFixed(2)}`
+                    )}
+                  </button>
+                )}
               </div>
             </div>
           </div>
