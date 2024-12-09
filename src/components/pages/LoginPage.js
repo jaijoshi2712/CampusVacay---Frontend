@@ -16,6 +16,39 @@ const LoginForm = ({ type }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const LoginPage = () => {
+  const [loginType, setLoginType] = useState('Student');
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-lg shadow-md flex w-full max-w-4xl">
+        <div className="w-1/2 bg-cover bg-center rounded-l-lg" style={{backgroundImage: "url('/api/placeholder/600/800')"}}>
+          <div className="h-full w-full bg-blue-500 bg-opacity-50 flex items-center justify-center rounded-l-lg">
+            <h1 className="text-4xl font-bold text-white">CampusVacay.</h1>
+          </div>
+        </div>
+        <div className="w-1/2 p-8">
+          <div className="flex justify-end mb-4">
+            <div className="relative inline-block w-10 mr-2 align-middle select-none">
+              <input
+                type="checkbox"
+                name="toggle"
+                id="toggle"
+                className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+                onChange={() => setLoginType(loginType === 'Student' ? 'Hotel' : 'Student')}
+              />
+              <label
+                htmlFor="toggle"
+                className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
+              ></label>
+            </div>
+            <span className="text-gray-700">{loginType} Login</span>
+          </div>
+          <LoginForm type={loginType} />
+        </div>
+      </div>
+    </div>
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage({ type: '', content: '' });
@@ -94,6 +127,12 @@ const LoginForm = ({ type }) => {
           </a>
         </div>
         <div className="flex items-center justify-between">
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+            type="submit"
+          >
+            Login
+          </button>
         </div>
       </form>
       <div className="text-center mt-4">
@@ -118,24 +157,6 @@ const LoginPage = () => {
           </div>
         </div>
         <div className="w-1/2 p-8">
-          <div className="flex justify-end mb-4">
-            <div className="relative inline-block w-10 mr-2 align-middle select-none">
-              <input
-                type="checkbox"
-                name="toggle"
-                id="toggle"
-                className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
-                onChange={() => setLoginType(loginType === 'Student' ? 'Hotel' : 'Student')}
-              />
-              <label
-                htmlFor="toggle"
-                className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
-              ></label>
-            </div>
-            <span className="text-gray-700">{loginType} Login</span>
-          </div>
-          <LoginForm type={loginType} />
-        </div>
       </div>
     </div>
   );
