@@ -10,6 +10,7 @@ const LoginForm = ({ type }) => {
     password: ''
   });
   const [message, setMessage] = useState({ type: '', content: '' });
+  const [loginType, setLoginType] = useState('Student');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -112,6 +113,7 @@ const LoginPage = () => {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-md flex w-full max-w-4xl">
         <div className="w-1/2 bg-cover bg-center rounded-l-lg" style={{backgroundImage: "url('/api/placeholder/600/800')"}}>
+          <div className="h-full w-full bg-blue-500 bg-opacity-50 flex items-center justify-center rounded-l-lg">
             <h1 className="text-4xl font-bold text-white">CampusVacay.</h1>
           </div>
         </div>
@@ -125,6 +127,10 @@ const LoginPage = () => {
                 className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
                 onChange={() => setLoginType(loginType === 'Student' ? 'Hotel' : 'Student')}
               />
+              <label
+                htmlFor="toggle"
+                className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
+              ></label>
             </div>
             <span className="text-gray-700">{loginType} Login</span>
           </div>
