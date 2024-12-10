@@ -1,10 +1,7 @@
-
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Search, User, MapPin, Calendar } from 'lucide-react';
-
-
+import { Search, User, MapPin, Navigation, Calendar } from 'lucide-react';
+import './edits.css';
 
 const SearchBar = ({ initialData }) => {
   const navigate = useNavigate();
@@ -63,18 +60,13 @@ const SearchBar = ({ initialData }) => {
       searchConfig,
       (predictions, status) => {
         if (status === 'OK' && predictions) {
-          const processedSuggestions = predictions.map(prediction => {
-            const mainText = prediction.structured_formatting.main_text;
-            const secondaryText = prediction.structured_formatting.secondary_text;
-            
-            return {
-              id: prediction.place_id,
-              mainText: mainText,
-              secondaryText: secondaryText,
-              description: prediction.description,
-              types: prediction.types
-            };
-          });
+          const processedSuggestions = predictions.map(prediction => ({
+            id: prediction.place_id,
+            mainText: prediction.structured_formatting.main_text,
+            secondaryText: prediction.structured_formatting.secondary_text,
+            description: prediction.description,
+            types: prediction.types
+          }));
           setSuggestions(processedSuggestions);
           setShowSuggestions(true);
         } else {
@@ -195,8 +187,7 @@ const SearchBar = ({ initialData }) => {
               className="w-full border border-gray-300 rounded-lg p-3 pl-10"
               autoComplete="off"
             />
-
-{showSuggestions && suggestions.length > 0 && (
+            {showSuggestions && suggestions.length > 0 && (
               <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                 {suggestions.map(suggestion => (
                   <div
@@ -248,27 +239,24 @@ const HotelCard = ({ hotel }) => {
   const location = useLocation();
   const searchData = location.state?.searchData;
 
-  // Get the lowest price room
   const lowestPriceRoom = hotel.rooms.reduce((min, room) => 
     room.price_per_night < (min?.price_per_night || Infinity) ? room : min
   , null);
 
-  // Calculate maximum occupancy across all room types
   const maxOccupancy = Math.max(...hotel.rooms.map(room => room.max_occupancy));
 
   const handleImageError = () => {
     setImageError(true);
   };
 
-// In HotelCard component (SearchPage.js)
-const handleBooking = () => {
-  navigate('/hotel-details', {
-    state: {
-      hotelData: hotel, // Pass the entire hotel object from API
-      searchData
-    }
-  });
-};
+  const handleBooking = () => {
+    navigate('/hotel-details', {
+      state: {
+        hotelData: hotel,
+        searchData
+      }
+    });
+  };
 
   const formatTime = (timeString) => {
     try {
@@ -377,46 +365,156 @@ const handleBooking = () => {
   );
 };
 
+const Layout = ({ children }) => (
+  <div className="min-h-screen flex flex-col">
+    <Header />
+    <main className="flex-grow bg-gray-100">
+      {children}
+    </main>
+    <footer className="bg-gray-800 text-gray-200 py-6">
+      <div className="max-w-6xl mx-auto px-6 flex flex-wrap justify-between items-start">
+        <div className="w-full md:w-1/3 mb-4 md:mb-0">
+          <a href="#home" className="text-3xl font-bold text-blue-500 flex items-center mb-2 no-underline">
+            <Navigation className="mr-2" />
+            CampusVacay.
+          </a>
+          <p className="text-gray-400 text-sm">We kaboom your beauty holiday instantly and memorable.</p>
+        </div>
+        <div className="w-full md:w-1/3 text-right">
+          <h4 className="text-lg font-semibold mb-2">Contact Us</h4>
+          <ul className="text-gray-400 text-sm space-y-1">
+            <li>Phone: +1-234-567-890</li>
+            <li>Email: support@campusvacay.com</li>
+            <li>Address: 123 Vacation Lane, Dream City, Holiday State</li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+    <div className="bg-[#3252DF] text-white h-11 flex items-center justify-center text-center text-sm">
+      <p>&copy; {new Date().getFullYear()} CampusVacay. All rights reserved.</p>
+    </div>
+  </div>
+);
+
+const Header = () => {
+  const [token, setToken] = useState(null);
+  const [loginType, setLoginType] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [message, setMessage] = useState({ type: '', content: '' });
+  
+  useEffect(() => {
+    setLoginType(localStorage.getItem('type'));
+    const storedToken = localStorage.getItem('authToken');
+    if (storedToken) {
+      setToken(storedToken);
+    }
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      const url = `http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/api/logout/`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Token ' + localStorage.getItem('authToken'),
+        },
+        body: JSON.stringify(''),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.detail || JSON.stringify(responseData) || 'Logout failed');
+      }
+
+      setMessage({ type: 'success', content: 'Logout successful!' });
+      localStorage.removeItem('authToken');
+      setToken(null);
+    } catch (error) {
+      console.error('Logout error:', error);
+      setMessage({ type: 'error', content: error.message });
+    }
+  };
+
+  return (
+    <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'}`}>
+      <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
+        <a href="#home" className="text-3xl font-bold text-blue-700 flex items-center no-underline">
+          <Navigation className="mr-2" />
+          CampusVacay.
+        </a>
+        <div className="flex items-center space-x-4">
+          {token && loginType == 'Student' ? (
+            <a href="/student/dashboard" className="list-none text-gray-600 hover:text-blue-700 cursor-pointer transition duration-300">
+              Dashboard
+            </a>
+          ) : token && loginType === 'Hotel' ? (
+            <a href="/dashboard" className="list-none text-gray-600 hover:text-blue-700 cursor-pointer transition duration-300">
+              Dashboard
+            </a>
+          ) : (<div></div>)
+          }
+          {token ? (
+            <button onClick={handleLogout} className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
+              Logout
+            </button>
+          ) : (
+            <a href="/login" className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
+              Login
+            </a>
+          )}
+        </div>
+      </div>
+      {message.content && (
+        <div className={`fixed top-16 right-8 p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+          {message.content}
+        </div>
+      )}
+    </header>
+  );
+};
+
 const SearchPage = () => {
   const location = useLocation();
-  const navigate = useNavigate();
   const searchResults = location.state?.searchResults || [];
   const initialSearchData = location.state?.searchData;
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Search Results</h1>
-          <button
-            onClick={() => navigate('/')}
-            className="bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-800 transition duration-300"
-          >
-            Back to Home
-          </button>
-        </div>
+    <Layout>
+      <div className="container mx-auto px-4">
+        <div className="pt-24 pb-8"> {/* Increased top padding for better placement */}
+          <h1 className="text-3xl font-bold mb-8 text-center">Search Results</h1> {/* Centered the title and added margin */}
 
-        <div className="mb-8">
-          <SearchBar initialData={initialSearchData} />
-        </div>
+          <div className="mb-8">
+            <SearchBar initialData={initialSearchData} />
+          </div>
 
-        {searchResults.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-xl text-gray-600">No hotels found matching your criteria.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {searchResults.map((hotel) => (
-  <HotelCard 
-    key={hotel.hotel_id} 
-    hotel={hotel}  // Pass the complete hotel object
-  />
-))}
-          </div>
-        )}
+          {searchResults.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-xl text-gray-600">No hotels found matching your criteria.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {searchResults.map((hotel) => (
+                <HotelCard 
+                  key={hotel.hotel_id} 
+                  hotel={hotel}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
 export default SearchPage;
+
