@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-
 import './edits.css';
 import { FaGoogle } from 'react-icons/fa';
 
 function RegisterPage() {
+  // State to track the type of registration (Student or Hotel)
   const [registerType, setRegisterType] = useState('Student');
+  
+  // Form data initialized based on the registration type
   const [formData, setFormData] = useState(
     registerType === 'Student'
       ? {
@@ -19,7 +21,7 @@ function RegisterPage() {
           phone_number: '',
           address: '',
           university_name: '',
-          university_id_proof: null
+          university_id_proof: null,
         }
       : {
           username: '',
@@ -27,46 +29,48 @@ function RegisterPage() {
           email: '',
           hotel_name: '',
           phone_number: '',
-          address: '',
           address1: '',
           address2: '',
           city: '',
           country: '',
-          zip: ''
-          
+          zip: '',
         }
   );
 
+  // State for managing messages (success or error) and visibility of password
   const [message, setMessage] = useState({ type: '', content: '' });
   const [isVisible, setIsVisible] = useState(false);
 
   const navigate = useNavigate();
 
-
+  // Updates formData state when input values change
   function handleChange(event) {
     const { name, value, type, files } = event.target;
     setFormData({
       ...formData,
-      [name]: type === 'file' ? files[0] : value
+      [name]: type === 'file' ? files[0] : value, // Handles file inputs separately
     });
   }
 
+  // Handles form submission
   async function handleSubmit(event) {
-    event.preventDefault();
-    setMessage({ type: '', content: '' });
+    event.preventDefault(); // Prevents default form submission behavior
+    setMessage({ type: '', content: '' }); // Resets any previous message
 
     const formDataToSend = new FormData();
-    Object.keys(formData).forEach(key => {
+    Object.keys(formData).forEach((key) => {
       if (key === 'university_id_proof' || key === 'hotel_photos') {
+        // Appends file data only if it exists
         if (formData[key]) {
           formDataToSend.append(key, formData[key]);
         }
       } else {
-        formDataToSend.append(key, formData[key]);
+        formDataToSend.append(key, formData[key]); // Appends other data
       }
     });
 
     try {
+      // Sends registration request to appropriate API endpoint based on registration type
       const url = `http://10.18.190.118:8000/${registerType.toLowerCase()}/api/register/`;
       const response = await fetch(url, {
         method: 'POST',
@@ -77,23 +81,26 @@ function RegisterPage() {
 
       if (response.ok) {
         if (registerType === 'Hotel') {
-          navigate('/login'); // Redirect to the Login page upon success
+          navigate('/login'); // Redirect to login on successful hotel registration
         } else {
           setMessage({ type: 'success', content: 'Student registered successfully!' });
         }
       } else {
-        const errorData = await response.json();
-        setMessage({ type: 'error', content: errorData.message || 'Registration failed. Please try again.' });
+        // Displays error message on unsuccessful registration
+        setMessage({ type: 'error', content: responseData.message || 'Registration failed. Please try again.' });
       }
     } catch (error) {
+      // Catches and displays any network or other errors
       setMessage({ type: 'error', content: 'An error occurred. Please try again.' });
     }
   }
 
+  // Toggles password visibility
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
   };
 
+  // Renders an input field
   const renderField = (name, label, type = 'text', required = true) => (
     <div className="register-field">
       <input
@@ -110,6 +117,7 @@ function RegisterPage() {
     </div>
   );
 
+  // Renders a textarea field
   const renderTextarea = (name, label, required = true) => (
     <div className="register-field">
       <textarea
@@ -127,17 +135,21 @@ function RegisterPage() {
   return (
     <form onSubmit={handleSubmit} className="register-page">
       <div className="register-container">
-        <div className='register-left-panel'>
+        {/* Left panel with branding */}
+        <div className="register-left-panel">
           <div className="register-logo">
             <span className="logo-part-blue">Campus</span>
             <span className="logo-part-dark">Vacay.</span>
           </div>
         </div>
-        <div className='register-right-panel'>
+
+        {/* Right panel with registration form */}
+        <div className="register-right-panel">
           <div className="register-form-container">
             <div className="register-header">
               <h2>{registerType} Account</h2>
               <div className="register-toggle">
+                {/* Toggle switch for switching registration type */}
                 <div className="toggle-switch">
                   <input
                     type="checkbox"
@@ -145,7 +157,8 @@ function RegisterPage() {
                     id="toggle"
                     className="toggle-checkbox"
                     onChange={() => {
-                      setRegisterType(registerType === 'Student' ? 'Hotel' : 'Student');
+                      setRegisterType(registerType === 'Student' ? 'Hotel' : 'Student'); // Updates type
+                      // Updates form data structure based on selected type
                       setFormData(registerType === 'Student'
                         ? {
                             username: '',
@@ -157,7 +170,7 @@ function RegisterPage() {
                             address2: '',
                             city: '',
                             country: '',
-                            zip: ''
+                            zip: '',
                           }
                         : {
                             username: '',
@@ -169,7 +182,7 @@ function RegisterPage() {
                             phone_number: '',
                             address: '',
                             university_name: '',
-                            university_id_proof: null
+                            university_id_proof: null,
                           }
                       );
                     }}
@@ -180,6 +193,7 @@ function RegisterPage() {
               </div>
             </div>
 
+            {/* Form fields for Student registration */}
             {registerType === 'Student' ? (
               <>
                 {renderField('username', 'Username')}
@@ -219,6 +233,7 @@ function RegisterPage() {
               </>
             ) : (
               <>
+                {/* Form fields for Hotel registration */}
                 {renderField('username', 'Username')}
                 <div className="register-field password-field">
                   <input
@@ -243,8 +258,6 @@ function RegisterPage() {
                 {renderTextarea('city', 'City')}
                 {renderTextarea('country', 'Country')}
                 {renderField('zip', 'Zip')}
-    
-
               </>
             )}
 
@@ -252,21 +265,25 @@ function RegisterPage() {
               By signing up you agree to <a href="#">terms and conditions</a>
             </div>
 
+            {/* Registration button */}
             <button type="submit" className="register-button">
               Register
             </button>
 
+            {/* Google Sign-up button */}
             <button type="button" className="google-button">
               <FaGoogle className="google-icon" />
               Sign up with Google
             </button>
 
+            {/* Displays success or error message */}
             {message.content && (
               <div className={`register-message ${message.type === 'success' ? 'success' : 'error'}`}>
                 {message.content}
               </div>
             )}
 
+            {/* Link to login page */}
             <div className="login-link">
               <Link to="/login">Login</Link>
             </div>
