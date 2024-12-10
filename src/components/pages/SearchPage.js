@@ -401,6 +401,8 @@ const Header = () => {
   const [loginType, setLoginType] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [message, setMessage] = useState({ type: '', content: '' });
+
+  const navigate = useNavigate(); // Hook for navigation
   
   useEffect(() => {
     setLoginType(localStorage.getItem('type'));
@@ -445,7 +447,7 @@ const Header = () => {
 
   return (
     <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'}`}>
-      <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
+      <div className="max-w-6xl mx-auto px-6 flex justify-between items-center" onClick={() => navigate('/')}>
         <a href="#home" className="text-3xl font-bold text-blue-700 flex items-center no-underline">
           <Navigation className="mr-2" />
           CampusVacay.
