@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-
 function HotelRegister() {
+  // State to manage form data
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,17 +16,20 @@ function HotelRegister() {
     facilities: ''
   });
 
+  // Handle input change for controlled form fields
   function handleChange(event) {
     const { name, value } = event.target;
     setFormData({
-      ...formData,
-      [name]: value
+      ...formData, // Spread operator to maintain other fields
+      [name]: value // Update specific field
     });
   }
 
+  // Handle form submission
   function handleSubmit(event) {
-    event.preventDefault();
-    console.log(formData);
+    event.preventDefault(); // Prevent default form submission behavior
+    console.log(formData); // Log form data to console
+    // Reset form data after submission
     setFormData({
       name: '',
       email: '',
@@ -39,22 +42,25 @@ function HotelRegister() {
       registrationNo: '',
       address: '',
       facilities: ''
-    })
+    });
   }
 
+  // State to toggle password visibility
   const [isVisible, setIsVisible] = useState(false);
 
+  // Toggle visibility of the password field
   const toggleVisibility = () => {
-      setIsVisible(!isVisible);
+    setIsVisible(!isVisible);
   };
 
   return (
     <form onSubmit={handleSubmit}>
-    <div className="container">
-      
-      <div className='right-panel'>
-        <h1>CampusVacay.</h1>
-  
+      <div className="container">
+        
+        {/* User Information Panel */}
+        <div className='right-panel'>
+          <h1>CampusVacay.</h1>
+          
           <h2 className="label-wrapper">
             <label>Name</label>
           </h2>
@@ -84,6 +90,7 @@ function HotelRegister() {
             placeholder="name@gmail.com"
             required
           />
+          
           <h2 className="label-wrapper">
             <label>Phone NO.</label>
           </h2>
@@ -92,9 +99,9 @@ function HotelRegister() {
             id="hotel-phone"
             className="input input__lg"
             name="phone"
-            autoComplete="off"
             value={formData.phone}
             onChange={handleChange}
+            autoComplete="off"
             placeholder="With Country Code"
             required
           />
@@ -107,9 +114,9 @@ function HotelRegister() {
             id="hotel-country"
             className="input input__lg"
             name="country"
-            autoComplete="off"
             value={formData.country}
             onChange={handleChange}
+            autoComplete="off"
             placeholder="Country Name"
             required
           />
@@ -122,9 +129,9 @@ function HotelRegister() {
             id="nic"
             className="input input__lg"
             name="nic"
-            autoComplete="off"
             value={formData.nic}
             onChange={handleChange}
+            autoComplete="off"
             placeholder="National Identity Card"
             required
           />
@@ -137,9 +144,9 @@ function HotelRegister() {
             id="username"
             className="input input__lg"
             name="username"
-            autoComplete="off"
             value={formData.username}
             onChange={handleChange}
+            autoComplete="off"
             placeholder="Username"
             required
           />
@@ -148,27 +155,30 @@ function HotelRegister() {
             <label>Password</label>
           </h2>
           <div>
-          <div className='inline-block3'>
-          <input
-            type={isVisible ? 'text' : 'password'}
-            id="password"
-            className="input input__lg"
-            name="password"
-            autoComplete="off"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="6+ characters"
-            required
-          /></div>
-          <div className="inline-block4" onClick={toggleVisibility}>
-            {isVisible ? 'Hide' : 'Show'}
+            {/* Password field with toggle for visibility */}
+            <div className='inline-block3'>
+              <input
+                type={isVisible ? 'text' : 'password'}
+                id="password"
+                className="input input__lg"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                autoComplete="off"
+                placeholder="6+ characters"
+                required
+              />
+            </div>
+            <div className="inline-block4" onClick={toggleVisibility}>
+              {isVisible ? 'Hide' : 'Show'}
+            </div>
           </div>
-          </div>
-      
-      </div>
-      <div className='right-panel'>
-        <h1>Register Your Hotel</h1>
-        
+        </div>
+
+        {/* Hotel Information Panel */}
+        <div className='right-panel'>
+          <h1>Register Your Hotel</h1>
+          
           <h2 className="label-wrapper">
             <label>Hotel Name</label>
           </h2>
@@ -198,6 +208,7 @@ function HotelRegister() {
             placeholder="PVT(Ltd)"
             required
           />
+          
           <h2 className="label-wrapper">
             <label>Address</label>
           </h2>
@@ -206,9 +217,9 @@ function HotelRegister() {
             id="address"
             className="input input__lg"
             name="address"
-            autoComplete="off"
             value={formData.address}
             onChange={handleChange}
+            autoComplete="off"
             placeholder="Location"
             required
           />
@@ -224,7 +235,6 @@ function HotelRegister() {
             autoComplete="off"
             onChange={handleChange}
             placeholder="Upload"
-            
           />
 
           <h2 className="label-wrapper">
@@ -238,7 +248,6 @@ function HotelRegister() {
             autoComplete="off"
             onChange={handleChange}
             placeholder="Upload"
-            
           />
 
           <h2 className="label-wrapper">
@@ -256,19 +265,18 @@ function HotelRegister() {
             required
           />
 
+          {/* Submit Button */}
           <button type="submit" className="btn btn__primary btn__lg">
             Register
           </button>
-        
-        {/*render to login page*/}
-        <div className='btn'><a href="">Login</a></div>
-        <br/>
+          
+          {/* Link to Login Page */}
+          <div className='btn'><a href="">Login</a></div>
+          <br/>
+        </div>
       </div>
-      
-    </div>
     </form>
   );
 }
-
 
 export default HotelRegister;
