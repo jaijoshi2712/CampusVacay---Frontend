@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Form } from 'react-router-dom';
 import { Search, MapPin, Star, Navigation, Calendar, Users } from 'lucide-react';
 import { FaBell } from 'react-icons/fa';
@@ -747,7 +747,6 @@ const Reservations = () => {
             const data = await response.json();
             //console.log(data);
             setReservationData(data);
-            console.log(data);
             data.forEach(d => {
                 const orderDate1 = new Date(d.check_in_date);
                 const orderDate2 = new Date(d.check_out_date);
@@ -1391,78 +1390,67 @@ const Profile = () => {
     )
 }
 
-const NotificationBell = ({init}) => {
+const NotificationBell = () => {
     const [hasNotification, setHasNotification] = useState(false);
-    const [reservationData, setReservationData] = useState([]);
-    const [newData, setNewData] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
     // Example: Simulating new notifications after a delay (replace with your actual logic)
+    
+    const lastDataRef = useRef(null);
 
+    const fetchData = async () => {
+        try {
+            const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reservations/', {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                }
+            });          
+            const result = await response.json();
+          
+          // Compare with last data to check for updates
+          //console.log(lastDataRef);
+          if (lastDataRef.current) {
+            if (JSON.stringify(result) !== JSON.stringify(lastDataRef.current)) {
+              setHasNotification(true);
+            }
+          }
+          //setData(result);
+          lastDataRef.current = result;
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+    };
     useEffect(() => {
-        const fetchUpdates = async () => {
-            try {
-                const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/hotel/reservations/', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Token ' + localStorage.getItem('authToken'),
-                    }
-                });
-        
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                console.log('fetching', data);
-                if (data.length > init.length) {
-                    setNewData(true);
-                }
-                //setUpdateData(data);
-                //console.log(data);
-                //console.log(updateData);
-                /*data.forEach(d => {
-                    console.log(d,reservationData);
-                    console.log(reservationData.includes(d));
-                    if (!reservationData.includes(d)) {
-                        setUpdateData(prev=>[...prev, d]);
-                        setReservationData(prev=>[...prev, d]);
-                        setHasNotification(true);
-                    }
-                });*/
-              } catch (error) {
-                //setError(error.message); // Handle errors
-              } 
-            };
-          //fetchUpdates();
-          const intervalId = setInterval(fetchUpdates, 10000);
-      //return () => clearTimeout(timer);
-    }, []);
+        fetchData();
+        const intervalId = setInterval(fetchData, 10000);
+        return () => {
+          clearInterval(intervalId);
+        };
+    },[]);
   
-    // Inline styles
     const bellStyle = {
-      position: 'relative',
-      display: 'inline-block',
-      fontSize: '32px',
-      color: '#333',
+        position: 'relative',
+        display: 'inline-block',
+        fontSize: '32px',
+        color: '#333',
     };
   
     const notificationDotStyle = {
-      position: 'absolute',
-      top: '-5px',
-      right: '-5px',
-      width: '10px',
-      height: '10px',
-      backgroundColor: 'red',
-      borderRadius: '50%',
-      border: '2px solid white', // Creates a border around the dot
+        position: 'absolute',
+        top: '-5px',
+        right: '-5px',
+        width: '10px',
+        height: '10px',
+        backgroundColor: 'red',
+        borderRadius: '50%',
+        border: '2px solid white',
     };
     const toggleDropdown = () => {
-        setHasNotification(false);
         setIsOpen(prevState => !prevState);
     };
     const toReservations = () => {
+        setHasNotification(false);
         localStorage.setItem('currentPage', 'reservations');
         window.location.reload();
     }
@@ -1474,7 +1462,7 @@ const NotificationBell = ({init}) => {
                 {hasNotification && <span style={notificationDotStyle}></span>}
                 {isOpen && (
                 <div className="w-40 absolute bg-white border rounded right-0 text-sm">
-                    {newData ?
+                    {hasNotification ?
                         <span onClick={toReservations}>You have new reservation!</span>:
                         <span>No new reservation!</span>
                     }
@@ -1487,44 +1475,7 @@ const NotificationBell = ({init}) => {
 
 const DashboardPage = () => {
     const [page, setPage] = useState('profile');
-    const [reservationData, setReservationData] = useState([]);
 
-    useEffect(() => {
-        const fetchReservations = async () => {
-            try {
-              const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/hotel/reservations/', {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': 'Token ' + localStorage.getItem('authToken'),
-                }
-              });
-      
-              if (!response.ok) {
-                throw new Error('Network response was not ok');
-              }
-      
-              const data = await response.json();
-              //console.log('hi',data);
-              setReservationData(data);
-              //setUpdateData(data);
-              /*data.forEach(d => {
-                  const orderDate1 = new Date(d.check_in_date);
-                  const orderDate2 = new Date(d.check_out_date);
-                  const today = new Date();
-                  if(orderDate1<=today && orderDate2>=today){
-                      setFilteredOrders(prev=>[...prev, d]);
-                      setInitialOrders(prev=>[...prev, d]);
-                  }
-              });*/
-            } catch (error) {
-              //setError(error.message); // Handle errors
-            } finally {
-              //setLoading(false); // Always set loading to false when request finishes
-            }
-          };
-          fetchReservations();
-    },[]);
     useEffect(() => {
         const savedPage = localStorage.getItem('currentPage');
         if (savedPage) {
@@ -1561,7 +1512,7 @@ const DashboardPage = () => {
                         Hello, manager!<br/>
                         Have a nice day!
                         <div className="flex">
-                            <NotificationBell init={reservationData}/>
+                            <NotificationBell/>
                             <div className="relative">
                                 <div className="bg-blue-600 text-white px-6 py-2 rounded-full transition duration-300">
                                     Hotel
