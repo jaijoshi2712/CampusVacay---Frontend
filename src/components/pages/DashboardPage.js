@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Search, MapPin, Star, Navigation, Calendar, Users } from 'lucide-react';
 import { FaBell } from 'react-icons/fa';
 
@@ -70,10 +70,6 @@ const Rooms = () => {
             'max_occupancy': selectedItem.max_occupancy,
             'smoking_allowed': selectedItem.smoking_allowed,
         })
-
-        //const files = Array.from(createRoom.images); // 獲取選擇的文件
-        //const imageUrls = files.map(file => URL.createObjectURL(file)); // 生成圖片的 URL
-        //setSelectedImages(prevImages => [...prevImages, ...imageUrls]);
     }
     const closeEdit = () => setEditOpen(0);
     const openDelete = (id, index) => {
@@ -93,14 +89,13 @@ const Rooms = () => {
         'smoking_allowed':false,
     })
 
-    const [selectedImages, setSelectedImages] = useState([]); // 存儲已上傳的圖片
+    const [selectedImages, setSelectedImages] = useState([]);
 
 
     const handleSubmit = async (e, mode, id) => {
         const { name, value, type, files } = e.target;
 
         e.preventDefault();
-        //console.log(mode, id);
         const room_id = id;
         const requestBody = {
             room_type:createRoom.room_type,
@@ -112,7 +107,6 @@ const Rooms = () => {
             max_occupancy:createRoom.max_occupancy,
             smoking_allowed:createRoom.smoking_allowed,
         };
-        //console.log(requestBody);
         if(mode=='create'){
             try {
                 const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/rooms/', {
@@ -217,17 +211,6 @@ const Rooms = () => {
 
     }
 
-    const handleImages = (e) => {
-        const files = Array.from(e.target.files); // 獲取選擇的文件
-        const imageUrls = files.map(file => URL.createObjectURL(file)); // 生成圖片的 URL
-        setSelectedImages(prevImages => [...prevImages, ...imageUrls]); // 更新狀態
-        //console.log(imageUrls);
-    }
-
-    const handleImageDelete = (index) => {
-        setSelectedImages(prevImages => prevImages.filter((_, i) => i !== index)); // 刪除指定的圖片
-    };
-
     if(loading){
         return <div>Loading...</div>
     }
@@ -239,13 +222,16 @@ const Rooms = () => {
                 {message.content}
                 </div>
             )}
-            <div className="flex justify-end px-5">
-                <button onClick={openCreate} className="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+            <div className="flex justify-between items-center text-2xl px-3">
+                Rooms
+            </div>
+            <div className="flex justify-end mx-5">
+                {/*<button onClick={openCreate} className="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
                     +
-                </button>
+                </button>*/}
                 {createOpen && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white rounded shadow-lg p-6 max-h-screen w-2/3">
+                    <div className="bg-white rounded shadow-lg max-h-screen px-4 py-3 mt-20 w-2/3">
                         <div className="flex items-center justify-between">
                             <h2 className="text-2xl font-bold mb-4">Create Room</h2>
                             <button onClick={closeCreate} className="p-2 bg-red-500 text-white rounded hover:bg-red-600">
@@ -258,7 +244,7 @@ const Rooms = () => {
                                     Room Type
                                 </label>
                                 <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    className="shadow appearance-none border rounded w-full py-2 px-1 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
                                     onChange={handleChange} id="room_type" name="room_type" type="text" value={createRoom.room_type}/>
                             </div>
                             <div>
@@ -266,7 +252,7 @@ const Rooms = () => {
                                     Number of Rooms
                                 </label>
                                 <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    className="shadow appearance-none border rounded w-full py-2 px-1 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
                                     onChange={handleChange} id="number_of_rooms" name="number_of_rooms" type="text" value={createRoom.number_of_rooms}/>
                             </div>
                             <div>
@@ -274,7 +260,7 @@ const Rooms = () => {
                                     Price per Night
                                 </label>
                                 <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    className="shadow appearance-none border rounded w-full py-2 px-1 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
                                     onChange={handleChange} id="price_per_night" name="price_per_night" type="text" value={createRoom.price_per_night}/>
                             </div>
                             <div>
@@ -282,7 +268,7 @@ const Rooms = () => {
                                     Facilities
                                 </label>
                                 <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
                                     onChange={handleChange} id="facilities" name="facilities" type="text" value={createRoom.facilities}/>
                             </div>
                             <div>
@@ -290,7 +276,7 @@ const Rooms = () => {
                                     Breakfast Included?
                                 </label>
                                 <input
-                                    className="shadow border rounded w-6 h-6 py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    className="shadow border rounded w-6 h-6 py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
                                     onChange={handleChange} id="breakfast_included" name="breakfast_included" type="checkbox" checked={createRoom.breakfast_included}/>
                             </div>
                             <div>
@@ -298,7 +284,7 @@ const Rooms = () => {
                                     Room Size
                                 </label>
                                 <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
                                     onChange={handleChange} id="room_size" name="room_size" type="text" value={createRoom.room_size}/>
                             </div>
                             <div>
@@ -306,7 +292,7 @@ const Rooms = () => {
                                     Max Occupancy
                                 </label>
                                 <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
                                     onChange={handleChange} id="max_occupancy" name="max_occupancy" type="text" value={createRoom.max_occupancy}/>
                             </div>
                             <div>
@@ -314,37 +300,9 @@ const Rooms = () => {
                                     Smoking Allowed?
                                 </label>
                                 <input
-                                    className="shadow border rounded w-6 h-6 py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    className="shadow border rounded w-6 h-6 py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
                                     onChange={handleChange} id="smoking_allowed" name="smoking_allowed" type="checkbox" checked={createRoom.smoking_allowed}/>
                             </div>
-                            {/*<div>
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="smoking_allowed">
-                                    Upload Images
-                                </label>
-                                <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                                    multiple accept="image/png, image/jpeg, application/pdf" onChange={handleImages} id="images" name="images" type="file"/>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                {selectedImages.map((image, index) => (
-                                <div key={index} className="relative">
-                                    <img
-                                        key={index}
-                                        src={image}
-                                        alt={`Uploaded ${index}`}
-                                        className="w-32 h-32 object-cover border border-gray-300 rounded"
-                                    />
-                                    <div
-                                    onClick={() => handleImageDelete(index)} // 刪除圖片
-                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 m-1"
-                                    >
-                                    ✕
-                                    </div>
-                                </div>
-                                ))}
-                            </div>*/}
-
                             <div className="flex justify-end">
                                 <button type="submit" className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                                     Create
@@ -356,9 +314,9 @@ const Rooms = () => {
                 )}
                 {editOpen!=0 && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white rounded shadow-lg p-6 max-h-screen w-2/3">
-                        <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-bold mb-4">Edit Room {editId}</h2>
+                    <div className="bg-white rounded shadow-lg max-h-screen px-4 py-3 mt-20 w-2/3">
+                        <div className="flex items-between justify-between">
+                            <h2 className="text-2xl font-bold">Edit Room {editId}</h2>
                             <button onClick={closeEdit} className="p-2 bg-red-500 text-white rounded hover:bg-red-600">
                             X
                             </button>
@@ -369,7 +327,7 @@ const Rooms = () => {
                                     Room Type
                                 </label>
                                 <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
                                     onChange={handleChange} id="room_type" name="room_type" type="text" value={createRoom.room_type}/>
                             </div>
                             <div>
@@ -377,7 +335,7 @@ const Rooms = () => {
                                     Number of Rooms
                                 </label>
                                 <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
                                     onChange={handleChange} id="number_of_rooms" name="number_of_rooms" type="text" value={createRoom.number_of_rooms}/>
                             </div>
                             <div>
@@ -385,7 +343,7 @@ const Rooms = () => {
                                     Price per Night
                                 </label>
                                 <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
                                     onChange={handleChange} id="price_per_night" name="price_per_night" type="text" value={createRoom.price_per_night}/>
                             </div>
                             <div>
@@ -393,7 +351,7 @@ const Rooms = () => {
                                     Facilities
                                 </label>
                                 <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
                                     onChange={handleChange} id="facilities" name="facilities" type="text" value={createRoom.facilities}/>
                             </div>
                             <div>
@@ -401,7 +359,7 @@ const Rooms = () => {
                                     Breakfast Included
                                 </label>
                                 <input
-                                    className="shadow border rounded w-6 h-6 py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    className="shadow border rounded w-6 h-6 py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
                                     onChange={handleChange} id="breakfast_included" name="breakfast_included" type="checkbox" checked={createRoom.breakfast_included}/>
                             </div>
                             <div>
@@ -409,7 +367,7 @@ const Rooms = () => {
                                     Room Size
                                 </label>
                                 <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
                                     onChange={handleChange} id="room_size" name="room_size" type="text" value={createRoom.room_size}/>
                             </div>
                             <div>
@@ -417,7 +375,7 @@ const Rooms = () => {
                                     Max Occupancy
                                 </label>
                                 <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
                                     onChange={handleChange} id="max_occupancy" name="max_occupancy" type="text" value={createRoom.max_occupancy}/>
                             </div>
                             <div>
@@ -425,35 +383,9 @@ const Rooms = () => {
                                     Smoking Allowed
                                 </label>
                                 <input
-                                    className="shadow border rounded w-6 h-6 py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                                    className="shadow border rounded w-6 h-6 py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
                                     onChange={handleChange} id="smoking_allowed" name="smoking_allowed" type="checkbox" checked={createRoom.smoking_allowed}/>
                             </div>
-                            {/*<div>
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="smoking_allowed">
-                                    Upload Images
-                                </label>
-                                <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                                    multiple accept="image/png, image/jpeg, application/pdf" onChange={handleImages} id="images" name="images" type="file" value={createRoom.images}/>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                {selectedImages.map((image, index) => (
-                                <div key={index} className="relative">
-                                    <img
-                                        key={index}
-                                        src={image}
-                                        alt={`Uploaded ${index}`}
-                                        className="w-32 h-32 object-cover border border-gray-300 rounded"
-                                    />
-                                    <div
-                                    onClick={() => handleImageDelete(index)} // 刪除圖片
-                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 m-1"
-                                    >
-                                    ✕
-                                    </div>
-                                </div>
-                                ))}
-                            </div>*/}
                             <div className="flex justify-end">
                                 <button type="submit" className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                                     Save
@@ -466,8 +398,8 @@ const Rooms = () => {
                 {deleteOpen!=0 && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white rounded shadow-lg p-6 max-h-screen w-2/3">
-                        <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-bold mb-4">Delete Room {deleteId}</h2>
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-2xl font-bold">Delete Room {deleteId}</h2>
                             <button onClick={closeDelete} className="p-2 bg-red-500 text-white rounded hover:bg-red-600">
                             X
                             </button>
@@ -485,7 +417,7 @@ const Rooms = () => {
                     </div>
                 )}
             </div>
-            <div className='p-3 m-3 min-h-screen bg-white'>
+            <div className='p-3 m-3 min-h-screen rounded-md bg-white'>
                 <div>
                     <div className="grid grid-cols-[60px_1fr_1fr_1fr_1fr] items-center gap-2 p-2 bg-white rounded-md shadow-md hover:bg-gray-200 transition">
                         <div className="text-center">#</div>
@@ -511,7 +443,12 @@ const Rooms = () => {
                         </div>
                     </div>
                     
-                    ))):(<div>No Rooms Yet!</div>)}
+                    ))):(<div></div>)}
+                    <div className="flex justify-center mt-10">
+                        <button onClick={openCreate} className="bg-blue-600 text-white px-3 py-2 rounded-full hover:bg-blue-700 transition duration-300">
+                            +
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -671,31 +608,31 @@ const Details = ({item}) => {
             </div>
             <form onSubmit={(e) => handleSubmit(e)}>
                 <div>
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="additional_charges">
+                    <label className="block text-gray-700 text-sm font-bold" htmlFor="additional_charges">
                         Additional Charges
                     </label>
                     <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:shadow-outline pr-10"
                         onChange={handleChange} id="additional_charges" name="additional_charges" type="text" value={formData.additional_charges}/>
                 </div>
                 <div>
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="damage_report">
+                    <label className="block text-gray-700 text-sm font-bold" htmlFor="damage_report">
                         Damage Report
                     </label>
                     <textarea
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:shadow-outline pr-10"
                         onChange={handleChange} id="damage_report" name="damage_report" value={formData.damage_report}/>
                 </div>
                 <div>
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="room_number">
+                    <label className="block text-gray-700 text-sm font-bold" htmlFor="room_number">
                         Room Number
                     </label>
                     <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:shadow-outline pr-10"
                         onChange={handleChange} id="room_number" name="room_number" type="text" value={formData.room_number}/>
                 </div>
                 <div>
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="smoking_allowed">
+                    <label className="block text-gray-700 text-sm font-bold" htmlFor="smoking_allowed">
                         Checked In?
                     </label>
                     <input
@@ -800,18 +737,10 @@ const Reservations = () => {
     const [editOpen, setEditOpen] = useState(0); 
 
     const openEdit = (id) => {
-        //const selectedItem = items.find(item => item.id === id);
         setEditOpen(id);
-        //not done
-        //const files = Array.from(createRoom.images); // 獲取選擇的文件
-        //const imageUrls = files.map(file => URL.createObjectURL(file)); // 生成圖片的 URL
-        //setSelectedImages(prevImages => [...prevImages, ...imageUrls]);
     }
     const closeEdit = () => setEditOpen(0);
     
-
-    
-
     // Handler to filter orders based on the date range
     const filterOrders = () => {
         if (!startDate) {
@@ -888,6 +817,9 @@ const Reservations = () => {
     }
     return (
         <div className="min-h-screen">
+            <div className="flex justify-between items-center text-2xl px-3">
+                Reservations
+            </div>
             <div>
                 <div className="p-3 flex items-center">
                     <div htmlFor="start-date" className="px-3 block text-xl text-gray-700">
@@ -953,7 +885,7 @@ const Reservations = () => {
                 </div>
             </div>
 
-            <div className='p-3 m-3 min-h-screen bg-white'>
+            <div className='p-3 m-3 min-h-screen rounded-md bg-white'>
                 <div>
                     <div className="grid grid-cols-[40px_1fr_1fr_1fr_1fr_1fr_1fr] items-center gap-2 p-2 bg-white rounded-md shadow-md hover:bg-gray-200 transition">
                         <div className="text-center">#</div>
@@ -965,9 +897,9 @@ const Reservations = () => {
                         <div className="text-center">Details</div>
                     </div>
                     { filteredOrders && filteredOrders.length>0 ?( 
-                    filteredOrders.map(item => (
+                    filteredOrders.map((item,index) => (
                     <div key={item.id} className="grid grid-cols-[40px_1fr_1fr_1fr_1fr_1fr_1fr] items-center gap-2 p-2 my-2 bg-gray-100 rounded-md shadow-md hover:bg-gray-200 transition">
-                        <div className="text-center">{item.id}</div>
+                        <div className="text-center">{index+1}</div>
                         <div className="text-center">{item.check_in_date}</div>
                         <div className="text-center">{item.check_out_date}</div>
                         <div className="text-center">{item.first_name} {item.last_name}</div>
@@ -976,13 +908,17 @@ const Reservations = () => {
                         <div className="text-center">
                             Cancelled
                         </div>
-                        ): item.Paid ? (
+                        ): item.checked_in ? (
+                        <div className="text-center">
+                            Checked-In
+                        </div>
+                        ): item.payment_status == 'succeeded' ? (
                         <div className="text-center">
                             Paid
                         </div>
-                        ):(
+                        ): (
                         <div className="text-center">
-                            Checked-In
+                            Unpaid
                         </div>
                         )}
                         <div className="text-center">
@@ -992,7 +928,7 @@ const Reservations = () => {
                         </div>
                         {editOpen!=0 && (
                             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                            <div className="bg-white rounded shadow-lg p-6 max-h-screen w-4/5">
+                            <div className="bg-white rounded shadow-lg max-h-screen px-4 py-3 mt-20 w-4/5">
                                 <div className="flex items-center justify-between">
                                     <h2 className="text-2xl font-bold mb-4">Details for reservation at {item.hotel_name}, {item.room_type}</h2>
                                     <button onClick={closeEdit} className="p-2 bg-red-500 text-white rounded hover:bg-red-600">
@@ -1054,7 +990,10 @@ const Reviews = () => {
 
     return (
         <div className='min-h-screen'>
-            <div className='p-3 m-3 min-h-screen bg-white'>
+            <div className="flex justify-between items-center text-2xl px-3">
+                Reviews
+            </div>
+            <div className='p-3 m-3 min-h-screen rounded-md bg-white'>
                 <div>
                     <div className="grid grid-cols-6 p-2 bg-white rounded-md shadow-md hover:bg-gray-200 transition">
                         <div>#</div>
@@ -1234,10 +1173,10 @@ const Profile = () => {
                 {message.content}
                 </div>
             )}
-            <div className="flex justify-between items-center text-2xl pt-4 px-5">
-                Hotel Profile
+            <div className="flex justify-between items-center text-2xl px-5">
+                Profile
             </div>
-            <div className="relative px-5">
+            <div className="relative mx-5">
             <form onSubmit={(e) => handleSubmit(e)}>
                 <div className="flex border-b py-3 items-center">
                     <label className="w-1/3 block text-gray-700 text-xl font-bold mr-4" htmlFor="username">
@@ -1473,6 +1412,120 @@ const NotificationBell = () => {
     );
 };
 
+
+
+const Layout = ({ children }) => (
+    <div className="">
+      <Header />
+      <main className=" bg-gray-100">
+        
+        {children}
+      </main>
+      <footer className="bg-gray-800 text-gray-200 py-6">
+        <div className="max-w-screen mx-auto px-6 flex flex-wrap justify-between items-start">
+          <div className="w-full md:w-1/3 mb-4 md:mb-0">
+            <a href="/" className="text-3xl font-bold text-blue-500 flex items-center mb-2 no-underline">
+              <Navigation className="mr-2" />
+              CampusVacay.
+            </a>
+            <p className="text-gray-400 text-sm">We kaboom your beauty holiday instantly and memorable.</p>
+          </div>
+          <div className="w-full md:w-1/3 text-right">
+            <h4 className="text-lg font-semibold mb-2">Contact Us</h4>
+            <ul className="text-gray-400 text-sm space-y-1">
+              <li>Phone: +1-234-567-890</li>
+              <li>Email: support@campusvacay.com</li>
+              <li>Address: 123 Vacation Lane, Dream City, Holiday State</li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+      <div className="bg-[#3252DF] text-white h-11 flex items-center justify-center text-center text-sm">
+        <p>&copy; {new Date().getFullYear()} CampusVacay. All rights reserved.</p>
+      </div>
+    </div>
+  );
+  
+  const Header = () => {
+    const [token, setToken] = useState(null);
+    const [loginType, setLoginType] = useState(null);
+    const [isScrolled, setIsScrolled] = useState(false);
+    const [message, setMessage] = useState({ type: '', content: '' });
+  
+    const navigate = useNavigate(); // Hook for navigation
+    
+    useEffect(() => {
+      setLoginType(localStorage.getItem('type'));
+      const storedToken = localStorage.getItem('authToken');
+      if (storedToken) {
+        setToken(storedToken);
+      }
+      const handleScroll = () => {
+        setIsScrolled(window.scrollY > 10);
+      };
+  
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+  
+    const handleLogout = async () => {
+      try {
+        const url = `http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/api/logout/`;
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + localStorage.getItem('authToken'),
+          },
+          body: JSON.stringify(''),
+        });
+  
+        const responseData = await response.json();
+  
+        if (!response.ok) {
+          throw new Error(responseData.detail || JSON.stringify(responseData) || 'Logout failed');
+        }
+  
+        setMessage({ type: 'success', content: 'Logout successful!' });
+        localStorage.removeItem('authToken');
+        setToken(null);
+        navigate('/');
+      } catch (error) {
+        console.error('Logout error:', error);
+        setMessage({ type: 'error', content: error.message });
+      }
+    };
+  
+    return (
+      <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'}`}>
+        <div className="max-w-screen mx-auto px-6 flex justify-between items-center">
+          <a href="/" className="text-3xl font-bold text-blue-700 flex items-center no-underline">
+            <Navigation className="mr-2" />
+            CampusVacay.
+          </a>
+          
+          <div className="flex items-center space-x-4">
+            <NotificationBell/>
+          {token ? (
+            <button onClick={handleLogout} className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
+              Logout
+            </button>
+          ) : (
+            <a href="/login" className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
+              Login
+            </a>
+          )}
+        </div>
+        </div>
+        {message.content && (
+          <div className={`fixed top-16 right-8 p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+            {message.content}
+          </div>
+        )}
+      </header>
+    );
+  };
+
 const DashboardPage = () => {
     const [page, setPage] = useState('profile');
 
@@ -1487,28 +1540,29 @@ const DashboardPage = () => {
     }, [page]);
 
     return (
-        <div className="min-h-screen w-full bg-gray-100 flex">
-            <div className="w-1/5 min-h-screen bg-white">
-                <div className='p-1 text-center'>
+        <Layout>
+        <div className="max-w-screen mx-auto px-6 flex h-full justify-between">
+            <div className="w-1/5 my-20 min-h-screen rounded-md bg-white">
+                {/*<div className='p-1 text-center'>
                 <a href="/">
                     <div className="text-3xl font-bold text-blue-700 flex items-center">
                         <Navigation className="mr-2" />
                         CampusVacay.
                     </div>
                 </a>
-                </div>
+                </div>*/}
                 <div className='p-1'>
                     <ul className="list-none p-0 m-0">
                         <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('profile')}>Profile</li>
                         <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('rooms')}>Rooms</li>
-                        <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('reservations')}>Bookings</li>
+                        <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('reservations')}>Reservations</li>
                         <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('reviews')}>Reviews</li>
                     </ul>
                 </div>
             </div>
-            <div className='w-4/5 min-h-screen'>
+            <div className='w-4/5 mt-20 h-full'>
                 <div className='p-1 min-h-screen'>
-                    <div className="flex justify-between items-center text-xl py-4 px-5">
+                    {/*<div className="flex justify-between items-center text-xl py-4 px-5">
                         Hello, manager!<br/>
                         Have a nice day!
                         <div className="flex">
@@ -1519,7 +1573,8 @@ const DashboardPage = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>*/}
+                    
                     {page==='profile' && (<Profile/>)}
                     {page==='reservations' && (<Reservations/>)}
                     {page==='rooms' && (<Rooms/>)}
@@ -1527,6 +1582,7 @@ const DashboardPage = () => {
                 </div>
             </div>
         </div>
+        </Layout>
     );
 };
 

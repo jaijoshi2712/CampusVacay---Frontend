@@ -151,7 +151,7 @@ const LoginForm = ({ type }) => {
       setMessage({ type: 'success', content: 'Login successful!' });
 
       localStorage.setItem('authToken', data.token);
-
+      localStorage.setItem('type', type);
       if (type === 'Hotel') {
         navigate('/dashboard');
       } else {
