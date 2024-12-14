@@ -270,12 +270,11 @@ const HotelCard = ({ hotel }) => {
       return timeString;
     }
   };
-
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
       <div className="relative">
         <img 
-          src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : "/api/placeholder/400/300"}
+          src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : `http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com${hotel.hotel_photos}`}
           alt={hotel.hotel_name}
           onError={handleImageError}
           className="w-full h-64 object-cover"

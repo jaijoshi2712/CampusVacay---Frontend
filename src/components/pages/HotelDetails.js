@@ -218,7 +218,6 @@ const HotelDetails = () => {
   const getTotalRooms = () => {
     return Object.values(selectedRooms).reduce((a, b) => a + b, 0);
   };
-
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -236,7 +235,7 @@ const HotelDetails = () => {
             {/* Hotel Header */}
             <div className="relative h-64 md:h-96">
               <img 
-                src="/api/placeholder/1200/400"
+                src={`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com${hotelData.hotel_photos}`}
                 alt={hotelData.hotel_name}
                 className="w-full h-full object-cover"
               />
