@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Search, MapPin, Star, Navigation, Calendar, Users } from 'lucide-react';
 import { FaBell } from 'react-icons/fa';
 
+import { Download } from 'lucide-react';
+
 const Rooms = () => {
     const [roomData, setRoomData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -651,6 +653,8 @@ const Details = ({item}) => {
     )
 }
 
+
+
 const Reservations = () => {
     const [reservationData, setReservationData] = useState([]);
     const [initialOrders, setInitialOrders] = useState([]);
@@ -658,90 +662,147 @@ const Reservations = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [allRoomTypes, setAllRoomTypes] = useState([]);
+
+    // Get today's date in YYYY-MM-DD format
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
-    
     const formattedDate = `${year}-${month}-${day}`;
+    
+    // Initialize startDate with today's date
     const [startDate, setStartDate] = useState(formattedDate);
 
     useEffect(() => {
         const fetchReservations = async () => {
-          try {
-            const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/hotel/reservations/', {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Token ' + localStorage.getItem('authToken'),
-              }
-            });
-    
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-    
-            const data = await response.json();
-            //console.log(data);
-            setReservationData(data);
-            data.forEach(d => {
-                const orderDate1 = new Date(d.check_in_date);
-                const orderDate2 = new Date(d.check_out_date);
-                const today = new Date(startDate);
-                //console.log(orderDate1,orderDate2,today);
-                if(orderDate1<=today && orderDate2>=today){
-                    console.log(d);
-                    setFilteredOrders(prev=>[...prev, d]);
-                    setInitialOrders(prev=>[...prev, d]);
+            try {
+                const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/hotel/reservations/', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
-            });
-          } catch (error) {
-            setError(error.message); // Handle errors
-          } finally {
-            setLoading(false); // Always set loading to false when request finishes
-          }
+
+                const data = await response.json();
+                setReservationData(data);
+
+                // Filter reservations for today's date by default
+                const todayReservations = data.filter(d => {
+                    const orderDate1 = new Date(d.check_in_date);
+                    const orderDate2 = new Date(d.check_out_date);
+                    const today = new Date(formattedDate);
+                    return orderDate1 <= today && orderDate2 >= today;
+                });
+                
+                setFilteredOrders(todayReservations);
+                setInitialOrders(todayReservations);
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
         };
-        fetchReservations();
+
         const fetchRooms = async () => {
             try {
-              const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/rooms/', {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': 'Token ' + localStorage.getItem('authToken'),
-                }
-              });
-      
-              if (!response.ok) {
-                throw new Error('Network response was not ok');
-              }
-              const data = await response.json();
-              //console.log(data);
-              data.forEach(item => {
-                if(!allRoomTypes.includes(item.room_type)){
-                    //console.log(item.room_type);
-                    setAllRoomTypes(prev=>[...prev, item.room_type]);
-                }
-              });
-              //setRoomData(data); // Set the fetched data to state
-            } catch (error) {
-              setError(error.message); // Handle errors
-            } finally {
-              setLoading(false); // Always set loading to false when request finishes
-            }
-          };
-      
-          fetchRooms()
-      }, []);
+                const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/rooms/', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Token ' + localStorage.getItem('authToken'),
+                    }
+                });
 
-    const [editOpen, setEditOpen] = useState(0); 
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                data.forEach(item => {
+                    if(!allRoomTypes.includes(item.room_type)){
+                        setAllRoomTypes(prev=>[...prev, item.room_type]);
+                    }
+                });
+            } catch (error) {
+                setError(error.message);
+            }
+        };
+
+        fetchReservations();
+        fetchRooms();
+    }, []);
+
+    const [editOpen, setEditOpen] = useState(0);
+    const [filterBy, setFilterBy] = useState('');
+    const [selectedOption, setSelectedOption] = useState('');
+    const [statusOption, setStatusOption] = useState('');
 
     const openEdit = (id) => {
         setEditOpen(id);
-    }
+    };
+
     const closeEdit = () => setEditOpen(0);
-    
-    // Handler to filter orders based on the date range
+
+    const exportToCSV = () => {
+        if (filteredOrders.length === 0) return;
+
+        // Define the CSV headers
+        const headers = [
+            'Check-in Date',
+            'Check-out Date',
+            'Guest Name',
+            'Phone Number',
+            'Email',
+            'Room Type',
+            'Status',
+            'Payment Status',
+            'Additional Charges',
+            'Special Requests'
+        ].join(',');
+
+        // Convert the data to CSV format
+        const csvData = filteredOrders.map(item => {
+            let status = item.canceled ? 'Cancelled' : 
+                        item.checked_in ? 'Checked-In' : 
+                        item.payment_status === 'succeeded' ? 'Paid' : 'Unpaid';
+
+            return [
+                item.check_in_date,
+                item.check_out_date,
+                `${item.first_name} ${item.last_name}`,
+                item.phone_number,
+                item.email,
+                item.room_type,
+                status,
+                item.payment_status,
+                item.additional_charges || '',
+                item.special_requests || ''
+            ].map(field => `"${field}"`).join(',');
+        });
+
+        // Combine headers and data
+        const csvContent = [headers, ...csvData].join('\n');
+
+        // Create a Blob and download link
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        
+        // Get current date for filename
+        const date = new Date().toLocaleDateString().replace(/\//g, '-');
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', `reservations-${date}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     const filterOrders = () => {
         if (!startDate) {
             setFilteredOrders(initialOrders);
@@ -755,7 +816,7 @@ const Reservations = () => {
                 orderDate1 <= new Date(startDate) && orderDate2 >= new Date(startDate);
             });
             setFilteredOrders(filtered);
-        }else if (statusOption=='canceled') {
+        } else if (statusOption=='canceled') {
             const filtered = reservationData.filter((item) => {
                 const orderDate1 = new Date(item.check_in_date);
                 const orderDate2 = new Date(item.check_out_date);
@@ -763,7 +824,7 @@ const Reservations = () => {
                 item.canceled && orderDate1 <= new Date(startDate) && orderDate2 >= new Date(startDate);
             });
             setFilteredOrders(filtered);
-        }else if (statusOption=='paid') {
+        } else if (statusOption=='paid') {
             const filtered = reservationData.filter((item) => {
                 const orderDate1 = new Date(item.check_in_date);
                 const orderDate2 = new Date(item.check_out_date);
@@ -771,7 +832,7 @@ const Reservations = () => {
                 item.payment_status=='Paid' && orderDate1 <= new Date(startDate) && orderDate2 >= new Date(startDate);
             });
             setFilteredOrders(filtered);
-        }else if (statusOption=='checkedIn') {
+        } else if (statusOption=='checkedIn') {
             const filtered = reservationData.filter((item) => {
                 const orderDate1 = new Date(item.check_in_date);
                 const orderDate2 = new Date(item.check_out_date);
@@ -780,45 +841,40 @@ const Reservations = () => {
             });
             setFilteredOrders(filtered);
         }
-        /*else if (statusOption=='finished') {
-            const filtered = reservationData.filter((item) => {
-                const orderDate1 = new Date(item.check_in_date);
-                const orderDate2 = new Date(item.check_out_date);
-                const today = new Date();
-                return (selectedOption=='' ? 1:item.room_type==selectedOption) &&
-                !item.canceled && orderDate2 < today && orderDate1 <= new Date(startDate) && orderDate2 >= new Date(startDate);
-            });
-            setFilteredOrders(filtered);
-        }*/
     };
 
-    const [filterBy, setFilterBy] = useState('');
-    const [selectedOption, setSelectedOption] = useState('');
-    const [statusOption, setStatusOption] = useState('');
     const handleSelectChange = (event) => {
         setSelectedOption(event.target.value);
     };
+
     const handleStatusChange = (event) => {
         setStatusOption(event.target.value);
     };
 
-    const filteredItems = () => {
-        
-    };
-
     const clear = () => {        
+        setStartDate(formattedDate); // Reset to today's date instead of empty string
         setFilteredOrders(initialOrders);
-        setStartDate('');
         setSelectedOption('');
         setStatusOption('');
-    }
+    };
+
     if (loading) {
         return <div>Loading...</div>;
     }
+
     return (
         <div className="min-h-screen">
             <div className="flex justify-between items-center text-2xl px-3">
-                Reservations
+                <div>Reservations</div>
+                {filteredOrders.length > 0 && (
+                    <button
+                        onClick={exportToCSV}
+                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                    >
+                        <Download size={20} />
+                        Export to CSV
+                    </button>
+                )}
             </div>
             <div>
                 <div className="p-3 flex items-center">
@@ -827,11 +883,11 @@ const Reservations = () => {
                     </div>
                     <div className="w-1/4">
                         <input
-                        type="date"
-                        id="start-date"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            type="date"
+                            id="start-date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         />
                     </div>
                 
@@ -844,7 +900,7 @@ const Reservations = () => {
                         >
                             <option value="">Select Type(Optional)</option>
                             {allRoomTypes.map((item) => (
-                                <option value={item}>{item}</option>
+                                <option key={item} value={item}>{item}</option>
                             ))}
                         </select>
                     </div>
@@ -863,7 +919,6 @@ const Reservations = () => {
                             <option value="canceled">Cancelled</option>
                             <option value="paid">Paid</option>
                             <option value="checkedIn">Checked-In</option>
-                            {/*<option value="finished">Finished</option>*/}
                         </select>
                     </div>
                     <div className="mx-2">
@@ -896,60 +951,53 @@ const Reservations = () => {
                         <div className="text-center">Status</div>
                         <div className="text-center">Details</div>
                     </div>
-                    { filteredOrders && filteredOrders.length>0 ?( 
-                    filteredOrders.map((item,index) => (
-                    <div key={item.id} className="grid grid-cols-[40px_1fr_1fr_1fr_1fr_1fr_1fr] items-center gap-2 p-2 my-2 bg-gray-100 rounded-md shadow-md hover:bg-gray-200 transition">
-                        <div className="text-center">{index+1}</div>
-                        <div className="text-center">{item.check_in_date}</div>
-                        <div className="text-center">{item.check_out_date}</div>
-                        <div className="text-center">{item.first_name} {item.last_name}</div>
-                        <div className="text-center">{item.phone_number}</div>
-                        {item.canceled ? (
-                        <div className="text-center">
-                            Cancelled
-                        </div>
-                        ): item.checked_in ? (
-                        <div className="text-center">
-                            Checked-In
-                        </div>
-                        ): item.payment_status == 'succeeded' ? (
-                        <div className="text-center">
-                            Paid
-                        </div>
-                        ): (
-                        <div className="text-center">
-                            Unpaid
-                        </div>
-                        )}
-                        <div className="text-center">
-                            <button onClick={()=>openEdit(item.id)} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                                Edit
-                            </button>
-                        </div>
-                        {editOpen!=0 && (
-                            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                            <div className="bg-white rounded shadow-lg max-h-screen px-4 py-3 mt-20 w-4/5">
-                                <div className="flex items-center justify-between">
-                                    <h2 className="text-2xl font-bold mb-4">Details for reservation at {item.hotel_name}, {item.room_type}</h2>
-                                    <button onClick={closeEdit} className="p-2 bg-red-500 text-white rounded hover:bg-red-600">
-                                    X
+                    {filteredOrders && filteredOrders.length > 0 ? (
+                        filteredOrders.map((item, index) => (
+                            <div key={item.id} className="grid grid-cols-[40px_1fr_1fr_1fr_1fr_1fr_1fr] items-center gap-2 p-2 my-2 bg-gray-100 rounded-md shadow-md hover:bg-gray-200 transition">
+                                <div className="text-center">{index+1}</div>
+                                <div className="text-center">{item.check_in_date}</div>
+                                <div className="text-center">{item.check_out_date}</div>
+                                <div className="text-center">{item.first_name} {item.last_name}</div>
+                                <div className="text-center">{item.phone_number}</div>
+                                {item.canceled ? (
+                                    <div className="text-center">Cancelled</div>
+                                ) : item.checked_in ? (
+                                    <div className="text-center">Checked-In</div>
+                                ) : item.payment_status == 'succeeded' ? (
+                                    <div className="text-center">Paid</div>
+                                ) : (
+                                    <div className="text-center">Unpaid</div>
+                                )}
+                                <div className="text-center">
+                                    <button onClick={() => openEdit(item.id)} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                                        Edit
                                     </button>
                                 </div>
-                                <Details item={item}/>
+                                {editOpen === item.id && (
+                                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                                        <div className="bg-white rounded shadow-lg max-h-screen px-4 py-3 mt-20 w-4/5">
+                                            <div className="flex items-center justify-between">
+                                                <h2 className="text-2xl font-bold mb-4">Details for reservation at {item.hotel_name}, {item.room_type}</h2>
+                                                <button onClick={closeEdit} className="p-2 bg-red-500 text-white rounded hover:bg-red-600">
+                                                    X
+                                                </button>
+                                            </div>
+                                            <Details item={item}/>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
-                            </div>
-                        )}
-                    </div>
-
-                    
-                    
-                    ))):(<div>No Reservations For Today!</div>)}
+                        ))
+                    ) : (
+                        <div>No Reservations For Today!</div>
+                    )}
                 </div>
-                
             </div>
         </div>
-    )
+    );
 };
+
+
 
 
 const Reviews = () => {
