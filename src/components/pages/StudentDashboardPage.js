@@ -332,7 +332,7 @@ const HotelCard = ({ reservation , type }) => {
             throw new Error("loading error!");
             }*/
             
-            await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/hotel/reservations/${reservation.id}`,{
+            await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reservations/${reservation.id}`,{
                 method: 'delete',
                 headers: {
                     'Content-Type': 'application/json',
