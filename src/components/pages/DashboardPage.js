@@ -316,83 +316,189 @@ const Rooms = () => {
                 )}
                 {editOpen!=0 && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white rounded shadow-lg max-h-screen px-4 py-3 mt-20 w-2/3">
-                        <div className="flex items-between justify-between">
-                            <h2 className="text-2xl font-bold">Edit Room {editId}</h2>
-                            <button onClick={closeEdit} className="p-2 bg-red-500 text-white rounded hover:bg-red-600">
-                            X
+                    <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl">
+                        {/* Header */}
+                        <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-3xl font-semibold text-gray-800">Edit Room {editId}</h2>
+                        <button
+                            onClick={closeEdit}
+                            className="text-red-600 hover:text-red-800 focus:outline-none"
+                            aria-label="Close"
+                        >
+                            <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            stroke="currentColor"
+                            className="w-6 h-6"
+                            >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M6 18L18 6M6 6l12 12"
+                            />
+                            </svg>
+                        </button>
+                        </div>
+
+                        {/* Form */}
+                        <form onSubmit={(e) => handleSubmit(e, 'edit', editOpen)} className="space-y-6">
+                        <div className="grid grid-cols-2 gap-6">
+                            {/* Room Type */}
+                            <div>
+                            <label
+                                className="block text-gray-700 font-medium mb-2"
+                                htmlFor="room_type"
+                            >
+                                Room Type
+                            </label>
+                            <input
+                                className="w-full border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                id="room_type"
+                                name="room_type"
+                                type="text"
+                                value={createRoom.room_type}
+                                onChange={handleChange}
+                            />
+                            </div>
+
+                            {/* Number of Rooms */}
+                            <div>
+                            <label
+                                className="block text-gray-700 font-medium mb-2"
+                                htmlFor="number_of_rooms"
+                            >
+                                Number of Rooms
+                            </label>
+                            <input
+                                className="w-full border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                id="number_of_rooms"
+                                name="number_of_rooms"
+                                type="number"
+                                value={createRoom.number_of_rooms}
+                                onChange={handleChange}
+                            />
+                            </div>
+
+                            {/* Price per Night */}
+                            <div>
+                            <label
+                                className="block text-gray-700 font-medium mb-2"
+                                htmlFor="price_per_night"
+                            >
+                                Price per Night
+                            </label>
+                            <input
+                                className="w-full border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                id="price_per_night"
+                                name="price_per_night"
+                                type="text"
+                                value={createRoom.price_per_night}
+                                onChange={handleChange}
+                            />
+                            </div>
+
+                            {/* Room Size */}
+                            <div>
+                            <label
+                                className="block text-gray-700 font-medium mb-2"
+                                htmlFor="room_size"
+                            >
+                                Room Size
+                            </label>
+                            <input
+                                className="w-full border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                id="room_size"
+                                name="room_size"
+                                type="text"
+                                value={createRoom.room_size}
+                                onChange={handleChange}
+                            />
+                            </div>
+
+                            {/* Facilities */}
+                            <div className="col-span-2">
+                            <label
+                                className="block text-gray-700 font-medium mb-2"
+                                htmlFor="facilities"
+                            >
+                                Facilities
+                            </label>
+                            <textarea
+                                className="w-full border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                id="facilities"
+                                name="facilities"
+                                rows="2"
+                                value={createRoom.facilities}
+                                onChange={handleChange}
+                            ></textarea>
+                            </div>
+
+                            {/* Max Occupancy */}
+                            <div>
+                            <label
+                                className="block text-gray-700 font-medium mb-2"
+                                htmlFor="max_occupancy"
+                            >
+                                Max Occupancy
+                            </label>
+                            <input
+                                className="w-full border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                id="max_occupancy"
+                                name="max_occupancy"
+                                type="number"
+                                value={createRoom.max_occupancy}
+                                onChange={handleChange}
+                            />
+                            </div>
+
+                            {/* Breakfast Included */}
+                            <div className="flex items-center space-x-3">
+                            <input
+                                id="breakfast_included"
+                                name="breakfast_included"
+                                type="checkbox"
+                                checked={createRoom.breakfast_included}
+                                onChange={handleChange}
+                                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            />
+                            <label
+                                className="block text-gray-700 font-medium"
+                                htmlFor="breakfast_included"
+                            >
+                                Breakfast Included
+                            </label>
+                            </div>
+
+                            {/* Smoking Allowed */}
+                            <div className="flex items-center space-x-3">
+                            <input
+                                id="smoking_allowed"
+                                name="smoking_allowed"
+                                type="checkbox"
+                                checked={createRoom.smoking_allowed}
+                                onChange={handleChange}
+                                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            />
+                            <label
+                                className="block text-gray-700 font-medium"
+                                htmlFor="smoking_allowed"
+                            >
+                                Smoking Allowed
+                            </label>
+                            </div>
+                        </div>
+
+                        {/* Submit Button */}
+                        <div className="flex justify-end">
+                            <button
+                            type="submit"
+                            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                            Save
                             </button>
                         </div>
-                        <form onSubmit={(e) => handleSubmit(e, 'edit', editOpen)}>
-                            <div>
-                                <label className="block text-gray-700 text-md font-bold" htmlFor="room_type">
-                                    Room Type
-                                </label>
-                                <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                                    onChange={handleChange} id="room_type" name="room_type" type="text" value={createRoom.room_type}/>
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 text-md font-bold" htmlFor="number_of_rooms">
-                                    Number of Rooms
-                                </label>
-                                <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                                    onChange={handleChange} id="number_of_rooms" name="number_of_rooms" type="text" value={createRoom.number_of_rooms}/>
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 text-md font-bold" htmlFor="price_per_night">
-                                    Price per Night
-                                </label>
-                                <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                                    onChange={handleChange} id="price_per_night" name="price_per_night" type="text" value={createRoom.price_per_night}/>
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 text-md font-bold" htmlFor="facilities">
-                                    Facilities
-                                </label>
-                                <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                                    onChange={handleChange} id="facilities" name="facilities" type="text" value={createRoom.facilities}/>
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 text-md font-bold" htmlFor="breakfast_included">
-                                    Breakfast Included
-                                </label>
-                                <input
-                                    className="shadow border rounded w-6 h-6 py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                                    onChange={handleChange} id="breakfast_included" name="breakfast_included" type="checkbox" checked={createRoom.breakfast_included}/>
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 text-md font-bold" htmlFor="room_size">
-                                    Room Size
-                                </label>
-                                <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                                    onChange={handleChange} id="room_size" name="room_size" type="text" value={createRoom.room_size}/>
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 text-md font-bold" htmlFor="max_occupancy">
-                                    Max Occupancy
-                                </label>
-                                <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                                    onChange={handleChange} id="max_occupancy" name="max_occupancy" type="text" value={createRoom.max_occupancy}/>
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 text-md font-bold" htmlFor="smoking_allowed">
-                                    Smoking Allowed
-                                </label>
-                                <input
-                                    className="shadow border rounded w-6 h-6 py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                                    onChange={handleChange} id="smoking_allowed" name="smoking_allowed" type="checkbox" checked={createRoom.smoking_allowed}/>
-                            </div>
-                            <div className="flex justify-end">
-                                <button type="submit" className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                                    Save
-                                </button>
-                            </div>
                         </form>
                     </div>
                     </div>
@@ -498,155 +604,124 @@ const Details = ({item}) => {
     }
     return (
         <div>
-            <div className="flex">
-                <div className="w-1/2 h-full border rounded m-2">
-                    <div className="flex border-b items-center">
-                        <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                            First Name:
-                        </label>
-                        <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                            {item.first_name}
-                        </span>
-                    </div>
-                    <div className="flex border-b items-center">
-                        <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                            Last Name:
-                        </label>
-                        <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                            {item.last_name}
-                        </span>
-                    </div>
-                    <div className="flex border-b items-center">
-                        <label className="w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                            Guests:
-                        </label>
-                        <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                            {item.guests}
-                        </span>
-                    </div>
-                    <div className="flex border-b items-center">
-                        <label className="w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                            Email:
-                        </label>
-                        <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                            {item.email}
-                        </span>
-                    </div>
-                    <div className="flex border-b items-center">
-                        <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                            Phone No:
-                        </label>
-                        <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                            {item.phone_number}
-                        </span>
-                    </div>
-                    <div className="flex items-center">
-                        <label className="w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                            Payment:
-                        </label>
-                        <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                            {item.payment_mode}
-                        </span>
-                    </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Left Column */}
+                <div className="bg-gray-50 border rounded-lg p-4 shadow-sm">
+                <div className="mb-2 flex justify-between items-center">
+                    <span className="font-semibold text-gray-600">First Name:</span>
+                    <span className="text-gray-800">{item.first_name}</span>
                 </div>
-                <div className="w-1/2 h-full border rounded m-2">
-                    <div className="flex border-b items-center">
-                        <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                            Check In Date:
-                        </label>
-                        <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                            {item.check_in_date}
-                        </span>
-                    </div>
-                    <div className="flex border-b items-center">
-                        <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                            Check Out Date:
-                        </label>
-                        <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                            {item.check_out_date}
-                        </span>
-                    </div>
-                    <div className="flex border-b items-center">
-                        <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                            Expected Arrival Time:
-                        </label>
-                        <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                            {item.expected_arrival_time}
-                        </span>
-                    </div>
-                    <div className="flex border-b items-center">
-                        <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                            Special Requests:
-                        </label>
-                        <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                            {item.special_requests}
-                        </span>
-                    </div>
-                    {/*<div className="flex border-b items-center">
-                        <label className="w-1/2 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                            Cancelled?
-                        </label>
-                        <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                            1
-                        </span>
-                    </div>
-                    <div className="flex border-b items-center">
-                        <label className="w-1/2 p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                            Cancellation Date:
-                        </label>
-                        <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                            1
-                        </span>
-                    </div>
-                    <div className="flex border-b items-center">
-                        <label className="w-1/2 whitespace-nowrap p-2 block text-gray-700 text-3xl font-bold mr-4" htmlFor="username">
-                            Cancellation Reason:
-                        </label>
-                        <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                            1
-                        </span>
-                    </div>*/}
+                <div className="mb-2 flex justify-between items-center">
+                    <span className="font-semibold text-gray-600">Last Name:</span>
+                    <span className="text-gray-800">{item.last_name}</span>
+                </div>
+                <div className="mb-2 flex justify-between items-center">
+                    <span className="font-semibold text-gray-600">Guests:</span>
+                    <span className="text-gray-800">{item.guests}</span>
+                </div>
+                <div className="mb-2 flex justify-between items-center">
+                    <span className="font-semibold text-gray-600">Email:</span>
+                    <span className="text-gray-800">{item.email}</span>
+                </div>
+                <div className="mb-2 flex justify-between items-center">
+                    <span className="font-semibold text-gray-600">Phone No:</span>
+                    <span className="text-gray-800">{item.phone_number}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                    <span className="font-semibold text-gray-600">Payment:</span>
+                    <span className="text-gray-800 capitalize">{item.payment_mode}</span>
+                </div>
+                </div>
+
+                {/* Right Column */}
+                <div className="bg-gray-50 border rounded-lg p-4 shadow-sm">
+                <div className="mb-2 flex justify-between items-center">
+                    <span className="font-semibold text-gray-600">Check In Date:</span>
+                    <span className="text-gray-800">{item.check_in_date}</span>
+                </div>
+                <div className="mb-2 flex justify-between items-center">
+                    <span className="font-semibold text-gray-600">Check Out Date:</span>
+                    <span className="text-gray-800">{item.check_out_date}</span>
+                </div>
+                <div className="mb-2 flex justify-between items-center">
+                    <span className="font-semibold text-gray-600">Arrival Time:</span>
+                    <span className="text-gray-800">{item.expected_arrival_time}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                    <span className="font-semibold text-gray-600">Special Requests:</span>
+                    <span className="text-gray-800">{item.special_requests}</span>
+                </div>
                 </div>
             </div>
-            <form onSubmit={(e) => handleSubmit(e)}>
+
+            {/* Form Section */}
+            <form onSubmit={handleSubmit} className="mt-6 bg-gray-50 rounded-lg p-4 shadow-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label className="block text-gray-700 text-sm font-bold" htmlFor="additional_charges">
-                        Additional Charges
+                    <label className="block text-gray-700 font-semibold mb-1" htmlFor="additional_charges">
+                    Additional Charges
                     </label>
                     <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                        onChange={handleChange} id="additional_charges" name="additional_charges" type="text" value={formData.additional_charges}/>
+                    className="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-blue-400"
+                    onChange={handleChange}
+                    id="additional_charges"
+                    name="additional_charges"
+                    type="number"
+                    step="0.01"
+                    value={formData.additional_charges}
+                    />
                 </div>
                 <div>
-                    <label className="block text-gray-700 text-sm font-bold" htmlFor="damage_report">
-                        Damage Report
-                    </label>
-                    <textarea
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                        onChange={handleChange} id="damage_report" name="damage_report" value={formData.damage_report}/>
-                </div>
-                <div>
-                    <label className="block text-gray-700 text-sm font-bold" htmlFor="room_number">
-                        Room Number
+                    <label className="block text-gray-700 font-semibold mb-1" htmlFor="room_number">
+                    Room Number
                     </label>
                     <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                        onChange={handleChange} id="room_number" name="room_number" type="text" value={formData.room_number}/>
+                    className="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-blue-400"
+                    onChange={handleChange}
+                    id="room_number"
+                    name="room_number"
+                    type="text"
+                    value={formData.room_number}
+                    />
                 </div>
-                <div>
-                    <label className="block text-gray-700 text-sm font-bold" htmlFor="smoking_allowed">
-                        Checked In?
-                    </label>
-                    <input
-                        className="shadow border rounded text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        onChange={handleChange} id="checked_in" name="checked_in" type="checkbox" checked={formData.checked_in}/>
                 </div>
-                
-                
-                <div className="flex justify-end">
-                    <button type="submit" className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                        Save
-                    </button>
+
+                <div className="mt-4">
+                <label className="block text-gray-700 font-semibold mb-1" htmlFor="damage_report">
+                    Damage Report
+                </label>
+                <textarea
+                    className="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-blue-400"
+                    onChange={handleChange}
+                    id="damage_report"
+                    name="damage_report"
+                    rows="3"
+                    value={formData.damage_report}
+                />
+                </div>
+
+                <div className="mt-4 flex items-center">
+                <label className="text-gray-700 font-semibold mr-2" htmlFor="checked_in">
+                    Checked In?
+                </label>
+                <input
+                    className="w-5 h-5"
+                    onChange={handleChange}
+                    id="checked_in"
+                    name="checked_in"
+                    type="checkbox"
+                    checked={formData.checked_in}
+                />
+                </div>
+
+                {/* Buttons */}
+                <div className="mt-6 flex justify-end">
+                <button
+                    type="submit"
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300"
+                >
+                    Save
+                </button>
                 </div>
             </form>
         </div>
@@ -864,12 +939,12 @@ const Reservations = () => {
 
     return (
         <div className="min-h-screen">
-            <div className="flex justify-between items-center text-2xl px-3">
-                <div>Reservations</div>
+            <div className="flex justify-between items-center text-2xl pl-7">
+                <div><b>Reservations</b></div>
                 {filteredOrders.length > 0 && (
                     <button
                         onClick={exportToCSV}
-                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                        className="flex items-center text-sm gap-2 px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                     >
                         <Download size={20} />
                         Export to CSV
@@ -1022,7 +1097,7 @@ const Reviews = () => {
             }
             const data = await response.json();
             setReviewData(data);
-            //console.log(data);
+            console.log(data);
           } catch (error) {
             setError(error.message); // Handle errors
           } finally {
@@ -1260,7 +1335,7 @@ const Profile = () => {
                 </div>
                 <div className="flex border-b py-3 items-center">
                     <label className="w-1/3 block text-gray-700 text-xl font-bold mr-4" htmlFor="address">
-                        Address
+                        Address 1
                     </label>
                     <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
@@ -1268,7 +1343,7 @@ const Profile = () => {
                 </div>
                 <div className="flex border-b py-3 items-center">
                     <label className="w-1/3 block text-gray-700 text-xl font-bold mr-4" htmlFor="location">
-                        Location
+                        Address 2
                     </label>
                     <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"

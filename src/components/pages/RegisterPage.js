@@ -106,7 +106,7 @@ function RegisterPage() {
     });
 
     try {
-      const url = `http://10.18.190.118:8000/${registerType.toLowerCase()}/api/register/`;
+      const url = `http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/${registerType.toLowerCase()}/api/register/`;
       const response = await fetch(url, {
         method: 'POST',
         body: formDataToSend,
@@ -222,6 +222,9 @@ function RegisterPage() {
               {/* Left Column */}
               <div className="space-y-4">
                 <div>
+                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+                  Username
+                </label>
                   <input
                     type="text"
                     placeholder="Username *"
@@ -233,6 +236,9 @@ function RegisterPage() {
                   />
                 </div>
                 <div className="relative">
+                          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+          Password
+        </label>
                   <input
                     type={isVisible ? 'text' : 'password'}
                     placeholder="Password *"
@@ -251,6 +257,9 @@ function RegisterPage() {
                   </button>
                 </div>
                 <div>
+                          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          Email
+        </label>
                   <input
                     type="email"
                     placeholder="Email *"
@@ -264,6 +273,9 @@ function RegisterPage() {
                 {registerType === 'Student' ? (
                   <>
                     <div>
+                                  <label htmlFor="first_name" className="block text-sm font-medium text-gray-700 mb-1">
+              First Name
+            </label>
                       <input
                         type="text"
                         placeholder="First Name *"
@@ -275,6 +287,9 @@ function RegisterPage() {
                       />
                     </div>
                     <div>
+                                  <label htmlFor="last_name" className="block text-sm font-medium text-gray-700 mb-1">
+              Last Name
+            </label>
                       <input
                         type="text"
                         placeholder="Last Name *"
@@ -289,6 +304,9 @@ function RegisterPage() {
                 ) : (
                   <>
                     <div>
+                                  <label htmlFor="hotel_name" className="block text-sm font-medium text-gray-700 mb-1">
+              Hotel Name
+            </label>
                       <input
                         type="text"
                         placeholder="Hotel Name *"
@@ -300,6 +318,9 @@ function RegisterPage() {
                       />
                     </div>
                     <div>
+                                  <label htmlFor="phone_number" className="block text-sm font-medium text-gray-700 mb-1">
+              Phone Number
+            </label>
                       <input
                         type="text"
                         placeholder="Phone Number *"
@@ -319,6 +340,9 @@ function RegisterPage() {
                 {registerType === 'Student' ? (
                   <>
                     <div>
+                                  <label htmlFor="dob" className="block text-sm font-medium text-gray-700 mb-1">
+              Date of Birth
+            </label>
                       <input
                         type="date"
                         placeholder="Date of Birth *"
@@ -330,6 +354,9 @@ function RegisterPage() {
                       />
                     </div>
                     <div>
+                                  <label htmlFor="phone_number" className="block text-sm font-medium text-gray-700 mb-1">
+              Phone Number
+            </label>
                       <input
                         type="text"
                         placeholder="Phone Number *"
@@ -341,6 +368,9 @@ function RegisterPage() {
                       />
                     </div>
                     <div>
+                                  <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+              Address
+            </label>
                       <textarea
                         placeholder="Address *"
                         name="address"
@@ -352,6 +382,9 @@ function RegisterPage() {
                       />
                     </div>
                     <div>
+                                  <label htmlFor="university_name" className="block text-sm font-medium text-gray-700 mb-1">
+              University Name
+            </label>
                       <input
                         type="text"
                         placeholder="University Name *"
@@ -363,6 +396,9 @@ function RegisterPage() {
                       />
                     </div>
                     <div>
+                                  <label htmlFor="university_id_proof" className="block text-sm font-medium text-gray-700 mb-1">
+              University ID Proof
+            </label>
                       <input
                         type="file"
                         name="university_id_proof"
@@ -376,6 +412,9 @@ function RegisterPage() {
                 ) : (
                   <>
                     <div>
+                                  <label htmlFor="address1" className="block text-sm font-medium text-gray-700 mb-1">
+              Address 1
+            </label>
                       <textarea
                         placeholder="Address 1 *"
                         name="address1"
@@ -387,6 +426,9 @@ function RegisterPage() {
                       />
                     </div>
                     <div>
+                                  <label htmlFor="address2" className="block text-sm font-medium text-gray-700 mb-1">
+              Address 2
+            </label>
                       <textarea
                         placeholder="Address 2 (Optional)"
                         name="address2"
@@ -397,6 +439,9 @@ function RegisterPage() {
                       />
                     </div>
                     <div>
+                                                        <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+              City
+            </label>
                       <input
                         type="text"
                         placeholder="City *"
@@ -408,6 +453,9 @@ function RegisterPage() {
                       />
                     </div>
                     <div>
+                      <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-1">
+              Country
+            </label>
                       <input
                         type="text"
                         placeholder="Country *"
@@ -419,6 +467,9 @@ function RegisterPage() {
                       />
                     </div>
                     <div>
+                    <label htmlFor="zip" className="block text-sm font-medium text-gray-700 mb-1">
+              ZIP
+            </label>
                       <input
                         type="text"
                         placeholder="ZIP Code *"

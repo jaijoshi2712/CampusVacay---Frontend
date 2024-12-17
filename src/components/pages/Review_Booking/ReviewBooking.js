@@ -595,6 +595,11 @@ const ReviewBooking = () => {
     }));
   };
 
+  const calculateInsurance = () => {
+    const baseAmount = bookingDetails.discountedTotal || bookingDetails.totalPrice;
+    return includeInsurance ? baseAmount * 0.05 : baseAmount;
+  };
+
   const calculateFinalAmount = () => {
     const baseAmount = bookingDetails.discountedTotal || bookingDetails.totalPrice;
     return includeInsurance ? baseAmount * 1.05 : baseAmount;
@@ -616,7 +621,7 @@ const ReviewBooking = () => {
 
       const reservationData = {
         hotel: hotelData.hotel_id,
-        room: 17,
+        room: 23,
         first_name: guestDetails.first_name,
         last_name: guestDetails.last_name,
         email: guestDetails.email,
@@ -733,7 +738,7 @@ const ReviewBooking = () => {
                       name="first_name"
                       value={guestDetails.first_name}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-150 ease-in-out"
+                      className=" px-3 py-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-150 ease-in-out"
                       required
                     />
                   </div>
@@ -744,7 +749,7 @@ const ReviewBooking = () => {
                       name="last_name"
                       value={guestDetails.last_name}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-150 ease-in-out"
+                      className=" px-3 py-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-150 ease-in-out"
                       required
                     />
                   </div>
@@ -755,7 +760,7 @@ const ReviewBooking = () => {
                       name="email"
                       value={guestDetails.email}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-150 ease-in-out"
+                      className="px-3 py-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-150 ease-in-out"
                       required
                     />
                   </div>
@@ -766,7 +771,7 @@ const ReviewBooking = () => {
                       name="phone_number"
                       value={guestDetails.phone_number}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-150 ease-in-out"
+                      className="px-3 py-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-150 ease-in-out"
                       required
                     />
                   </div>
@@ -777,7 +782,7 @@ const ReviewBooking = () => {
                       name="country"
                       value={guestDetails.country}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-150 ease-in-out"
+                      className="px-3 py-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-150 ease-in-out"
                       required
                     />
                   </div>
@@ -788,7 +793,7 @@ const ReviewBooking = () => {
                       name="expected_arrival_time"
                       value={guestDetails.expected_arrival_time}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-150 ease-in-out"
+                      className="px-3 py-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-150 ease-in-out"
                       required
                     />
                   </div>
@@ -799,7 +804,7 @@ const ReviewBooking = () => {
                       value={guestDetails.special_requests}
                       onChange={handleInputChange}
                       rows={3}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-150 ease-in-out"
+                      className="px-3 py-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-150 ease-in-out"
                       placeholder="Any special requests for your stay?"
                     />
                   </div>
@@ -851,7 +856,7 @@ const ReviewBooking = () => {
                   {includeInsurance && (
                     <div className="flex justify-between text-blue-600">
                       <p>Damage Insurance</p>
-                      <p>+5%</p>
+                      <p>${calculateInsurance().toFixed(2)}</p>
                     </div>
                   )}
 

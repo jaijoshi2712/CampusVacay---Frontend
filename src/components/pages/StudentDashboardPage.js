@@ -4,7 +4,7 @@ import { MapPin, Navigation } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 
-const Review = ({ hotel_id }) => {
+const Review = ({ hotel_id, hotel_name }) => {
     //const [review, setReview] = useState({rating: 0, comment: ''});
     const [editOpen, setEditOpen] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -195,7 +195,7 @@ const Review = ({ hotel_id }) => {
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white rounded shadow-lg p-6 max-h-screen w-4/5">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-bold mb-4">Writing reviews for hotel {hotel_id}</h2>
+                            <h2 className="text-2xl font-bold mb-4">Writing reviews for Hotel {hotel_name}</h2>
                             <button onClick={closeEdit} className="p-3 bg-red-500 text-white rounded hover:bg-red-600">
                             X
                             </button>
@@ -390,7 +390,7 @@ const HotelCard = ({ reservation , type }) => {
                     </div>
                 </div>
                 {type=='past' &&
-                    <Review hotel_id={reservation.hotel}/>
+                    <Review hotel_id={reservation.hotel} hotel_name={reservation.hotel_name} />
                 }
             </div>
             
@@ -402,138 +402,95 @@ const HotelCard = ({ reservation , type }) => {
             </div>
             }
 
-            { popOpen && (
+            {popOpen && (
             <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white rounded shadow-lg p-6 max-h-screen px-4 py-3 mt-10 w-4/5">
-                <div className="flex items-start justify-between">
-                    <h2 className="text-2xl font-bold mb-4">Details for reservation at {reservation.hotel_name}, {reservation.room_type}</h2>
-                    <button onClick={closePop} className="align-top px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+                <div className="bg-white rounded-lg shadow-lg p-6 max-h-screen w-4/5 overflow-y-auto">
+                {/* Header Section */}
+                <div className="flex items-start justify-between mb-6">
+                    <h2 className="text-2xl font-bold text-blue-700">
+                    Details for reservation at {reservation.hotel_name}, {reservation.room_type}
+                    </h2>
+                    <button
+                    onClick={closePop}
+                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition duration-300"
+                    >
                     X
                     </button>
                 </div>
-                <img 
-                src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : reservation.hotel_photos}
-                alt={reservation.hotel_name}
+
+                {/* Hotel Image */}
+                <img
+                    src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : `http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com${reservation.hotel_photos}`}
+                    alt={reservation.hotel_name}
                     onError={handleImageError}
-                    className="w-full h-40 object-cover"
+                    className="w-full h-48 object-cover rounded mb-6"
                 />
-                <div className="flex">
-                    <div className="w-1/2 h-full border rounded m-2">
-                        <div className="flex border-b items-center">
-                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                First Name:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.first_name}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Last Name:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.last_name}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Guests:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.guests}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Email:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.email}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Phone No:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.phone_number}
-                            </span>
-                        </div>
-                        <div className="flex items-center">
-                            <label className="w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Payment:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.payment_status}
-                            </span>
-                        </div>
+
+                {/* Reservation Details */}
+                <div className="flex flex-wrap -mx-2">
+                    {/* Left Column */}
+                    <div className="w-full md:w-1/2 px-2 mb-4">
+                    <div className="border rounded-md p-4 bg-gray-50">
+                        <DetailItem label="First Name" value={reservation.first_name} />
+                        <DetailItem label="Last Name" value={reservation.last_name} />
+                        <DetailItem label="Guests" value={reservation.guests} />
+                        <DetailItem label="Email" value={reservation.email} />
+                        <DetailItem label="Phone No" value={reservation.phone_number} />
+                        <DetailItem label="Amount" value={`${reservation.amount} ${reservation.currency?.toUpperCase() || ''}`} />
+                        <DetailItem
+                        label="Payment"
+                        value={`${reservation.payment_status.charAt(0).toUpperCase()}${reservation.payment_status.slice(1).toLowerCase()}`}
+                        className={`font-semibold ${
+                            reservation.payment_status === "succeeded"
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }`}
+                        />
                     </div>
-                    <div className="w-1/2 h-full border rounded m-2">
-                        <div className="flex border-b items-center">
-                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Check In Date:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.check_in_date}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Check Out Date:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.check_out_date}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Expected Arrival Time:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.expected_arrival_time}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Special Requests:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.special_requests}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="damage_insurance">
-                                Damage Insurance:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.damage_insurance ? 'Insured' : 'No'}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="damage_report">
-                                Damage Report:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.damage_report}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="additional_charges">
-                                Additional Charge:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.additional_charges}
-                            </span>
-                        </div>
+                    </div>
+
+                    {/* Right Column */}
+                    <div className="w-full md:w-1/2 px-2 mb-4">
+                    <div className="border rounded-md p-4 bg-gray-50">
+                        <DetailItem label="Check In Date" value={reservation.check_in_date} />
+                        <DetailItem label="Check Out Date" value={reservation.check_out_date} />
+                        <DetailItem
+                        label="Expected Arrival Time"
+                        value={reservation.expected_arrival_time}
+                        />
+                        <DetailItem
+                        label="Special Requests"
+                        value={reservation.special_requests || "N/A"}
+                        />
+                        <DetailItem
+                        label="Damage Insurance"
+                        value={reservation.damage_insurance ? "Insured" : "No"}
+                        />
+                        <DetailItem
+                        label="Damage Report"
+                        value={reservation.damage_report || "N/A"}
+                        />
+                        <DetailItem
+                        label="Additional Charge"
+                        value={`$${reservation.additional_charges}`}
+                        />
+                    </div>
                     </div>
                 </div>
-            </div>
+                </div>
             </div>
             )}
         </div>
       </div>
     );
 };
+
+const DetailItem = ({ label, value, className }) => (
+  <div className="flex justify-between border-b py-2">
+    <span className="font-semibold text-gray-600">{label}:</span>
+    <span className={`text-gray-800 ${className}`}>{value}</span>
+  </div>
+);
 
 const Reservations = () => {
     const [loading, setLoading] = useState(true);
@@ -558,6 +515,7 @@ const Reservations = () => {
                 'Authorization': 'Token ' + localStorage.getItem('authToken'),
               }
             });
+            console.log(response);
     
             if (!response.ok) {
               throw new Error('Network response was not ok');
