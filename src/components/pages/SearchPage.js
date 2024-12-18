@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Search, User, MapPin, Navigation, Calendar } from 'lucide-react';
+import { FilterSection, useFilteredResults } from './FilterComponents';
 import './edits.css';
 
 const SearchBar = ({ initialData }) => {
@@ -214,7 +215,7 @@ const SearchBar = ({ initialData }) => {
           {isLoading ? (
             <>
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              <span>Searching...</span>
+              <span className="ml-2">Searching...</span>
             </>
           ) : (
             <>
@@ -232,7 +233,6 @@ const SearchBar = ({ initialData }) => {
     </div>
   );
 };
-
 const HotelCard = ({ hotel }) => {
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
@@ -275,7 +275,7 @@ const HotelCard = ({ hotel }) => {
     <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
       <div className="relative">
         <img 
-          src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : "/api/placeholder/400/300"}
+          src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : `http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com${hotel.hotel_photos}`}
           alt={hotel.hotel_name}
           onError={handleImageError}
           className="w-full h-64 object-cover"
@@ -402,7 +402,7 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [message, setMessage] = useState({ type: '', content: '' });
 
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
   
   useEffect(() => {
     setLoginType(localStorage.getItem('type'));
@@ -447,8 +447,8 @@ const Header = () => {
 
   return (
     <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'}`}>
-      <div className="max-w-6xl mx-auto px-6 flex justify-between items-center" onClick={() => navigate('/')}>
-        <a href="#home" className="text-3xl font-bold text-blue-700 flex items-center no-underline">
+      <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
+        <a href="#home" className="text-3xl font-bold text-blue-700 flex items-center no-underline" onClick={() => navigate('/')}>
           <Navigation className="mr-2" />
           CampusVacay.
         </a>
@@ -487,31 +487,58 @@ const SearchPage = () => {
   const location = useLocation();
   const searchResults = location.state?.searchResults || [];
   const initialSearchData = location.state?.searchData;
+  
+  const { filteredResults, setFilters } = useFilteredResults(searchResults);
+
+  // Debug logging to check results
+  console.log('Total hotels:', searchResults.length);
+  console.log('Filtered hotels:', filteredResults.length);
 
   return (
     <Layout>
       <div className="container mx-auto px-4">
-        <div className="pt-24 pb-8"> {/* Increased top padding for better placement */}
-          <h1 className="text-3xl font-bold mb-8 text-center">Search Results</h1> {/* Centered the title and added margin */}
+        <div className="pt-24 pb-8">
+          <h1 className="text-3xl font-bold mb-8 text-center">Search Results</h1>
 
           <div className="mb-8">
             <SearchBar initialData={initialSearchData} />
           </div>
 
-          {searchResults.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-xl text-gray-600">No hotels found matching your criteria.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {searchResults.map((hotel) => (
-                <HotelCard 
-                  key={hotel.hotel_id} 
-                  hotel={hotel}
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Filters Sidebar - Made sticky */}
+            <div className="w-full lg:w-1/4">
+              <div className="sticky top-24">
+                <FilterSection 
+                  searchResults={searchResults}
+                  onFilterChange={setFilters}
                 />
-              ))}
+              </div>
             </div>
-          )}
+
+            {/* Search Results */}
+            <div className="w-full lg:w-3/4">
+              <div className="mb-4">
+                <p className="text-gray-600">
+                  Showing {filteredResults.length} of {searchResults.length} hotels
+                </p>
+              </div>
+              
+              {filteredResults.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-xl text-gray-600">No hotels found matching your criteria.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                  {filteredResults.map((hotel) => (
+                    <HotelCard 
+                      key={hotel.hotel_id} 
+                      hotel={hotel}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </Layout>
@@ -519,4 +546,3 @@ const SearchPage = () => {
 };
 
 export default SearchPage;
-

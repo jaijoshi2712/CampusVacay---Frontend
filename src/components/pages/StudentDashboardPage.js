@@ -4,7 +4,7 @@ import { MapPin, Navigation } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 
-const Review = ({ hotel_id }) => {
+const Review = ({ hotel_id, hotel_name }) => {
     //const [review, setReview] = useState({rating: 0, comment: ''});
     const [editOpen, setEditOpen] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -195,7 +195,7 @@ const Review = ({ hotel_id }) => {
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white rounded shadow-lg p-6 max-h-screen w-4/5">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-bold mb-4">Writing reviews for hotel {hotel_id}</h2>
+                            <h2 className="text-2xl font-bold mb-4">Writing reviews for Hotel {hotel_name}</h2>
                             <button onClick={closeEdit} className="p-3 bg-red-500 text-white rounded hover:bg-red-600">
                             X
                             </button>
@@ -332,7 +332,7 @@ const HotelCard = ({ reservation , type }) => {
             throw new Error("loading error!");
             }*/
             
-            await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/hotel/reservations/${reservation.id}`,{
+            await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reservations/${reservation.id}`,{
                 method: 'delete',
                 headers: {
                     'Content-Type': 'application/json',
@@ -390,7 +390,7 @@ const HotelCard = ({ reservation , type }) => {
                     </div>
                 </div>
                 {type=='past' &&
-                    <Review hotel_id={reservation.hotel}/>
+                    <Review hotel_id={reservation.hotel} hotel_name={reservation.hotel_name} />
                 }
             </div>
             
@@ -402,138 +402,95 @@ const HotelCard = ({ reservation , type }) => {
             </div>
             }
 
-            { popOpen && (
+            {popOpen && (
             <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white rounded shadow-lg p-6 max-h-screen w-4/5">
-                <div className="flex items-start justify-between">
-                    <h2 className="text-2xl font-bold mb-4">Details for reservation at {reservation.hotel_name}, {reservation.room_type}</h2>
-                    <button onClick={closePop} className="align-top px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+                <div className="bg-white rounded-lg shadow-lg p-6 max-h-screen w-4/5 overflow-y-auto">
+                {/* Header Section */}
+                <div className="flex items-start justify-between mb-6">
+                    <h2 className="text-2xl font-bold text-blue-700">
+                    Details for reservation at {reservation.hotel_name}, {reservation.room_type}
+                    </h2>
+                    <button
+                    onClick={closePop}
+                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition duration-300"
+                    >
                     X
                     </button>
                 </div>
-                <img 
-                src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : reservation.hotel_photos}
-                alt={reservation.hotel_name}
+
+                {/* Hotel Image */}
+                <img
+                    src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : `http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com${reservation.hotel_photos}`}
+                    alt={reservation.hotel_name}
                     onError={handleImageError}
-                    className="w-full h-64 object-cover"
+                    className="w-full h-48 object-cover rounded mb-6"
                 />
-                <div className="flex">
-                    <div className="w-1/2 h-full border rounded m-2">
-                        <div className="flex border-b items-center">
-                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                First Name:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.first_name}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Last Name:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.last_name}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Guests:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.guests}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Email:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.email}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="whitespace-nowrap w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Phone No:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.phone_number}
-                            </span>
-                        </div>
-                        <div className="flex items-center">
-                            <label className="w-1/3 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Payment:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.payment_status}
-                            </span>
-                        </div>
+
+                {/* Reservation Details */}
+                <div className="flex flex-wrap -mx-2">
+                    {/* Left Column */}
+                    <div className="w-full md:w-1/2 px-2 mb-4">
+                    <div className="border rounded-md p-4 bg-gray-50">
+                        <DetailItem label="First Name" value={reservation.first_name} />
+                        <DetailItem label="Last Name" value={reservation.last_name} />
+                        <DetailItem label="Guests" value={reservation.guests} />
+                        <DetailItem label="Email" value={reservation.email} />
+                        <DetailItem label="Phone No" value={reservation.phone_number} />
+                        <DetailItem label="Amount" value={`${reservation.amount} ${reservation.currency?.toUpperCase() || ''}`} />
+                        <DetailItem
+                        label="Payment"
+                        value={`${reservation.payment_status.charAt(0).toUpperCase()}${reservation.payment_status.slice(1).toLowerCase()}`}
+                        className={`font-semibold ${
+                            reservation.payment_status === "succeeded"
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }`}
+                        />
                     </div>
-                    <div className="w-1/2 h-full border rounded m-2">
-                        <div className="flex border-b items-center">
-                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Check In Date:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.check_in_date}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Check Out Date:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.check_out_date}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Expected Arrival Time:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.expected_arrival_time}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="username">
-                                Special Requests:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.special_requests}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="damage_insurance">
-                                Damage Insurance:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.damage_insurance ? 'Insured' : 'No'}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="damage_report">
-                                Damage Report:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.damage_report}
-                            </span>
-                        </div>
-                        <div className="flex border-b items-center">
-                            <label className="w-1/2 p-2 block text-gray-700 text-lg font-bold mr-4" htmlFor="additional_charges">
-                                Additional Charge:
-                            </label>
-                            <span className="appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10">
-                                {reservation.additional_charges}
-                            </span>
-                        </div>
+                    </div>
+
+                    {/* Right Column */}
+                    <div className="w-full md:w-1/2 px-2 mb-4">
+                    <div className="border rounded-md p-4 bg-gray-50">
+                        <DetailItem label="Check In Date" value={reservation.check_in_date} />
+                        <DetailItem label="Check Out Date" value={reservation.check_out_date} />
+                        <DetailItem
+                        label="Expected Arrival Time"
+                        value={reservation.expected_arrival_time}
+                        />
+                        <DetailItem
+                        label="Special Requests"
+                        value={reservation.special_requests || "N/A"}
+                        />
+                        <DetailItem
+                        label="Damage Insurance"
+                        value={reservation.damage_insurance ? "Insured" : "No"}
+                        />
+                        <DetailItem
+                        label="Damage Report"
+                        value={reservation.damage_report || "N/A"}
+                        />
+                        <DetailItem
+                        label="Additional Charge"
+                        value={`$${reservation.additional_charges}`}
+                        />
+                    </div>
                     </div>
                 </div>
-            </div>
+                </div>
             </div>
             )}
         </div>
       </div>
     );
 };
+
+const DetailItem = ({ label, value, className }) => (
+  <div className="flex justify-between border-b py-2">
+    <span className="font-semibold text-gray-600">{label}:</span>
+    <span className={`text-gray-800 ${className}`}>{value}</span>
+  </div>
+);
 
 const Reservations = () => {
     const [loading, setLoading] = useState(true);
@@ -558,6 +515,7 @@ const Reservations = () => {
                 'Authorization': 'Token ' + localStorage.getItem('authToken'),
               }
             });
+            console.log(response);
     
             if (!response.ok) {
               throw new Error('Network response was not ok');
@@ -597,8 +555,10 @@ const Reservations = () => {
     }
     return (
         <div className=''>
-            
-            <div className="flex items-center justify-end px-5">
+            <div className="flex justify-between items-center text-2xl font-bold px-3">
+                Reservations
+            </div>
+            <div className="flex items-center justify-end px-3">
                 <label className="p-2">Filter:</label>
                 <select
                 value={sortBy}
@@ -611,7 +571,7 @@ const Reservations = () => {
                 <option value="past">Past</option>
                 </select>
             </div>
-            <div className='p-3 m-3 min-h-screen bg-white'>
+            <div className='p-3 m-3 min-h-screen rounded-md bg-white'>
                 <div>
                     {/*<div className="grid grid-cols-6 p-2 bg-white rounded-md shadow-md hover:bg-gray-200 transition">
                         <div>#</div>
@@ -771,8 +731,8 @@ const Profile = () => {
     return (
         <div className='min-h-screen'>
             
-            <div className="flex justify-between items-center text-2xl pt-4 px-5">
-                Personal Profile
+            <div className="flex justify-between items-center text-2xl font-bold px-5">
+                Profile
             </div>
             <div className="relative px-5">
             <form onSubmit={(e) => handleSubmit(e)}>
@@ -832,7 +792,7 @@ const Profile = () => {
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
                         readOnly={isReadOnly} onChange={handleChange} id="address" name="address" type="text" value={item.address}/>
                 </div>
-                <div className="flex border-b py-3 items-center">
+                {/*<div className="flex border-b py-3 items-center">
                     <label className="w-1/3 block text-gray-700 text-xl font-bold mr-4" htmlFor="university_name">
                         University
                     </label>
@@ -854,16 +814,16 @@ const Profile = () => {
                         required
                         accept="image/png, image/jpeg, application/pdf"
                     />
-                </div>
+                </div>*/}
                 {isReadOnly && (
-                <div className="flex justify-end p-3">
+                <div className="flex justify-end">
                     <button onClick={toggleReadOnly} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                         Edit
                     </button>
                 </div>
                 )}
                 {!isReadOnly && (
-                <div className="flex justify-end p-3">
+                <div className="flex justify-end">
                     <button onClick={handleSubmit} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                         Save
                     </button>
@@ -987,19 +947,22 @@ const Wishlist = () => {
     
     return (
         <div className=''>
+            <div className="flex justify-between items-center text-2xl font-bold px-3">
+                Wishlist
+            </div>
             {message.content && (
                 <div className={`fixed top-16 right-8 p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                 {message.content}
                 </div>
             )}
-            <div className='p-3 m-3 min-h-screen bg-white'>
+            <div className='p-3 m-3 min-h-screen rounded-md bg-white'>
                 <div>
                     <div>
-                        <div className="text-2xl font-bold">Wishlist</div>
+                        
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {wishData && wishData.length >0 ? (
                                 wishData.map((reservation,index) => (
-                                    <div className="w-full border">
+                                    <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                                         <div className="relative" onClick={() => goHotel(reservation)}>
                                         <img 
                                         src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : `http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com${reservation.hotel_photos}`}
@@ -1014,11 +977,9 @@ const Wishlist = () => {
                                             <span className="font-semibold whitespace-nowrap">{reservation.address1}, {reservation.city}, {reservation.country}</span>
 
                                             <div className="border-t pt-4">
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div onClick={()=>removeFav(reservation.id)}>
-                                                        remove {reservation.id}
-                                                    </div>
-                                                </div>
+                                                    <button className="p-2 bg-red-500 text-white rounded hover:bg-red-600" onClick={()=>removeFav(reservation.id)}>
+                                                        Remove
+                                                    </button>
                                             </div>
                                         </div>
                                     </div>
@@ -1034,6 +995,118 @@ const Wishlist = () => {
 }
 
 
+const Layout = ({ children }) => (
+    <div className="">
+      <Header />
+      <main className=" bg-gray-100">
+        
+        {children}
+      </main>
+      <footer className="bg-gray-800 text-gray-200 py-6">
+        <div className="max-w-screen mx-auto px-6 flex flex-wrap justify-between items-start">
+          <div className="w-full md:w-1/3 mb-4 md:mb-0">
+            <a href="/" className="text-3xl font-bold text-blue-500 flex items-center mb-2 no-underline">
+              <Navigation className="mr-2" />
+              CampusVacay.
+            </a>
+            <p className="text-gray-400 text-sm">We kaboom your beauty holiday instantly and memorable.</p>
+          </div>
+          <div className="w-full md:w-1/3 text-right">
+            <h4 className="text-lg font-semibold mb-2">Contact Us</h4>
+            <ul className="text-gray-400 text-sm space-y-1">
+              <li>Phone: +1-234-567-890</li>
+              <li>Email: support@campusvacay.com</li>
+              <li>Address: 123 Vacation Lane, Dream City, Holiday State</li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+      <div className="bg-[#3252DF] text-white h-11 flex items-center justify-center text-center text-sm">
+        <p>&copy; {new Date().getFullYear()} CampusVacay. All rights reserved.</p>
+      </div>
+    </div>
+);
+  
+const Header = () => {
+    const [token, setToken] = useState(null);
+    const [loginType, setLoginType] = useState(null);
+    const [isScrolled, setIsScrolled] = useState(false);
+    const [message, setMessage] = useState({ type: '', content: '' });
+  
+    const navigate = useNavigate(); // Hook for navigation
+    
+    useEffect(() => {
+      setLoginType(localStorage.getItem('type'));
+      const storedToken = localStorage.getItem('authToken');
+      if (storedToken) {
+        setToken(storedToken);
+      }
+      const handleScroll = () => {
+        setIsScrolled(window.scrollY > 10);
+      };
+  
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+  
+    const handleLogout = async () => {
+      try {
+        const url = `http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/student/api/logout/`;
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + localStorage.getItem('authToken'),
+          },
+          body: JSON.stringify(''),
+        });
+  
+        const responseData = await response.json();
+  
+        if (!response.ok) {
+          throw new Error(responseData.detail || JSON.stringify(responseData) || 'Logout failed');
+        }
+  
+        setMessage({ type: 'success', content: 'Logout successful!' });
+        localStorage.removeItem('authToken');
+        setToken(null);
+        navigate('/');
+      } catch (error) {
+        console.error('Logout error:', error);
+        setMessage({ type: 'error', content: error.message });
+      }
+    };
+  
+    return (
+      <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'}`}>
+        <div className="max-w-screen mx-auto px-6 flex justify-between items-center">
+          <a href="/" className="text-3xl font-bold text-blue-700 flex items-center no-underline">
+            <Navigation className="mr-2" />
+            CampusVacay.
+          </a>
+          
+          <div className="flex items-center space-x-4">
+            
+          {token ? (
+            <button onClick={handleLogout} className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
+              Logout
+            </button>
+          ) : (
+            <a href="/login" className="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition duration-300">
+              Login
+            </a>
+          )}
+        </div>
+        </div>
+        {message.content && (
+          <div className={`fixed top-16 right-8 p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+            {message.content}
+          </div>
+        )}
+      </header>
+    );
+};
+
 const StudentDashboardPage = () => {
     const [page, setPage] = useState('profile');
 
@@ -1048,41 +1121,26 @@ const StudentDashboardPage = () => {
     }, [page]);
 
     return (
-        <div className="min-h-screen w-full bg-gray-100 flex">
-            <div className="w-1/5 min-h-screen bg-white">
-                <div className='p-1 text-center'>
-                <a href="/">
-                    <div className="text-3xl font-bold text-blue-700 flex items-center">
-                        <Navigation className="mr-2" />
-                        CampusVacay.
-                    </div>
-                </a>
-                </div>
+        <Layout>
+        <div className="max-w-screen mx-auto px-6 flex h-full justify-between">
+            <div className="w-1/5 my-20 min-h-screen rounded-md bg-white">
                 <div className='p-1'>
                     <ul className="list-none p-0 m-0">
                         <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('profile')}>Profile</li>
-                        <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('reservations')}>Bookings</li>
+                        <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('reservations')}>Reservations</li>
                         <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('wishlist')}>Wishlist</li>
                     </ul>
                 </div>
             </div>
-            <div className='w-4/5 min-h-screen'>
+            <div className='w-4/5 mt-20 h-full'>
                 <div className='p-1 min-h-screen'>
-                    <div className="flex justify-between items-center text-xl py-4 px-5">
-                        Hello, student!<br/>
-                        Have a nice day!
-                        <div className="relative">
-                            <button className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition duration-300">
-                                Student
-                            </button>
-                        </div>
-                    </div>
                     {page==='profile' && (<Profile/>)}
                     {page==='reservations' && (<Reservations/>)}
                     {page==='wishlist' && (<Wishlist/>)}
                 </div>
             </div>
         </div>
+        </Layout>
     );
 };
 

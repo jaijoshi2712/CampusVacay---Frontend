@@ -176,6 +176,7 @@ const HotelDetails = () => {
   const calculateTotalPrice = () => {
     return Object.entries(selectedRooms).reduce((total, [roomId, quantity]) => {
       const room = hotelData.rooms.find(r => r.room_type.toLowerCase().replace(/\s+/g, '-') === roomId);
+      console.log(hotelData);
       return total + (room?.price_per_night || 0) * quantity;
     }, 0);
   };
@@ -218,7 +219,6 @@ const HotelDetails = () => {
   const getTotalRooms = () => {
     return Object.values(selectedRooms).reduce((a, b) => a + b, 0);
   };
-
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -236,7 +236,7 @@ const HotelDetails = () => {
             {/* Hotel Header */}
             <div className="relative h-64 md:h-96">
               <img 
-                src="/api/placeholder/1200/400"
+                src={`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com${hotelData.hotel_photos}`}
                 alt={hotelData.hotel_name}
                 className="w-full h-full object-cover"
               />
@@ -291,6 +291,31 @@ const HotelDetails = () => {
                     <p className="text-sm text-gray-600">Check-out time</p>
                     <p className="font-medium text-gray-900">{formatTime(hotelData.check_out_time)}</p>
                   </div>
+                </div>
+              </div>
+
+              {/* Tourist Spots */}
+              <div className="mb-8">
+                <h2 className="text-2xl font-bold mb-4">Nearby Tourist Spots</h2>
+                <div className="">
+                  {hotelData.tourist_spots?.map((spot, index) => (
+                    <div 
+                      key={index} 
+                      className="flex items-center justify-between bg-gray-100 p-4 rounded-lg shadow-sm"
+                    >
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800">{spot.name}</h3>
+                        <p className="text-sm text-gray-600">{spot.address}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center bg-green-100 px-2 py-1 rounded-full">
+                          <Star className="w-4 h-4 text-green-500" />
+                          <span className="ml-1 text-green-700 font-medium text-sm">{spot.rating}</span>
+                        </div>
+                        <span className="text-sm text-gray-500">{spot.user_ratings_total} reviews</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
