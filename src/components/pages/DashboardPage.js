@@ -627,9 +627,13 @@ const Details = ({item}) => {
                     <span className="font-semibold text-gray-600">Phone No:</span>
                     <span className="text-gray-800">{item.phone_number}</span>
                 </div>
+                <div className="mb-2 flex justify-between items-center">
+                    <span className="font-semibold text-gray-600">Amount:</span>
+                    <span className="text-gray-800 capitalize">{`${item.amount} ${item.currency?.toUpperCase() || ''}`}</span>
+                </div>
                 <div className="flex justify-between items-center">
                     <span className="font-semibold text-gray-600">Payment:</span>
-                    <span className="text-gray-800 capitalize">{item.payment_mode}</span>
+                    <span className="text-gray-800 capitalize">{item.payment_status}</span>
                 </div>
                 </div>
 
@@ -1165,6 +1169,12 @@ const Profile = () => {
     const [item,setItem] = useState([]);
     const [isReadOnly, setIsReadOnly] = useState(true);
     const [message, setMessage] = useState({ type: '', content: '' });
+    const [file, setFile] = useState(null);
+    const [imageError, setImageError] = useState(false);
+
+    const handleImageError = () => {
+      setImageError(true);
+    };
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -1180,7 +1190,7 @@ const Profile = () => {
                 throw new Error('Network response was not ok');
               }
               const data = await response.json();
-              console.log(data);
+              //console.log(data);
               setProfile({
                 username: data.user.username,
                 email: data.user.email,
@@ -1197,6 +1207,7 @@ const Profile = () => {
                 cancellation_policy: data.cancellation_policy,
                 student_discount: data.student_discount,
                 special_offers: data.special_offers,
+                hotel_photos: data.hotel_photos,
             });
               setItem({
                 username: data.user.username,
@@ -1214,6 +1225,7 @@ const Profile = () => {
                 cancellation_policy: data.cancellation_policy,
                 student_discount: data.student_discount,
                 special_offers: data.special_offers,
+                hotel_photos: data.hotel_photos,
             });
             } catch (error) {
               setError(error.message); // Handle errors
@@ -1228,6 +1240,7 @@ const Profile = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         toggleReadOnly();
+        console.log(item.hotel_photos);
         const formData = {
             username: item.username,
             email: item.email,
@@ -1244,16 +1257,28 @@ const Profile = () => {
             cancellation_policy: item.cancellation_policy,
             student_discount: item.student_discount,
             special_offers: item.special_offers,
+            hotel_photos: file,
         };
+        const formDataToSend = new FormData();
+        Object.keys(formData).forEach((key) => {
+        if (key === 'hotel_photos') {
+            if (formData[key]) {
+                //console.log(formData[key]);
+            formDataToSend.append(key, file);
+            }
+        } else {
+            formDataToSend.append(key, formData[key]);
+        }
+        });
 
         try {
             const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/hotel/hotel-profile/', {
               method: 'PATCH',
               headers: {
-                'Content-Type': 'application/json',
+                //'Content-Type': 'application/json',
                 'Authorization': 'Token ' + localStorage.getItem('authToken'),
               },
-              body: JSON.stringify(formData),
+              body: formDataToSend,
             });
       
             const data = await response.json();
@@ -1262,8 +1287,9 @@ const Profile = () => {
             }
             setMessage({ type: 'success', content: 'Profile Edited successfully!' });
             setTimeout(() => {
+                window.location.reload();
                 setMessage({type: '', content: ''});
-            }, 5000);
+            }, 2000);
         }catch (error) {
             setMessage({ type: 'error', content: error.message });
             setTimeout(() => {
@@ -1272,12 +1298,16 @@ const Profile = () => {
         }
     };
 
-    const handleChange = (e) => {
+    function handleChange(e) {
+        const { name, value, type, files } = e.target;
         setItem({
-        ...item,
-        [e.target.name]: e.target.value
+          ...item,
+          [name]: type === 'file' ? files[0] : value,
         });
     }
+    const handleFileChange = (event) => {
+        setFile(event.target.files[0]); // Get the first file selected
+    };
 
     const handleCancel = () => {
         setItem(profile);
@@ -1429,6 +1459,24 @@ const Profile = () => {
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
                         readOnly={isReadOnly} onChange={handleChange} id="special_offers" name="special_offers" type="text" value={item.special_offers}/>
                 </div>
+                <div className="flex border-b py-3 items-center">
+                    <label className="w-1/3 block text-gray-700 text-xl font-bold mr-4" htmlFor="hotel_photos">
+                        Photos
+                    </label>
+                    <input
+                        type="file"
+                        name="hotel_photos"
+                        onChange={handleFileChange}
+                        accept="image/png, image/jpeg, application/pdf"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                      />
+                </div>
+                <img
+                    src={`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com${item.hotel_photos}`}
+                    alt={item.hotel_name}
+                    onError={handleImageError}
+                    className="w-full h-64 object-cover rounded mb-6"
+                />
                 {isReadOnly && (
                 <div className="flex justify-end p-3">
                     <button onClick={toggleReadOnly} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
@@ -1461,7 +1509,7 @@ const NotificationBell = () => {
 
     const fetchData = async () => {
         try {
-            const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reservations/', {
+            const response = await fetch('http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/hotel/reservations/', {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
