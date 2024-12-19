@@ -621,7 +621,7 @@ const ReviewBooking = () => {
 
       const reservationData = {
         hotel: hotelData.hotel_id,
-        room: 23,
+        room: 22,
         first_name: guestDetails.first_name,
         last_name: guestDetails.last_name,
         email: guestDetails.email,
@@ -816,7 +816,7 @@ const ReviewBooking = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium text-lg text-blue-700">Damage Insurance</h3>
-                    <p className="text-sm text-gray-600">Protect against accidental damage during your stay (5% of booking amount)</p>
+                    <p className="text-sm text-gray-600">Protect against accidental damage during your stay</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input

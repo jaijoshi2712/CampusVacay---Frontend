@@ -332,7 +332,7 @@ const HotelCard = ({ reservation , type }) => {
             throw new Error("loading error!");
             }*/
             
-            await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reservations/${reservation.id}`,{
+            await fetch(`http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/hotel/api/reservations/${reservation.id}/`,{
                 method: 'delete',
                 headers: {
                     'Content-Type': 'application/json',
@@ -420,7 +420,7 @@ const HotelCard = ({ reservation , type }) => {
 
                 {/* Hotel Image */}
                 <img
-                    src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : `http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com${reservation.hotel_photos}`}
+                    src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : reservation.hotel_photos}
                     alt={reservation.hotel_name}
                     onError={handleImageError}
                     className="w-full h-48 object-cover rounded mb-6"
@@ -948,7 +948,7 @@ const Wishlist = () => {
     return (
         <div className=''>
             <div className="flex justify-between items-center text-2xl font-bold px-3">
-                Wishlist
+                Favourite Hotels
             </div>
             {message.content && (
                 <div className={`fixed top-16 right-8 p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
@@ -965,7 +965,7 @@ const Wishlist = () => {
                                     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                                         <div className="relative" onClick={() => goHotel(reservation)}>
                                         <img 
-                                        src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : `http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com${reservation.hotel_photos}`}
+                                        src={imageError ? "https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg" : `http://campusvacay-env.eba-mdfmvvfe.us-east-1.elasticbeanstalk.com/${reservation.hotel_photos}`}
                                         alt={reservation.hotel_name}
                                             onError={handleImageError}
                                             className="w-full h-64 object-cover"
@@ -983,7 +983,7 @@ const Wishlist = () => {
                                             </div>
                                         </div>
                                     </div>
-                            ))):(<div className="min-h-20">Wishlist Empty!</div>)}
+                            ))):(<div className="min-h-20">No Favourite Hotels!</div>)}
                         </div>
                     </div>
                     
@@ -1128,7 +1128,7 @@ const StudentDashboardPage = () => {
                     <ul className="list-none p-0 m-0">
                         <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('profile')}>Profile</li>
                         <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('reservations')}>Reservations</li>
-                        <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('wishlist')}>Wishlist</li>
+                        <li className="p-2 hover:cursor-pointer hover:bg-gray-200" onClick={()=>setPage('wishlist')}>Favourite Hotels</li>
                     </ul>
                 </div>
             </div>
